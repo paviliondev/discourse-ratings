@@ -1,3 +1,6 @@
-{{#if controller.hasRating}}
-  {{rating ratingNum=view.post.rating allowRating=view.post.yours postId=view.post.id}}
-{{else}}
+{{#if controller.showRating}}
+  {{d-rating  rating=view.parentView.post.rating
+              enabled=view.parentView.post.yours
+              post=view.parentView.post
+              topic=controller.model}}
+{{/if}}

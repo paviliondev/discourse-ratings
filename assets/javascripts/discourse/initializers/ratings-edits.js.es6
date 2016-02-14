@@ -1,19 +1,19 @@
 import TopicController from 'discourse/controllers/topic';
-import PostView from 'discourse/views/post';
 
 export default {
   name: 'ratings-edits',
   initialize(){
 
     TopicController.reopen({
-      hasRating: function(){
+      showRating: function(){
+        var category = this.get('model.category'),
+            ratingsCategory = category ? category.for_ratings : false;
+        if (ratingsCategory) {return ratingsCategory}
         var tags = this.get('model.tags'),
-            isService = tags ? Boolean(tags.indexOf('service') > -1) : false;
-        return isService
-      }.property('model.tags')
+            ratingsTag = tags ? Boolean(tags.indexOf('rating') > -1) : false;
+        return ratingsTag
+      }.property('model.tags', 'model.category')
     })
-
-    // Add logic if ratings are by cateogry instead of tags
 
   }
 }

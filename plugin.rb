@@ -1,9 +1,9 @@
 # name: discourse-ratings
-# about: A Discourse plugin that lets use topics to rate services or products
+# about: A Discourse plugin that lets you use topics to rate things
 # version: 0.1
 # authors: Angus McLeod
 
-register_asset 'stylesheets/desktop-civil.scss', :desktop
+register_asset 'stylesheets/ratings-desktop.scss', :desktop
 
 after_initialize do
 
@@ -20,7 +20,6 @@ after_initialize do
       post = Post.find(params[:id].to_i)
       save_rating_to_post(post)
       add_rating_to_topic_average(post)
-      render json: success_json
     end
 
     def save_rating_to_post(post)
@@ -35,6 +34,7 @@ after_initialize do
       post.topic.custom_fields["average_rating"] = average
       post.topic.custom_fields["ratings"] = @all_ratings.length
       post.topic.save!
+      render json: average
     end
 
     ##def update_top_topics(post)
@@ -54,7 +54,7 @@ after_initialize do
   end
 
   Discourse::Application.routes.append do
-    mount ::DiscourseRatings::Engine, at: "service"
+    mount ::DiscourseRatings::Engine, at: "rating"
   end
 
   TopicView.add_post_custom_fields_whitelister do |user|
@@ -63,6 +63,20 @@ after_initialize do
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
 
+  require 'category_serializer'
+  class ::CategorySerializer
+    alias_method :_custom_fields, :custom_fields
+    def custom_fields
+      if !object.custom_fields["for_ratings"]
+       object.custom_fields["for_ratings"] = ""
+       object.save
+      end
+      _custom_fields
+    end
+  end
+
+  ## Add the new fields to the serializers
+  add_to_serializer(:basic_category, :for_ratings) {!!object.custom_fields["for_ratings"]}
   add_to_serializer(:post, :rating) {post_custom_fields["rating"]}
   add_to_serializer(:topic_view, :average_rating) {object.topic.custom_fields["average_rating"]}
   add_to_serializer(:topic_view, :ratings) {object.topic.custom_fields["ratings"]}
