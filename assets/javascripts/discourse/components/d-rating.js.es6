@@ -17,7 +17,7 @@ export default Ember.Component.extend({
       type: 'POST',
       data: { id: post.id, rating: value }
     }).then((result) => {
-      topic.set('average_rating', result)
+      if (topic){topic.set('average_rating', result)}
     }).catch(function (error) {
       popupAjaxError(error);
     });
