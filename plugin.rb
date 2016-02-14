@@ -80,4 +80,5 @@ after_initialize do
   add_to_serializer(:post, :rating) {post_custom_fields["rating"]}
   add_to_serializer(:topic_view, :average_rating) {object.topic.custom_fields["average_rating"]}
   add_to_serializer(:topic_view, :ratings) {object.topic.custom_fields["ratings"]}
+  add_to_serializer(:topic_list_item, :average_rating) { object.custom_fields["average_rating"] }
 end

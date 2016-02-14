@@ -1,4 +1,12 @@
+.composer-rating {
+  padding: 3px 7px;
+  .rating {
+    margin-left: 2px;
+  }
+}
+
 .rating {
+  vertical-align: middle;
   font-size: 0;
   white-space: nowrap;
   display: inline-block;

@@ -1,4 +1,8 @@
 import TopicController from 'discourse/controllers/topic';
+import ComposerController from 'discourse/controllers/composer';
+import ComposerView from 'discourse/views/composer';
+import registerUnbound from 'discourse/helpers/register-unbound';
+import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-rating';
 
 export default {
   name: 'ratings-edits',
@@ -14,6 +18,31 @@ export default {
         return ratingsTag
       }.property('model.tags', 'model.category')
     })
+
+    ComposerController.reopen({
+      showRating: function() {
+        var topic = this.get('model.topic')
+        if (topic) {
+          if (topic.archetype === 'private_message') {return false}
+          var tController = this.get('controllers.topic')
+          return tController.get('showRating')
+        }
+        var categoryId = this.get('model.categoryId'),
+            category = this.site.categories.findProperty('id', categoryId);
+        if (category) {return category.for_ratings}
+        return false
+      }.property('model.topic', 'model.categoryId')
+    })
+
+    ComposerView.reopen({
+      resizeIfShowRating: function() {
+        this.resize()
+      }.observes('controller.showRating')
+    })
+
+    registerUnbound('rating-unbound', function(rating) {
+      return new Handlebars.SafeString(renderUnboundRating(rating));
+    });
 
   }
 }
