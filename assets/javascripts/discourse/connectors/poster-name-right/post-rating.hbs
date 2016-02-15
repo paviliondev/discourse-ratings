@@ -1,6 +1,8 @@
 {{#if controller.showRating}}
-  {{d-rating  rating=view.parentView.post.rating 
-              enabled=view.parentView.post.yours
-              post=view.parentView.post
-              topic=controller.model}}
+  {{#if view.parentView.post.rating}}
+    {{d-rating  rating=view.parentView.post.rating
+                enabled=view.parentView.post.yours
+                post=view.parentView.post
+                topic=controller.model}}
+  {{/if}}
 {{/if}}

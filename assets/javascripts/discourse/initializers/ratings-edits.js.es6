@@ -23,7 +23,7 @@ export default {
       showRating: function() {
         var topic = this.get('model.topic')
         if (topic) {
-          if (topic.archetype === 'private_message') {return false}
+          if (topic.archetype === 'private_message' || topic.posted) {return false}
           var tController = this.get('controllers.topic')
           return tController.get('showRating')
         }
