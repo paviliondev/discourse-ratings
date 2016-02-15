@@ -12,7 +12,7 @@ A Discourse plugin that lets you use topics to rate things. [Read more about thi
 
 ## To do
 
-1. Prevent a user from posting in a ratings topic more than once.
+1. Prevent a user from posting in a ratings topic more than once. Currently, users cannot rate in a ratings topic more than once.
 
 2. Created a sorted topic list (highest to lowest) of all topics within a ratings category or with the 'rating'. Perhaps use Bayseian estimation [as discussed in the code comments](https://github.com/angusmcleod/discourse-ratings/blob/master/plugin.rb#L40).
 
