@@ -24,6 +24,14 @@ export default {
 
     ComposerController.reopen({
 
+      // overrides controller method
+
+      close() {
+        this.setProperties({ model: null, lastValidatedAt: null, rating: null });
+      },
+
+      //
+
       showRating: function() {
         var topic = this.get('model.topic')
         if (topic) {
