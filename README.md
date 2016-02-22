@@ -6,7 +6,7 @@ A Discourse plugin that lets you use topics to rate things. [Read more about thi
 
 2. Each ratings topic concerns a single thing ("rating subject"); e.g. a service or a product.
 
-3. Users rate the rating subject by choosing a star rating when posting (i.e. in the composer) or after posting (on the published post) in the topic.
+3. Users rate the rating subject by choosing a star rating when posting (i.e. in the composer).
 
 4. The average (mean) of all the ratings in the topic is displayed under the topic title and on the relevant topic list item.  
 
