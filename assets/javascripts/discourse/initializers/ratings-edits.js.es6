@@ -12,7 +12,7 @@ export default {
   initialize(){
 
     TopicController.reopen({
-      
+
       showRating: function(){
         var category = this.get('model.category'),
             ratingsCategory = category ? category.for_ratings : false;
@@ -30,7 +30,7 @@ export default {
             model.set('average_rating', data.average)
           }
         })
-      }.observes('model.id')
+      }.observes('controllers.topic-progress.model')
 
     })
 
