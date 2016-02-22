@@ -12,6 +12,7 @@ export default {
   initialize(){
 
     TopicController.reopen({
+      
       showRating: function(){
         var category = this.get('model.category'),
             ratingsCategory = category ? category.for_ratings : false;
@@ -19,7 +20,18 @@ export default {
         var tags = this.get('model.tags'),
             ratingsTag = tags ? Boolean(tags.indexOf('rating') > -1) : false;
         return ratingsTag
-      }.property('model.tags', 'model.category')
+      }.property('model.tags', 'model.category'),
+
+      subscribeToRatingUpdates: function() {
+        var model = this.get('model')
+        if (!model) {return}
+        this.messageBus.subscribe("/topic/" + model.id, function(data) {
+          if (data.type === 'revised') {
+            model.set('average_rating', data.average)
+          }
+        })
+      }.observes('model.id')
+
     })
 
     ComposerController.reopen({
@@ -78,16 +90,6 @@ export default {
         Discourse.ajax("/rating/rate", {
           type: 'POST',
           data: data
-        }).then((result) => {
-          var currentTopic = self.get('controllers.topic.model')
-          if (currentTopic) {
-            currentTopic.set('average_rating', result)
-          } else {
-            Topic.find(post.topic_id, {}).then((topic) => {
-              var topic = Topic.create(topic)
-              Topic.update(topic, {average_rating: result})
-            })
-          }
         }).catch(function (error) {
           popupAjaxError(error);
         });

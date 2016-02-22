@@ -18,14 +18,9 @@ after_initialize do
   class DiscourseRatings::RatingController < ::ApplicationController
     def rate
       post = Post.find(params[:id].to_i)
-      save_rating_to_post(post)
-      add_rating_to_topic_average(post)
-    end
-
-    def save_rating_to_post(post)
       post.custom_fields["rating"] = params[:rating].to_i
       post.save!
-      post.publish_change_to_clients!(:revised)
+      add_rating_to_topic_average(post)
     end
 
     def add_rating_to_topic_average(post)
@@ -35,7 +30,19 @@ after_initialize do
       post.topic.custom_fields["average_rating"] = average
       post.topic.custom_fields["ratings"] = @all_ratings.length
       post.topic.save!
-      render json: average
+      push_updated_ratings_to_clients!(post, average)
+    end
+
+    def push_updated_ratings_to_clients!(post, average)
+      channel = "/topic/#{post.topic_id}"
+      msg = {
+        id: post.id,
+        updated_at: Time.now,
+        average: average,
+        type: "revised"
+      }
+      MessageBus.publish(channel, msg, group_ids: post.topic.secure_group_ids)
+      render json: success_json
     end
 
     ##def update_top_topics(post)
