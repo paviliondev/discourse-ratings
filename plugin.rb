@@ -25,6 +25,7 @@ after_initialize do
     def save_rating_to_post(post)
       post.custom_fields["rating"] = params[:rating].to_i
       post.save!
+      post.publish_change_to_clients!(:revised)
     end
 
     def add_rating_to_topic_average(post)
