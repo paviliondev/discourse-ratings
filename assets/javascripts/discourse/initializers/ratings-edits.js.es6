@@ -14,20 +14,22 @@ export default {
     TopicController.reopen({
 
       showRating: function(){
-        var category = this.get('model.category'),
-            ratingsCategory = category ? category.for_ratings : false;
-        if (ratingsCategory) {return ratingsCategory}
+        var category = this.get('model.category');
+        if (category && category.for_ratings) {return true}
         var tags = this.get('model.tags'),
             ratingsTag = tags ? Boolean(tags.indexOf('rating') > -1) : false;
         return ratingsTag
       }.property('model.tags', 'model.category'),
 
       subscribeToRatingUpdates: function() {
+        if (!this.get('showRating')
+            || !this.get('model')) {return}
         var model = this.get('model')
-        if (!model) {return}
         this.messageBus.subscribe("/topic/" + model.id, function(data) {
           if (data.type === 'revised') {
-            model.set('average_rating', data.average)
+            if (model.get('average_rating')) {
+              model.set('average_rating', data.average)
+            }
           }
         })
       }.observes('controllers.topic-progress.model')
@@ -47,17 +49,16 @@ export default {
       showRating: function() {
         var topic = this.get('model.topic')
         if (topic) {
-          if (topic.archetype === 'private_message' ||
-              (topic.posted && this.get('model.action') !== Composer.EDIT)) {
+          if (topic.posted && this.get('model.action') !== Composer.EDIT) {
             return false
           }
-          var tController = this.get('controllers.topic')
-          return tController.get('showRating')
+          return this.get('controllers.topic.showRating')
+        } else {
+          var categoryId = this.get('model.categoryId'),
+              category = this.site.categories.findProperty('id', categoryId);
+          if (category) {return category.for_ratings}
+          return false
         }
-        var categoryId = this.get('model.categoryId'),
-            category = this.site.categories.findProperty('id', categoryId);
-        if (category) {return category.for_ratings}
-        return false
       }.property('model.topic', 'model.categoryId'),
 
       setRating: function() {
@@ -65,21 +66,20 @@ export default {
         if (post && this.get('showRating')) {
           this.set('rating', post.rating)
         }
-      }.observes('model.post'),
+      }.observes('model.post', 'showRating'),
 
       saveRatingAfterCreating: function() {
-        var post = this.get('model.createdPost');
-        if (!post) {return}
-        this.saveRating(post)
+        if (!this.get('showRating')
+            || !this.get('model.createdPost')) {return}
+        this.saveRating(this.get('model.createdPost'))
       }.observes('model.createdPost'),
 
       saveRatingAfterEditing: function() {
-        if (this.get('model.action') === Composer.EDIT
-            && this.get('model.composeState') !== Composer.CLOSED) {return}
-        var post = this.get('model.post')
-        if (post) {
-          this.saveRating(post)
-        }
+        if (!this.get('showRating')
+            || this.get('model.action') !== Composer.EDIT
+            || this.get('model.composeState') !== Composer.CLOSED
+            || !this.get('model.post')) {return}
+        this.saveRating(this.get('model.post'))
       }.observes('model.composeState'),
 
       saveRating: function(post) {

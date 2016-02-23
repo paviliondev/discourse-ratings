@@ -84,7 +84,7 @@ after_initialize do
   end
 
   ## Add the new fields to the serializers
-  add_to_serializer(:basic_category, :for_ratings) {!!object.custom_fields["for_ratings"]}
+  add_to_serializer(:basic_category, :for_ratings) {object.custom_fields["for_ratings"] == 'true'}
   add_to_serializer(:post, :rating) {post_custom_fields["rating"]}
   add_to_serializer(:topic_view, :average_rating) {object.topic.custom_fields["average_rating"]}
   add_to_serializer(:topic_view, :ratings) {object.topic.custom_fields["ratings"]}
