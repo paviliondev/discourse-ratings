@@ -6,24 +6,40 @@ import Composer from 'discourse/models/composer';
 import registerUnbound from 'discourse/helpers/register-unbound';
 import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-rating';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
+import { withPluginApi } from 'discourse/lib/plugin-api';
 
 export default {
   name: 'ratings-edits',
   initialize(){
 
+    withPluginApi('0.1', api => {
+      api.decorateWidget('poster-name:after', function(helper) {
+        var rating = helper.getModel().get('rating'),
+            html = new Handlebars.SafeString(renderUnboundRating(rating));
+        if (helper.widget.container.lookup('controller:topic').showRating) {
+          return helper.rawHtml(`${html}`);
+        }
+      })
+    });
+
     TopicController.reopen({
+      showRating: false,
 
       showRating: function(){
         var category = this.get('model.category');
-        if (category && category.for_ratings) {return true}
-        var tags = this.get('model.tags'),
-            ratingsTag = tags ? Boolean(tags.indexOf('rating') > -1) : false;
-        return ratingsTag
+        if (category && category.for_ratings) {
+          this.subscribeToRatingUpdates()
+          return true
+        }
+        var tags = this.get('model.tags')
+        if (tags && tags.indexOf('rating') > -1) {
+          this.subscribeToRatingUpdates()
+          return true
+        }
+        return false
       }.property('model.tags', 'model.category'),
 
       subscribeToRatingUpdates: function() {
-        if (!this.get('showRating')
-            || !this.get('model')) {return}
         var model = this.get('model')
         this.messageBus.subscribe("/topic/" + model.id, function(data) {
           if (data.type === 'revised') {
@@ -32,7 +48,7 @@ export default {
             }
           }
         })
-      }.observes('controllers.topic-progress.model')
+      }
 
     })
 

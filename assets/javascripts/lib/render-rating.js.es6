@@ -1,13 +1,13 @@
 var renderUnboundRating = function(rating) {
-  var html = ''
+  var stars = ''
   for (var i = 0; i < 5; i++) {
     var value = i + 1,
         checked = value <= rating ? 'checked' : '',
         disabled = disabled ? 'disabled' : '',
         star = '<input type="radio" value="' + value + '" ' + checked + ' disabled><i></i>';
-    html = html.concat(star)
+    stars = stars.concat(star)
   }
-  return html;
+  return '<span class="rating">' + stars + '</span>';
 };
 
 export default renderUnboundRating;

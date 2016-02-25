@@ -5,9 +5,14 @@
   }
 }
 
-.rating {
+.topic-post .rating {
+  vertical-align: top;
+}
+
+span.rating {
   vertical-align: middle;
   font-size: 0;
+  padding: 0;
   white-space: nowrap;
   display: inline-block;
   width: 70px;
