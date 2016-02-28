@@ -28,7 +28,6 @@ after_initialize do
       @all_ratings = PostCustomField.where(post_id: @topic_posts.map(&:id), name: "rating").pluck('value').map(&:to_i)
       average = @all_ratings.inject(:+).to_f / @all_ratings.length
       post.topic.custom_fields["average_rating"] = average
-      post.topic.custom_fields["ratings"] = @all_ratings.length
       post.topic.save!
       push_updated_ratings_to_clients!(post, average)
     end
@@ -71,22 +70,40 @@ after_initialize do
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
 
-  require 'category_serializer'
-  class ::CategorySerializer
-    alias_method :_custom_fields, :custom_fields
-    def custom_fields
-      if !object.custom_fields["for_ratings"]
-       object.custom_fields["for_ratings"] = ""
-       object.save
-      end
-      _custom_fields
+  require 'topic_view_serializer'
+  class ::TopicViewSerializer
+    attributes :average_rating, :show_ratings, :can_rate
+
+    def average_rating
+      object.topic.custom_fields["average_rating"]
+    end
+
+    def show_ratings
+      has_rating_tag = TopicCustomField.exists?(topic_id: object.topic.id, name: "tags", value: "rating")
+      has_rating_tag || !!object.topic.category.custom_fields["rating_enabled"]
+    end
+
+    def can_rate
+      show_ratings && !posted
+    end
+  end
+
+  require 'topic_list_item_serializer'
+  class ::TopicListItemSerializer
+    attributes :average_rating, :show_average
+
+    def average_rating
+      object.custom_fields["average_rating"]
+    end
+
+    def show_average
+      has_rating_tag = TopicCustomField.exists?(topic_id: object.id, name: "tags", value: "rating")
+      is_rating_category = CategoryCustomField.where(category_id: object.category_id, name: "rating_enabled").pluck('value')
+      has_rating_tag || is_rating_category.first == "true"
     end
   end
 
   ## Add the new fields to the serializers
-  add_to_serializer(:basic_category, :for_ratings) {object.custom_fields["for_ratings"] == 'true'}
+  add_to_serializer(:basic_category, :rating_enabled) {object.custom_fields["rating_enabled"] == 'true'}
   add_to_serializer(:post, :rating) {post_custom_fields["rating"]}
-  add_to_serializer(:topic_view, :average_rating) {object.topic.custom_fields["average_rating"]}
-  add_to_serializer(:topic_view, :ratings) {object.topic.custom_fields["ratings"]}
-  add_to_serializer(:topic_list_item, :average_rating) { object.custom_fields["average_rating"] }
 end

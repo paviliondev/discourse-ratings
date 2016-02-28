@@ -13,48 +13,45 @@ export default {
   initialize(){
 
     withPluginApi('0.1', api => {
+      api.includePostAttributes('rating')
       api.decorateWidget('poster-name:after', function(helper) {
-        var rating = helper.getModel().get('rating'),
-            html = new Handlebars.SafeString(renderUnboundRating(rating));
-        if (helper.widget.container.lookup('controller:topic').showRating) {
-          return helper.rawHtml(`${html}`);
+        var rating = helper.attrs.rating,
+            showRating = helper.getModel().topic.show_ratings;
+        if (showRating && rating) {
+          var html = new Handlebars.SafeString(renderUnboundRating(rating))
+          return helper.rawHtml(`${html}`)
         }
       })
     });
 
     TopicController.reopen({
-      showRating: false,
-
-      showRating: function(){
-        var category = this.get('model.category');
-        if (category && category.for_ratings) {
-          this.subscribeToRatingUpdates()
-          return true
-        }
-        var tags = this.get('model.tags')
-        if (tags && tags.indexOf('rating') > -1) {
-          this.subscribeToRatingUpdates()
-          return true
-        }
-        return false
-      }.property('model.tags', 'model.category'),
 
       subscribeToRatingUpdates: function() {
         var model = this.get('model')
-        this.messageBus.subscribe("/topic/" + model.id, function(data) {
-          if (data.type === 'revised') {
-            if (model.get('average_rating')) {
+        if (model.show_ratings && this.get('model.postStream.loaded')) {
+          this.messageBus.subscribe("/topic/" + model.id, function(data) {
+            if (data.type === 'revised' && data.average) {
               model.set('average_rating', data.average)
             }
-          }
-        })
-      }
+          })
+        }
+      }.observes('model.postStream.loaded')
 
     })
 
     ComposerController.reopen({
+      rating: null,
 
       // overrides controller method
+
+      actions: {
+        save() {
+          if (this.get('showRating') && this.get('model.action') !== Composer.EDIT && !this.get('rating')) {
+            return bootbox.alert(I18n.t("composer.select_rating"))
+          }
+          this.save()
+        }
+      },
 
       close() {
         this.setProperties({ model: null, lastValidatedAt: null, rating: null });
@@ -63,19 +60,16 @@ export default {
       //
 
       showRating: function() {
-        var topic = this.get('model.topic')
-        if (topic) {
-          if (topic.posted && this.get('model.action') !== Composer.EDIT) {
-            return false
-          }
-          return this.get('controllers.topic.showRating')
-        } else {
-          var categoryId = this.get('model.categoryId'),
-              category = this.site.categories.findProperty('id', categoryId);
-          if (category) {return category.for_ratings}
+        var topic = this.get('model.topic'),
+            category = this.site.categories.findProperty('id', this.get('model.categoryId')),
+            tags = this.get('model.tags');
+        if (topic && !topic.can_rate && this.get('model.action') !== Composer.EDIT) {
           return false
         }
-      }.property('model.topic', 'model.categoryId'),
+        if (category && category.rating_enabled) {return true}
+        if (tags && tags.indexOf('rating') > -1) {return true}
+        return false
+      }.property('model.topic', 'model.categoryId', 'model.tags'),
 
       setRating: function() {
         var post = this.get('model.post')

@@ -1,6 +1,7 @@
 en:
   js:
     category:
-      for_ratings: "Use topics in this category to rate things."
+      enable_rating: "Use topics in this category to rate things."
     composer:
       your_rating: "Your rating:"
+      select_rating: "Please select a rating"
