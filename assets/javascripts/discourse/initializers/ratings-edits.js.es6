@@ -1,5 +1,6 @@
-import TopicController from 'discourse/controllers/topic';
 import Topic from 'discourse/models/topic';
+import TopicController from 'discourse/controllers/topic';
+import TopicRoute from 'discourse/routes/topic';
 import ComposerController from 'discourse/controllers/composer';
 import ComposerView from 'discourse/views/composer';
 import Composer from 'discourse/models/composer';
@@ -39,15 +40,31 @@ export default {
 
     })
 
+    TopicRoute.reopen({
+      actions: {
+        reloadTopic: function() {
+          this.refresh();
+        }
+      }
+    })
+
     ComposerController.reopen({
       rating: null,
+      refresh: false,
 
-      // overrides controller method
+      // overrides controller methods
 
       actions: {
         save() {
-          if (this.get('showRating') && this.get('model.action') !== Composer.EDIT && !this.get('rating')) {
+          var show = this.get('showRating'),
+              action = this.get('model.action');
+          if (show && action !== Composer.EDIT && !this.get('rating')) {
             return bootbox.alert(I18n.t("composer.select_rating"))
+          }
+          var topic = this.get('model.topic'),
+              post = this.get('model.post');
+          if (topic && post && post.get('firstPost') && (action === Composer.EDIT) && (topic.show_ratings !== show)) {
+            this.set('refresh', true)
           }
           this.save()
         }
@@ -55,21 +72,26 @@ export default {
 
       close() {
         this.setProperties({ model: null, lastValidatedAt: null, rating: null });
+        if (this.get('refresh')) {
+          this.send("reloadTopic")
+          this.set('refresh', false)
+        }
       },
 
-      //
+      // end of overidden controller methods
 
       showRating: function() {
-        var topic = this.get('model.topic'),
-            category = this.site.categories.findProperty('id', this.get('model.categoryId')),
-            tags = this.get('model.tags');
-        if (topic && !topic.can_rate && this.get('model.action') !== Composer.EDIT) {
-          return false
+        var model = this.get('model')
+        if (!model) {return false}
+        var topic = model.get('topic'),
+            post = model.get('post');
+        if (topic && post && !post.get('firstPost') && !topic.can_rate) {
+          return Boolean(topic.show_ratings && post.rating > 0 && (model.get('action') === Composer.EDIT))
         }
-        if (category && category.rating_enabled) {return true}
-        if (tags && tags.indexOf('rating') > -1) {return true}
-        return false
-      }.property('model.topic', 'model.categoryId', 'model.tags'),
+        var category = this.site.categories.findProperty('id', model.get('categoryId')),
+            tags = model.get('tags') || (topic && topic.tags);
+        return Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1))
+      }.property('model.topic', 'model.categoryId', 'model.tags', 'model.post'),
 
       setRating: function() {
         var post = this.get('model.post')

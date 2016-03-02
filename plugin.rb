@@ -84,8 +84,11 @@ after_initialize do
     end
 
     def can_rate
-      show_ratings && !posted
+      user = object.topic_user
+      return true if !user.respond_to?(:posted?)
+      show_ratings && !user.posted?
     end
+
   end
 
   require 'topic_list_item_serializer'
