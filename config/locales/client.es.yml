@@ -1,0 +1,7 @@
+es:
+  js:
+    category:
+      enable_rating: "Usa los temas en esta categoría para realizar valoraciones."
+    composer:
+      your_rating: "Tu valoración:"
+      select_rating: "Por favor selecciona una valoración"
