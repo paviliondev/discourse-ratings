@@ -26,6 +26,7 @@ export default {
     });
 
     TopicController.reopen({
+      refreshAfterTopicEdit: false,
 
       subscribeToRatingUpdates: function() {
         var model = this.get('model')
@@ -36,13 +37,35 @@ export default {
             }
           })
         }
-      }.observes('model.postStream.loaded')
+      }.observes('model.postStream.loaded'),
+
+      showRating: function() {
+        if (!this.get('editingTopic')) {return this.get('model.show_ratings')}
+        var category = this.site.categories.findProperty('id', this.get('buffered.category_id')),
+            tags = this.get('buffered.tags'),
+            ratingsVisible = Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1));
+        if (ratingsVisible !== this.get('buffered.show_ratings')) {
+          this.set('refreshAfterTopicEdit', true)
+        }
+        return ratingsVisible
+      }.property('model.show_ratings', 'buffered.category_id', 'buffered.tags'),
+
+      refreshTopic: function() {
+        if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
+          this.send('refreshTopic')
+          this.set('refreshAfterTopicEdit', false)
+        }
+      }.observes('editingTopic'),
+
+      toggleCanRate: function() {
+        this.toggleProperty('model.can_rate')
+      }
 
     })
 
     TopicRoute.reopen({
       actions: {
-        reloadTopic: function() {
+        refreshTopic: function() {
           this.refresh();
         }
       }
@@ -50,7 +73,7 @@ export default {
 
     ComposerController.reopen({
       rating: null,
-      refresh: false,
+      refreshAfterPost: false,
 
       // overrides controller methods
 
@@ -63,8 +86,9 @@ export default {
           }
           var topic = this.get('model.topic'),
               post = this.get('model.post');
-          if (topic && post && post.get('firstPost') && (action === Composer.EDIT) && (topic.show_ratings !== show)) {
-            this.set('refresh', true)
+          if (topic && post && post.get('firstPost') &&
+              (action === Composer.EDIT) && (topic.show_ratings !== show)) {
+            this.set('refreshAfterPost', true)
           }
           this.save()
         }
@@ -72,9 +96,9 @@ export default {
 
       close() {
         this.setProperties({ model: null, lastValidatedAt: null, rating: null });
-        if (this.get('refresh')) {
-          this.send("reloadTopic")
-          this.set('refresh', false)
+        if (this.get('refreshAfterPost')) {
+          this.send("refreshTopic")
+          this.set('refreshAfterPost', false)
         }
       },
 
@@ -85,12 +109,15 @@ export default {
         if (!model) {return false}
         var topic = model.get('topic'),
             post = model.get('post');
-        if (topic && post && !post.get('firstPost') && !topic.can_rate) {
-          return Boolean(topic.show_ratings && post.rating > 0 && (model.get('action') === Composer.EDIT))
+        if ((post && post.get('firstPost')) || !topic) {
+          var category = this.site.categories.findProperty('id', model.get('categoryId')),
+              tags = model.tags || (topic && topic.tags);
+          return Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1));
         }
-        var category = this.site.categories.findProperty('id', model.get('categoryId')),
-            tags = model.get('tags') || (topic && topic.tags);
-        return Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1))
+        if (post && !post.get('firstPost') && !topic.can_rate) {
+          return Boolean(topic.show_ratings && post.rating && (model.get('action') === Composer.EDIT))
+        }
+        return topic.can_rate
       }.property('model.topic', 'model.categoryId', 'model.tags', 'model.post'),
 
       setRating: function() {
@@ -104,6 +131,7 @@ export default {
         if (!this.get('showRating')
             || !this.get('model.createdPost')) {return}
         this.saveRating(this.get('model.createdPost'))
+        this.get('controllers.topic').toggleCanRate()
       }.observes('model.createdPost'),
 
       saveRatingAfterEditing: function() {
