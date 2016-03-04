@@ -79,8 +79,10 @@ after_initialize do
     end
 
     def show_ratings
-      has_rating_tag = TopicCustomField.exists?(topic_id: object.topic.id, name: "tags", value: "rating")
-      has_rating_tag || !!object.topic.category.custom_fields["rating_enabled"]
+      topic = object.topic
+      has_rating_tag = TopicCustomField.exists?(topic_id: topic.id, name: "tags", value: "rating")
+      has_ratings_enabled = topic.category.respond_to?(:custom_fields) ? !!topic.category.custom_fields["rating_enabled"] : false
+      has_rating_tag || has_ratings_enabled
     end
 
     def can_rate
