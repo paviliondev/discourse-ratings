@@ -19,14 +19,29 @@ after_initialize do
     def rate
       post = Post.find(params[:id].to_i)
       post.custom_fields["rating"] = params[:rating].to_i
+      post.custom_fields["rating_weight"] = 1
       post.save!
-      add_rating_to_topic_average(post)
+      calculate_topic_average(post)
     end
 
-    def add_rating_to_topic_average(post)
-      @topic_posts = Post.where(topic_id: post.topic_id)
-      @all_ratings = PostCustomField.where(post_id: @topic_posts.map(&:id), name: "rating").pluck('value').map(&:to_i)
-      average = @all_ratings.inject(:+).to_f / @all_ratings.length
+    def weight
+      post = Post.with_deleted.find(params[:id].to_i)
+      post.custom_fields["rating_weight"] = params[:weight].to_i
+      post.save!
+      calculate_topic_average(post)
+    end
+
+    def calculate_topic_average(post)
+      @topic_posts = Post.with_deleted.where(topic_id: post.topic_id)
+      @ratings = []
+      @topic_posts.each do |post|
+        weight = post.custom_fields["rating_weight"]
+        if weight.blank? || weight.to_i > 0
+          rating = post.custom_fields["rating"].to_i
+          @ratings.push(rating)
+        end
+      end
+      average = @ratings.inject(:+).to_f / @ratings.length
       post.topic.custom_fields["average_rating"] = average
       post.topic.save!
       push_updated_ratings_to_clients!(post, average)
@@ -58,6 +73,7 @@ after_initialize do
 
   DiscourseRatings::Engine.routes.draw do
     post "/rate" => "rating#rate"
+    post "/weight" => "rating#weight"
   end
 
   Discourse::Application.routes.append do
@@ -65,7 +81,7 @@ after_initialize do
   end
 
   TopicView.add_post_custom_fields_whitelister do |user|
-    ["rating"]
+    ["rating", "rating_weight"]
   end
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields

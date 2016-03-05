@@ -4,6 +4,7 @@ import TopicRoute from 'discourse/routes/topic';
 import ComposerController from 'discourse/controllers/composer';
 import ComposerView from 'discourse/views/composer';
 import Composer from 'discourse/models/composer';
+import Post from 'discourse/models/post';
 import registerUnbound from 'discourse/helpers/register-unbound';
 import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-rating';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
@@ -58,7 +59,9 @@ export default {
       }.observes('editingTopic'),
 
       toggleCanRate: function() {
-        this.toggleProperty('model.can_rate')
+        if (this.get('model')) {
+          this.toggleProperty('model.can_rate')
+        }
       }
 
     })
@@ -71,13 +74,29 @@ export default {
       }
     })
 
+    Post.reopen({
+      setRatingWeight: function() {
+        var id = this.get('id'),
+            weight = this.get('deleted') ? 0 : 1;
+        Discourse.ajax("/rating/weight", {
+          type: 'POST',
+          data: {
+            id: id,
+            weight: weight
+          }
+        }).catch(function (error) {
+          popupAjaxError(error);
+        });
+      }.observes('deleted')
+    })
+
     ComposerController.reopen({
       rating: null,
       refreshAfterPost: false,
 
-      // overrides controller methods
-
       actions: {
+
+        // overrides controller methods
         save() {
           var show = this.get('showRating');
           if (show && !this.get('rating')) {
@@ -91,9 +110,14 @@ export default {
             this.set('refreshAfterPost', true)
           }
           this.save()
+        },
+
+        removeRating(post) {
+          this.removeRating(post)
         }
       },
 
+      // overrides controller methods
       close() {
         this.setProperties({ model: null, lastValidatedAt: null, rating: null });
         if (this.get('refreshAfterPost')) {
@@ -101,8 +125,6 @@ export default {
           this.set('refreshAfterPost', false)
         }
       },
-
-      // end of overidden controller methods
 
       showRating: function() {
         var model = this.get('model')
@@ -143,13 +165,14 @@ export default {
       }.observes('model.composeState'),
 
       saveRating: function(post) {
-        var value = this.get('rating'),
-            data = { id: post.id, rating: value },
-            self = this;
-        post.set('rating', value)
+        var rating = this.get('rating')
+        post.set('rating', rating)
         Discourse.ajax("/rating/rate", {
           type: 'POST',
-          data: data
+          data: {
+            id: post.id,
+            rating: rating
+          }
         }).catch(function (error) {
           popupAjaxError(error);
         });
