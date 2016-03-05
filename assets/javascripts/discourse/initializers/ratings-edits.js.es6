@@ -30,7 +30,7 @@ export default {
 
       subscribeToRatingUpdates: function() {
         var model = this.get('model')
-        if (model.show_ratings && this.get('model.postStream.loaded')) {
+        if (model.show_ratings && model.get('postStream.loaded')) {
           this.messageBus.subscribe("/topic/" + model.id, function(data) {
             if (data.type === 'revised' && data.average) {
               model.set('average_rating', data.average)
@@ -79,15 +79,15 @@ export default {
 
       actions: {
         save() {
-          var show = this.get('showRating'),
-              action = this.get('model.action');
-          if (show && action !== Composer.EDIT && !this.get('rating')) {
+          var show = this.get('showRating');
+          if (show && !this.get('rating')) {
             return bootbox.alert(I18n.t("composer.select_rating"))
           }
-          var topic = this.get('model.topic'),
-              post = this.get('model.post');
+          var model = this.get('model'),
+              topic = model.get('topic'),
+              post = model.get('post');
           if (topic && post && post.get('firstPost') &&
-              (action === Composer.EDIT) && (topic.show_ratings !== show)) {
+              (model.get('action') === Composer.EDIT) && (topic.show_ratings !== show)) {
             this.set('refreshAfterPost', true)
           }
           this.save()
