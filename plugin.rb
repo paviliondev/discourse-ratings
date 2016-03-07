@@ -36,7 +36,7 @@ after_initialize do
       @ratings = []
       @topic_posts.each do |post|
         weight = post.custom_fields["rating_weight"]
-        if weight.blank? || weight.to_i > 0
+        if post.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
           rating = post.custom_fields["rating"].to_i
           @ratings.push(rating)
         end
