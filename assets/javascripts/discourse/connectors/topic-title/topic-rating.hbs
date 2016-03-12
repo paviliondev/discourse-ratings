@@ -1,6 +1,12 @@
 {{#if showRating}}
   {{d-rating rating=model.average_rating}}
   {{#if this.siteSettings.show_exact_average_rating}}
-    <span class="exact-average">({{model.average_rating}})</span>
+    <span class="title-text">({{model.average_rating}})</span>
+  {{/if}}
+{{else}}
+  {{#if model.average_rating}}
+    {{#if currentUser.admin}}
+      <span class="title-text">{{i18n "topic.hidden_ratings"}}</span>
+    {{/if}}
   {{/if}}
 {{/if}}
