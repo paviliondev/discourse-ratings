@@ -1,6 +1,6 @@
 # name: discourse-ratings
 # about: A Discourse plugin that lets you use topics to rate things
-# version: 0.1
+# version: 0.2
 # authors: Angus McLeod
 
 register_asset 'stylesheets/ratings-desktop.scss', :desktop
