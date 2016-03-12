@@ -1,0 +1,4 @@
+plugins:
+  show_exact_average_rating:
+    default: true
+    client: true

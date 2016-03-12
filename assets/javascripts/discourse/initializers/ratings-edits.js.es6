@@ -110,11 +110,8 @@ export default {
             this.set('refreshAfterPost', true)
           }
           this.save()
-        },
-
-        removeRating(post) {
-          this.removeRating(post)
         }
+
       },
 
       // overrides controller methods
@@ -143,8 +140,10 @@ export default {
       }.property('model.topic', 'model.categoryId', 'model.tags', 'model.post'),
 
       setRating: function() {
-        var post = this.get('model.post')
-        if (post && this.get('showRating')) {
+        var model = this.get('model')
+        if (!model) {return null}
+        var post = model.get('post')
+        if (post && !this.get('rating') && this.get('showRating')) {
           this.set('rating', post.rating)
         }
       }.observes('model.post', 'showRating'),
@@ -182,7 +181,9 @@ export default {
 
     ComposerView.reopen({
       resizeIfShowRating: function() {
-        this.resize()
+        if (this.get('composeState') === Composer.OPEN) {
+          this.resize()
+        }
       }.observes('controller.showRating')
     })
 
