@@ -76,6 +76,7 @@ export default {
 
     Post.reopen({
       setRatingWeight: function() {
+        if (!this.get('topic.show_ratings')) {return}
         var id = this.get('id'),
             weight = this.get('deleted') ? 0 : 1;
         Discourse.ajax("/rating/weight", {
