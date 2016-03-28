@@ -33,7 +33,7 @@ export default {
         var model = this.get('model')
         if (model.show_ratings && model.get('postStream.loaded')) {
           this.messageBus.subscribe("/topic/" + model.id, function(data) {
-            if (data.type === 'revised' && data.average) {
+            if (data.type === 'revised' && data.average !== undefined) {
               model.set('average_rating', data.average)
             }
           })
@@ -41,6 +41,7 @@ export default {
       }.observes('model.postStream.loaded'),
 
       showRating: function() {
+        if (this.get('model.average_rating') < 1) {return false}
         if (!this.get('editingTopic')) {return this.get('model.show_ratings')}
         var category = this.site.categories.findProperty('id', this.get('buffered.category_id')),
             tags = this.get('buffered.tags'),
@@ -49,7 +50,7 @@ export default {
           this.set('refreshAfterTopicEdit', true)
         }
         return ratingsVisible
-      }.property('model.show_ratings', 'buffered.category_id', 'buffered.tags'),
+      }.property('model.average_rating', 'model.show_ratings', 'buffered.category_id', 'buffered.tags'),
 
       refreshTopic: function() {
         if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
@@ -94,13 +95,14 @@ export default {
     ComposerController.reopen({
       rating: null,
       refreshAfterPost: false,
+      includeRating: true,
 
       actions: {
 
         // overrides controller methods
         save() {
           var show = this.get('showRating');
-          if (show && !this.get('rating')) {
+          if (show && this.get('includeRating') && !this.get('rating')) {
             return bootbox.alert(I18n.t("composer.select_rating"))
           }
           var model = this.get('model'),
@@ -124,25 +126,30 @@ export default {
         }
       },
 
+      onOpenSetup: function() {
+        if (this.get('model.composeState') === Composer.OPEN) {
+          this.set('includeRating', true)
+        }
+      }.on('willInsertElement').observes('model.composeState'),
+
       showRating: function() {
         var model = this.get('model')
         if (!model) {return false}
         var topic = model.get('topic'),
-            post = model.get('post');
-        if ((post && post.get('firstPost')) || !topic) {
+            post = model.get('post'),
+            firstPost = Boolean(post && post.get('firstPost'));
+        if ((firstPost && topic.can_rate) || !topic) {
           var category = this.site.categories.findProperty('id', model.get('categoryId')),
               tags = model.tags || (topic && topic.tags);
           return Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1));
         }
-        if (post && !post.get('firstPost') && !topic.can_rate) {
-          return Boolean(topic.show_ratings && post.rating && (model.get('action') === Composer.EDIT))
-        }
-        return topic.can_rate
+        if (topic.can_rate) {return true}
+        return Boolean(topic.show_ratings && post && post.rating && (model.get('action') === Composer.EDIT))
       }.property('model.topic', 'model.categoryId', 'model.tags', 'model.post'),
 
       setRating: function() {
         var model = this.get('model')
-        if (!model) {return null}
+        if (!model || this.get('model.action') !== Composer.EDIT) {return null}
         var post = model.get('post')
         if (post && !this.get('rating') && this.get('showRating')) {
           this.set('rating', post.rating)
@@ -150,22 +157,41 @@ export default {
       }.observes('model.post', 'showRating'),
 
       saveRatingAfterCreating: function() {
-        if (!this.get('showRating')
-            || !this.get('model.createdPost')) {return}
-        this.saveRating(this.get('model.createdPost'))
+        if (!this.get('showRating') ||
+            !this.get('includeRating')) {return}
+        var post = this.get('model.createdPost')
+        if (!post) {return}
+        this.saveRating(post, this.get('rating'))
         this.get('controllers.topic').toggleCanRate()
       }.observes('model.createdPost'),
 
       saveRatingAfterEditing: function() {
         if (!this.get('showRating')
             || this.get('model.action') !== Composer.EDIT
-            || this.get('model.composeState') !== Composer.CLOSED
-            || !this.get('model.post')) {return}
-        this.saveRating(this.get('model.post'))
+            || this.get('model.composeState') !== Composer.CLOSED) {return}
+        var post = this.get('model.post')
+        if (!post) {return}
+        var rating = this.get('rating');
+        if (rating && !this.get('includeRating')) {
+          this.removeRating(post)
+          this.get('controllers.topic').toggleCanRate()
+        } else {
+          this.saveRating(post, rating)
+        }
       }.observes('model.composeState'),
 
-      saveRating: function(post) {
-        var rating = this.get('rating')
+      removeRating: function(post) {
+        Discourse.ajax("/rating/remove", {
+          type: 'POST',
+          data: {
+            id: post.id,
+          }
+        }).catch(function (error) {
+          popupAjaxError(error);
+        });
+      },
+
+      saveRating: function(post, rating) {
         post.set('rating', rating)
         Discourse.ajax("/rating/rate", {
           type: 'POST',

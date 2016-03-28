@@ -31,17 +31,25 @@ after_initialize do
       calculate_topic_average(post)
     end
 
+    def remove
+      id = params[:id].to_i
+      post = Post.find(id)
+      PostCustomField.destroy_all(post_id: id, name:"rating")
+      PostCustomField.destroy_all(post_id: id, name:"rating_weight")
+      calculate_topic_average(post)
+    end
+
     def calculate_topic_average(post)
       @topic_posts = Post.with_deleted.where(topic_id: post.topic_id)
       @ratings = []
-      @topic_posts.each do |post|
-        weight = post.custom_fields["rating_weight"]
-        if post.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
-          rating = post.custom_fields["rating"].to_i
+      @topic_posts.each do |tp|
+        weight = tp.custom_fields["rating_weight"]
+        if tp.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
+          rating = tp.custom_fields["rating"].to_i
           @ratings.push(rating)
         end
       end
-      average = @ratings.inject(:+).to_f / @ratings.length
+      average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
       post.topic.custom_fields["average_rating"] = average
       post.topic.save!
       push_updated_ratings_to_clients!(post, average)
@@ -74,6 +82,7 @@ after_initialize do
   DiscourseRatings::Engine.routes.draw do
     post "/rate" => "rating#rate"
     post "/weight" => "rating#weight"
+    post "/remove" => "rating#remove"
   end
 
   Discourse::Application.routes.append do
@@ -102,9 +111,11 @@ after_initialize do
     end
 
     def can_rate
-      user = object.topic_user
-      return true if !user.respond_to?(:posted?)
-      show_ratings && !user.posted?
+      return false if !scope.current_user
+      ## This should be replaced with a :rated? property in TopicUser - but how to do this in a plugin?
+      @user_posts = object.posts.select{ |post| post.user_id === scope.current_user.id}
+      rated = PostCustomField.exists?(post_id: @user_posts.map(&:id), name: "rating")
+      show_ratings && !rated
     end
 
   end
@@ -118,6 +129,7 @@ after_initialize do
     end
 
     def show_average
+      return false if !average_rating
       has_rating_tag = TopicCustomField.exists?(topic_id: object.id, name: "tags", value: "rating")
       is_rating_category = CategoryCustomField.where(category_id: object.category_id, name: "rating_enabled").pluck('value')
       has_rating_tag || is_rating_category.first == "true"
