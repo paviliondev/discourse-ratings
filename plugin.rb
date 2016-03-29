@@ -7,6 +7,8 @@ register_asset 'stylesheets/ratings-desktop.scss', :desktop
 
 after_initialize do
 
+  Category.register_custom_field_type('rating_enabled', :boolean)
+
   module ::DiscourseRatings
     class Engine < ::Rails::Engine
       engine_name "discourse_ratings"
@@ -106,7 +108,7 @@ after_initialize do
     def show_ratings
       topic = object.topic
       has_rating_tag = TopicCustomField.exists?(topic_id: topic.id, name: "tags", value: "rating")
-      has_ratings_enabled = topic.category.respond_to?(:custom_fields) ? !!topic.category.custom_fields["rating_enabled"] : false
+      has_ratings_enabled = topic.category.respond_to?(:custom_fields) ? topic.category.custom_fields["rating_enabled"] : false
       has_rating_tag || has_ratings_enabled
     end
 
@@ -137,6 +139,6 @@ after_initialize do
   end
 
   ## Add the new fields to the serializers
-  add_to_serializer(:basic_category, :rating_enabled) {object.custom_fields["rating_enabled"] == 'true'}
+  add_to_serializer(:basic_category, :rating_enabled) {object.custom_fields["rating_enabled"]}
   add_to_serializer(:post, :rating) {post_custom_fields["rating"]}
 end
