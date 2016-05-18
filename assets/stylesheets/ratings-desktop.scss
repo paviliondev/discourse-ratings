@@ -5,11 +5,16 @@
   }
 }
 
-.title-text {
+.exact-rating {
   vertical-align: middle;
   display: inline-block;
   height: 17px;
   color: #777;
+}
+
+.topic-list .exact-rating {
+  font-size: 14px;
+  height: 14px;
 }
 
 .topic-post .rating {
