@@ -9,6 +9,7 @@ import { registerUnbound } from 'discourse/lib/helpers';
 import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-rating';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
+import { ajax } from 'discourse/lib/ajax';
 
 export default {
   name: 'ratings-edits',
@@ -80,7 +81,7 @@ export default {
         if (!this.get('topic.show_ratings')) {return}
         var id = this.get('id'),
             weight = this.get('deleted') ? 0 : 1;
-        Discourse.ajax("/rating/weight", {
+        ajax("/rating/weight", {
           type: 'POST',
           data: {
             id: id,
@@ -99,7 +100,6 @@ export default {
 
       actions: {
 
-        // overrides controller methods
         save() {
           var show = this.get('showRating');
           if (show && this.get('includeRating') && !this.get('rating')) {
@@ -117,7 +117,6 @@ export default {
 
       },
 
-      // overrides controller methods
       close() {
         this.setProperties({ model: null, lastValidatedAt: null, rating: null });
         if (this.get('refreshAfterPost')) {
@@ -125,12 +124,6 @@ export default {
           this.set('refreshAfterPost', false)
         }
       },
-
-      onOpenSetup: function() {
-        if (this.get('model.composeState') === Composer.OPEN) {
-          this.set('includeRating', true)
-        }
-      }.on('willInsertElement').observes('model.composeState'),
 
       showRating: function() {
         var model = this.get('model')
@@ -181,7 +174,7 @@ export default {
       }.observes('model.composeState'),
 
       removeRating: function(post) {
-        Discourse.ajax("/rating/remove", {
+        ajax("/rating/remove", {
           type: 'POST',
           data: {
             id: post.id,
@@ -193,7 +186,7 @@ export default {
 
       saveRating: function(post, rating) {
         post.set('rating', rating)
-        Discourse.ajax("/rating/rate", {
+        ajax("/rating/rate", {
           type: 'POST',
           data: {
             id: post.id,
