@@ -3,5 +3,9 @@ es:
     category:
       enable_rating: "Usa los temas en esta categoría para realizar valoraciones."
     composer:
-      your_rating: "Tu valoración:"
-      select_rating: "Por favor selecciona una valoración"
+      your_rating: "Tu valoración"
+      select_rating: "Por favor selecciona una valoración, o desmarca 'Tu valoración'"
+    topic:
+      hidden_ratings: "El tema tiene valoraciones ocultas"
+  site_settings:
+    show_exact_average_rating: "Mostrar el promedio numérico exacto al lado del promedio de valoraciones del tema."
