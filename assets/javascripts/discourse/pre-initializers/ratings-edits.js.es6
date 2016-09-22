@@ -5,7 +5,7 @@ import ComposerController from 'discourse/controllers/composer';
 import ComposerView from 'discourse/views/composer';
 import Composer from 'discourse/models/composer';
 import Post from 'discourse/models/post';
-import { registerUnbound } from 'discourse/lib/helpers';
+import { registerUnbound } from 'discourse-common/lib/helpers';
 import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-rating';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
