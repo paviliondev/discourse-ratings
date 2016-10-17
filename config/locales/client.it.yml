@@ -1,0 +1,11 @@
+it:
+  js:
+    category:
+      enable_rating: "Usa gli argomenti in questa categoria per valutare cose."
+    composer:
+      your_rating: "Aggiungi una valutazione"
+      select_rating: "Per favore seleziona una valutazione, o disabilita 'Aggiungi una valutazione'."
+    topic:
+      hidden_ratings: "Argomento con valutazioni nascoste"
+  site_settings:
+show_exact_average_rating: "Mostra l'esatta media numerica accanto alla valutazione media dell'argomento."
