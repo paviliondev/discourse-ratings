@@ -46,7 +46,9 @@ export default {
         if (!this.get('editingTopic')) {return this.get('model.show_ratings')}
         var category = this.site.categories.findProperty('id', this.get('buffered.category_id')),
             tags = this.get('buffered.tags'),
-            ratingsVisible = Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1));
+            ratingsVisible = (category && category.rating_enabled) ||
+                              tags && tags.filter(function(t){return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;})
+        console.log(ratingTag, ratingsVisible)
         if (ratingsVisible !== this.get('buffered.show_ratings')) {
           this.set('refreshAfterTopicEdit', true)
         }
@@ -134,7 +136,8 @@ export default {
         if ((firstPost && topic.can_rate) || !topic) {
           var category = this.site.categories.findProperty('id', model.get('categoryId')),
               tags = model.tags || (topic && topic.tags);
-          return Boolean((category && category.rating_enabled) || (tags && tags.indexOf('rating') > -1));
+          return (category && category.rating_enabled) ||
+                  tags && tags.filter(function(t){return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;})
         }
         if (topic.can_rate) {return true}
         return Boolean(topic.show_ratings && post && post.rating && (model.get('action') === Composer.EDIT))
@@ -155,7 +158,7 @@ export default {
         var post = this.get('model.createdPost')
         if (!post) {return}
         this.saveRating(post, this.get('rating'))
-        this.get('controllers.topic').toggleCanRate()
+        this.get('topicController').toggleCanRate()
       }.observes('model.createdPost'),
 
       saveRatingAfterEditing: function() {
@@ -167,7 +170,7 @@ export default {
         var rating = this.get('rating');
         if (rating && !this.get('includeRating')) {
           this.removeRating(post)
-          this.get('controllers.topic').toggleCanRate()
+          this.get('topicController').toggleCanRate()
         } else {
           this.saveRating(post, rating)
         }

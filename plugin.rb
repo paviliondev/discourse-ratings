@@ -3,7 +3,7 @@
 # version: 0.2
 # authors: Angus McLeod
 
-register_asset 'stylesheets/ratings-desktop.scss', :desktop
+register_asset 'stylesheets/ratings-desktop.scss'
 
 after_initialize do
 
@@ -107,7 +107,7 @@ after_initialize do
 
     def show_ratings
       topic = object.topic
-      has_rating_tag = TopicCustomField.exists?(topic_id: topic.id, name: "tags", value: "rating")
+      has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
       has_ratings_enabled = topic.category.respond_to?(:custom_fields) ? topic.category.custom_fields["rating_enabled"] : false
       has_rating_tag || has_ratings_enabled
     end
@@ -132,7 +132,7 @@ after_initialize do
 
     def show_average
       return false if !average_rating
-      has_rating_tag = TopicCustomField.exists?(topic_id: object.id, name: "tags", value: "rating")
+      has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
       is_rating_category = CategoryCustomField.where(category_id: object.category_id, name: "rating_enabled").pluck('value')
       has_rating_tag || is_rating_category.first == "true"
     end

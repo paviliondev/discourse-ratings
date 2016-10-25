@@ -9,3 +9,4 @@ en:
       hidden_ratings: "Topic has hidden ratings"
   site_settings:
     show_exact_average_rating: "Show the exact numerical average next to a topic average rating."
+    rating_tags: "Tag(s) used to designate a topic as a ratings topic."
