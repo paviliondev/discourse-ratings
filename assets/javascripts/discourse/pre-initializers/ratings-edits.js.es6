@@ -34,7 +34,7 @@ export default {
     Composer.reopen({
       setRating: function() {
         const post = this.get('post')
-        if (post && post.yours && post.rating) {
+        if (this.get('editingPost') && post && post.rating) {
           this.set('rating', post.rating)
         }
       }.observes('post').on('init')
