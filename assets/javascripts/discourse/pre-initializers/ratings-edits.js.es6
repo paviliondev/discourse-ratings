@@ -18,8 +18,8 @@ export default {
     withPluginApi('0.1', api => {
       api.includePostAttributes('rating')
       api.decorateWidget('poster-name:after', function(helper) {
-        var rating = helper.attrs.rating,
-            showRating = helper.getModel().topic.show_ratings;
+        let rating = helper.attrs.rating,
+            showRating = helper.getModel().topic.rating_enabled;
         if (showRating && rating) {
           var html = new Handlebars.SafeString(renderUnboundRating(rating))
           return helper.rawHtml(`${html}`)
@@ -27,167 +27,94 @@ export default {
       })
     });
 
-    TopicController.reopen({
-      refreshAfterTopicEdit: false,
+    Composer.serializeOnCreate('rating')
 
-      subscribeToRatingUpdates: function() {
-        var model = this.get('model')
-        if (model.show_ratings && model.get('postStream.loaded')) {
-          this.messageBus.subscribe("/topic/" + model.id, function(data) {
-            if (data.type === 'revised' && data.average !== undefined) {
-              model.set('average_rating', data.average)
-            }
-          })
+    Composer.serializeToTopic('rating')
+
+    Composer.reopen({
+      setRating: function() {
+        const post = this.get('post')
+        if (post && post.yours && post.rating) {
+          this.set('rating', post.rating)
         }
-      }.observes('model.postStream.loaded'),
-
-      showRating: function() {
-        if (this.get('model.average_rating') < 1) {return false}
-        if (!this.get('editingTopic')) {return this.get('model.show_ratings')}
-        var category = this.site.categories.findProperty('id', this.get('buffered.category_id')),
-            tags = this.get('buffered.tags'),
-            ratingsVisible = (category && category.rating_enabled) ||
-                              tags && tags.filter(function(t){return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;})
-        console.log(ratingTag, ratingsVisible)
-        if (ratingsVisible !== this.get('buffered.show_ratings')) {
-          this.set('refreshAfterTopicEdit', true)
-        }
-        return ratingsVisible
-      }.property('model.average_rating', 'model.show_ratings', 'buffered.category_id', 'buffered.tags'),
-
-      refreshTopic: function() {
-        if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
-          this.send('refreshTopic')
-          this.set('refreshAfterTopicEdit', false)
-        }
-      }.observes('editingTopic'),
-
-      toggleCanRate: function() {
-        if (this.get('model')) {
-          this.toggleProperty('model.can_rate')
-        }
-      }
-
-    })
-
-    TopicRoute.reopen({
-      actions: {
-        refreshTopic: function() {
-          this.refresh();
-        }
-      }
-    })
-
-    Post.reopen({
-      setRatingWeight: function() {
-        if (!this.get('topic.show_ratings')) {return}
-        var id = this.get('id'),
-            weight = this.get('deleted') ? 0 : 1;
-        ajax("/rating/weight", {
-          type: 'POST',
-          data: {
-            id: id,
-            weight: weight
-          }
-        }).catch(function (error) {
-          popupAjaxError(error);
-        });
-      }.observes('deleted')
+      }.observes('post').on('init')
     })
 
     ComposerController.reopen({
-      rating: null,
-      refreshAfterPost: false,
       includeRating: true,
 
       actions: {
-
         save() {
-          var show = this.get('showRating');
-          if (show && this.get('includeRating') && !this.get('rating')) {
+          if (this.get('showRating') && this.get('includeRating') && !this.get('model.rating')) {
             return bootbox.alert(I18n.t("composer.select_rating"))
           }
-          var model = this.get('model'),
-              topic = model.get('topic'),
-              post = model.get('post');
-          if (topic && post && post.get('firstPost') &&
-              (model.get('action') === Composer.EDIT) && (topic.show_ratings !== show)) {
-            this.set('refreshAfterPost', true)
-          }
           this.save()
-        }
-
-      },
-
-      close() {
-        this.setProperties({ model: null, lastValidatedAt: null, rating: null });
-        if (this.get('refreshAfterPost')) {
-          this.send("refreshTopic")
-          this.set('refreshAfterPost', false)
         }
       },
 
       showRating: function() {
-        var model = this.get('model')
+        let model = this.get('model')
         if (!model) {return false}
-        var topic = model.get('topic'),
+
+        let topic = model.get('topic'),
             post = model.get('post'),
-            firstPost = Boolean(post && post.get('firstPost'));
-        if ((firstPost && topic.can_rate) || !topic) {
-          var category = this.site.categories.findProperty('id', model.get('categoryId')),
-              tags = model.tags || (topic && topic.tags);
-          return (category && category.rating_enabled) ||
-                  tags && tags.filter(function(t){return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;})
-        }
-        if (topic.can_rate) {return true}
-        return Boolean(topic.show_ratings && post && post.rating && (model.get('action') === Composer.EDIT))
-      }.property('model.topic', 'model.categoryId', 'model.tags', 'model.post'),
+            firstPost = post && post.get('firstPost');
 
-      setRating: function() {
-        var model = this.get('model')
-        if (!model || this.get('model.action') !== Composer.EDIT) {return null}
-        var post = model.get('post')
-        if (post && !this.get('rating') && this.get('showRating')) {
-          this.set('rating', post.rating)
+        // creating or editing first post
+        if ((firstPost && topic.rating_enabled) || !topic) {
+          return this.get('ratingEnabled')
         }
-      }.observes('model.post', 'showRating'),
 
-      saveRatingAfterCreating: function() {
-        if (!this.get('showRating') ||
-            !this.get('includeRating')) {return}
-        var post = this.get('model.createdPost')
-        if (!post) {return}
-        this.saveRating(post, this.get('rating'))
-        this.get('topicController').toggleCanRate()
-      }.observes('model.createdPost'),
+        // creating post other than first post
+        if (topic.can_rate) { return true }
+
+        // editing post other than first post
+        return topic.rating_enabled && post && post.rating && (model.get('action') === Composer.EDIT)
+      }.property('ratingEnabled', 'model.topic', 'model.post'),
+
+      ratingEnabled: function() {
+        let category = Discourse.Category.findById(this.get('model.categoryId')),
+            tags = this.get('model.tags'),
+            catEnabled = category && category.rating_enabled,
+            tagEnabled = tags && tags.filter(function(t){
+                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
+                         })
+        return catEnabled || tagEnabled
+      }.property('model.tags', 'model.categoryId'),
 
       saveRatingAfterEditing: function() {
-        if (!this.get('showRating')
-            || this.get('model.action') !== Composer.EDIT
-            || this.get('model.composeState') !== Composer.CLOSED) {return}
-        var post = this.get('model.post')
-        if (!post) {return}
-        var rating = this.get('rating');
-        if (rating && !this.get('includeRating')) {
-          this.removeRating(post)
-          this.get('topicController').toggleCanRate()
-        } else {
-          this.saveRating(post, rating)
-        }
-      }.observes('model.composeState'),
+       // only continue if user was editing and composer is now closed
+       if (!this.get('showRating')
+           || this.get('model.action') !== Composer.EDIT
+           || this.get('model.composeState') !== Composer.SAVING) {return}
 
-      removeRating: function(post) {
+       let post = this.get('model.post'),
+           rating = this.get('model.rating');
+
+       if (rating && !this.get('includeRating')) {
+         this.removeRating(post)
+         this.get('topicController').toggleCanRate()
+       } else {
+         this.editRating(post, rating)
+       }
+     }.observes('model.composeState'),
+
+     removeRating: function(post) {
+       let self = this
         ajax("/rating/remove", {
           type: 'POST',
           data: {
             id: post.id,
           }
-        }).catch(function (error) {
-          popupAjaxError(error);
+        }).then(function (result, error) {
+          if (error) {
+            popupAjaxError(error);
+          }
         });
       },
 
-      saveRating: function(post, rating) {
+      editRating: function(post, rating) {
+        let self = this
         post.set('rating', rating)
         ajax("/rating/rate", {
           type: 'POST',
@@ -195,8 +122,10 @@ export default {
             id: post.id,
             rating: rating
           }
-        }).catch(function (error) {
-          popupAjaxError(error);
+        }).then(function (result, error) {
+          if (error) {
+            popupAjaxError(error);
+          }
         });
       }
 
@@ -214,5 +143,60 @@ export default {
       return new Handlebars.SafeString(renderUnboundRating(rating));
     });
 
+    TopicController.reopen({
+      refreshAfterTopicEdit: false,
+
+      subscribeToRatingUpdates: function() {
+        let model = this.get('model'),
+            postStream = model.get('postStream'),
+            refresh = (args) => this.appEvents.trigger('post-stream:refresh', args);
+
+        if (model.rating_enabled && postStream.get('loaded')) {
+          this.messageBus.subscribe("/topic/" + model.id, function(data) {
+            if (data.type === 'revised') {
+              if (data.average !== undefined) {
+                model.set('average_rating', data.average)
+              }
+              if (data.post_id !== undefined) {
+                postStream.triggerChangedPost(data.post_id, data.updated_at).then(() =>
+                  refresh({ id: data.post_id })
+                );
+              }
+            }
+          })
+        }
+      }.observes('model.postStream.loaded'),
+
+      showRating: function() {
+        if (this.get('model.average_rating') < 1) {return false}
+        if (!this.get('editingTopic')) {return this.get('model.rating_enabled')}
+
+        let category = Discourse.Category.findById(this.get('buffered.category_id')),
+            tags = this.get('buffered.tags'),
+            catEnabled = category && category.rating_enabled,
+            ratingTags = tags && tags.filter(function(t){
+                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
+                         }),
+            ratingsVisible = Boolean(ratingTags.length || catEnabled)
+
+        if (ratingsVisible !== this.get('model.rating_enabled')) {
+          this.set('refreshAfterTopicEdit', true)
+        }
+        return ratingsVisible
+      }.property('model.average_rating', 'model.rating_enabled', 'buffered.category_id', 'buffered.tags'),
+
+      refreshPostRatingVisibility: function() {
+        if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
+         this.get('model.postStream').refresh()
+         this.set('refreshAfterTopicEdit', false)
+        }
+      }.observes('editingTopic'),
+
+      toggleCanRate: function() {
+        if (this.get('model')) {
+          this.toggleProperty('model.can_rate')
+        }
+      }
+    })
   }
 }

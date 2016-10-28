@@ -23,14 +23,20 @@ after_initialize do
       post.custom_fields["rating"] = params[:rating].to_i
       post.custom_fields["rating_weight"] = 1
       post.save!
-      calculate_topic_average(post)
+
+      average = RatingsHelper.calculate_topic_average(post.topic)
+      RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
+      render json: success_json
     end
 
     def weight
       post = Post.with_deleted.find(params[:id].to_i)
       post.custom_fields["rating_weight"] = params[:weight].to_i
       post.save!
-      calculate_topic_average(post)
+
+      average = RatingsHelper.calculate_topic_average(post.topic)
+      RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
+      render json: success_json
     end
 
     def remove
@@ -38,47 +44,11 @@ after_initialize do
       post = Post.find(id)
       PostCustomField.destroy_all(post_id: id, name:"rating")
       PostCustomField.destroy_all(post_id: id, name:"rating_weight")
-      calculate_topic_average(post)
-    end
 
-    def calculate_topic_average(post)
-      @topic_posts = Post.with_deleted.where(topic_id: post.topic_id)
-      @ratings = []
-      @topic_posts.each do |tp|
-        weight = tp.custom_fields["rating_weight"]
-        if tp.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
-          rating = tp.custom_fields["rating"].to_i
-          @ratings.push(rating)
-        end
-      end
-      average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
-      post.topic.custom_fields["average_rating"] = average
-      post.topic.save!
-      push_updated_ratings_to_clients!(post, average)
-    end
-
-    def push_updated_ratings_to_clients!(post, average)
-      channel = "/topic/#{post.topic_id}"
-      msg = {
-        id: post.id,
-        updated_at: Time.now,
-        average: average,
-        type: "revised"
-      }
-      MessageBus.publish(channel, msg, group_ids: post.topic.secure_group_ids)
+      average = RatingsHelper.calculate_topic_average(post.topic)
+      RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
       render json: success_json
     end
-
-    ##def update_top_topics(post)
-    ##  @category_topics = Topic.where(category_id: post.topic.category_id, tags: post.topic.tags[0])
-    ##  @all_place_ratings = TopicCustomField.where(topic_id: @category_topics.map(&:id), name: "average_rating").pluck('value', 'topic_id').map(&:to_i)
-
-      ## To do: Add a bayseian estimate of a weighted rating (WR) to WR = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
-      ## R = average for the topic = (Rating); v = number of votes for the topic
-      ## m = minimum votes required to be listed in the top list (currently 1)
-      ## C = the mean vote for all topics
-      ## See further http://bit.ly/1XLPS97 and http://bit.ly/1HJGW2g
-    ##end
   end
 
   DiscourseRatings::Engine.routes.draw do
@@ -97,19 +67,84 @@ after_initialize do
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
 
+  module RatingsHelper
+    class << self
+      def calculate_topic_average(topic)
+        @topic_posts = Post.with_deleted.where(topic_id: topic.id)
+        @ratings = []
+        @topic_posts.each do |tp|
+          weight = tp.custom_fields["rating_weight"]
+          if tp.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
+            rating = tp.custom_fields["rating"].to_i
+            @ratings.push(rating)
+          end
+        end
+        average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
+        average = average.round(1)
+        topic.custom_fields["average_rating"] = average
+        topic.save!
+        return average
+      end
+
+      def push_ratings_to_clients(topic, average, updatedId='')
+        channel = "/topic/#{topic.id}"
+        msg = {
+          updated_at: Time.now,
+          average: average,
+          post_id: updatedId,
+          type: "revised"
+        }
+        MessageBus.publish(channel, msg, group_ids: topic.secure_group_ids)
+      end
+
+      ##def update_top_topics(post)
+      ##  @category_topics = Topic.where(category_id: post.topic.category_id, tags: post.topic.tags[0])
+      ##  @all_place_ratings = TopicCustomField.where(topic_id: @category_topics.map(&:id), name: "average_rating").pluck('value', 'topic_id').map(&:to_i)
+
+        ## To do: Add a bayseian estimate of a weighted rating (WR) to WR = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
+        ## R = average for the topic = (Rating); v = number of votes for the topic
+        ## m = minimum votes required to be listed in the top list (currently 1)
+        ## C = the mean vote for all topics
+        ## See further http://bit.ly/1XLPS97 and http://bit.ly/1HJGW2g
+      ##end
+    end
+  end
+
+  DiscourseEvent.on(:post_created) do |post, opts, user|
+    if opts[:rating]
+      post.custom_fields['rating'] = opts[:rating]
+      post.save!
+      average = RatingsHelper.calculate_topic_average(post.topic)
+      RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
+    end
+  end
+
+  DiscourseEvent.on(:post_destroyed) do |post, opts, user|
+    if post.custom_fields['rating']
+      post.custom_fields["rating_weight"]
+      post.save!
+      average = RatingsHelper.calculate_topic_average(post.topic)
+      RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
+    end
+  end
+
+  PostRevisor.track_topic_field(:rating) do |tc, rating|
+    puts "track_topic_field: #{tc.as_json}, #{rating}"
+  end
+
   require 'topic_view_serializer'
   class ::TopicViewSerializer
-    attributes :average_rating, :show_ratings, :can_rate
+    attributes :average_rating, :rating_enabled, :can_rate
 
     def average_rating
       object.topic.custom_fields["average_rating"]
     end
 
-    def show_ratings
+    def rating_enabled
       topic = object.topic
       has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
-      has_ratings_enabled = topic.category.respond_to?(:custom_fields) ? topic.category.custom_fields["rating_enabled"] : false
-      has_rating_tag || has_ratings_enabled
+      is_rating_category = topic.category && topic.category.custom_fields["rating_enabled"]
+      has_rating_tag || is_rating_category
     end
 
     def can_rate
@@ -117,7 +152,7 @@ after_initialize do
       ## This should be replaced with a :rated? property in TopicUser - but how to do this in a plugin?
       @user_posts = object.posts.select{ |post| post.user_id === scope.current_user.id}
       rated = PostCustomField.exists?(post_id: @user_posts.map(&:id), name: "rating")
-      show_ratings && !rated
+      rating_enabled && !rated
     end
 
   end
