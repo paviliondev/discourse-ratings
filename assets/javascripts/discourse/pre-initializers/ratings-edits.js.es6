@@ -78,7 +78,7 @@ export default {
             catEnabled = category && category.rating_enabled,
             tagEnabled = tags && tags.filter(function(t){
                             return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
-                         })
+                         }).length > 0
         return catEnabled || tagEnabled
       }.property('model.tags', 'model.categoryId'),
 
