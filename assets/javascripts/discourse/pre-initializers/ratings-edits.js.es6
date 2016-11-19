@@ -2,7 +2,7 @@ import Topic from 'discourse/models/topic';
 import TopicController from 'discourse/controllers/topic';
 import TopicRoute from 'discourse/routes/topic';
 import ComposerController from 'discourse/controllers/composer';
-import ComposerView from 'discourse/views/composer';
+import ComposerBody from 'discourse/components/composer-body';
 import Composer from 'discourse/models/composer';
 import Post from 'discourse/models/post';
 import { registerUnbound } from 'discourse-common/lib/helpers';
@@ -131,12 +131,12 @@ export default {
 
     })
 
-    ComposerView.reopen({
+    ComposerBody.reopen({
       resizeIfShowRating: function() {
-        if (this.get('composeState') === Composer.OPEN) {
+        if (this.get('composer.composeState') === Composer.OPEN) {
           this.resize()
         }
-      }.observes('controller.showRating')
+      }.observes('targetObject.showRating')
     })
 
     registerUnbound('rating-unbound', function(rating) {
