@@ -19,8 +19,8 @@ export default {
       api.includePostAttributes('rating')
       api.decorateWidget('poster-name:after', function(helper) {
         let rating = helper.attrs.rating,
-            showRating = helper.getModel().topic.rating_enabled;
-        if (showRating && rating) {
+            model = helper.getModel();
+        if (model && model.topic.rating_enabled && rating) {
           var html = new Handlebars.SafeString(renderUnboundRating(rating))
           return helper.rawHtml(`${html}`)
         }
