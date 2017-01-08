@@ -32,32 +32,28 @@ export default {
     Composer.serializeToTopic('rating')
 
     Composer.reopen({
+      includeRating: true,
+
       setRating: function() {
         const post = this.get('post')
         if (this.get('editingPost') && post && post.rating) {
           this.set('rating', post.rating)
         }
-      }.observes('post').on('init')
-    })
+      }.observes('post').on('init'),
 
-    ComposerController.reopen({
-      includeRating: true,
-
-      actions: {
-        save() {
-          if (this.get('showRating') && this.get('includeRating') && !this.get('model.rating')) {
-            return bootbox.alert(I18n.t("composer.select_rating"))
-          }
-          this.save()
-        }
-      },
+      ratingEnabled: function() {
+        let category = Discourse.Category.findById(this.get('categoryId')),
+            tags = this.get('tags'),
+            catEnabled = category && category.rating_enabled,
+            tagEnabled = tags && tags.filter(function(t){
+                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
+                         }).length > 0
+        return catEnabled || tagEnabled
+      }.property('tags', 'categoryId'),
 
       showRating: function() {
-        let model = this.get('model')
-        if (!model) {return false}
-
-        let topic = model.get('topic'),
-            post = model.get('post'),
+        let topic = this.get('topic'),
+            post = this.get('post'),
             firstPost = post && post.get('firstPost');
 
         // creating or editing first post
@@ -69,18 +65,19 @@ export default {
         if (topic.can_rate) { return true }
 
         // editing post other than first post
-        return topic.rating_enabled && post && post.rating && (model.get('action') === Composer.EDIT)
-      }.property('ratingEnabled', 'model.topic', 'model.post'),
+        return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT)
+      }.property('ratingEnabled', 'topic', 'post')
+    })
 
-      ratingEnabled: function() {
-        let category = Discourse.Category.findById(this.get('model.categoryId')),
-            tags = this.get('model.tags'),
-            catEnabled = category && category.rating_enabled,
-            tagEnabled = tags && tags.filter(function(t){
-                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
-                         }).length > 0
-        return catEnabled || tagEnabled
-      }.property('model.tags', 'model.categoryId'),
+    ComposerController.reopen({
+      actions: {
+        save() {
+          if (this.get('model.showRating') && this.get('model.includeRating') && !this.get('model.rating')) {
+            return bootbox.alert(I18n.t("composer.select_rating"))
+          }
+          this.save()
+        }
+      },
 
       saveRatingAfterEditing: function() {
        // only continue if user was editing and composer is now closed
@@ -91,7 +88,7 @@ export default {
        let post = this.get('model.post'),
            rating = this.get('model.rating');
 
-       if (rating && !this.get('includeRating')) {
+       if (rating && !this.get('model.includeRating')) {
          this.removeRating(post)
          this.get('topicController').toggleCanRate()
        } else {
@@ -166,24 +163,6 @@ export default {
           })
         }
       }.observes('model.postStream.loaded'),
-
-      showRating: function() {
-        if (this.get('model.average_rating') < 1) {return false}
-        if (!this.get('editingTopic')) {return this.get('model.rating_enabled')}
-
-        let category = Discourse.Category.findById(this.get('buffered.category_id')),
-            tags = this.get('buffered.tags'),
-            catEnabled = category && category.rating_enabled,
-            ratingTags = tags && tags.filter(function(t){
-                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
-                         }),
-            ratingsVisible = Boolean(ratingTags.length || catEnabled)
-
-        if (ratingsVisible !== this.get('model.rating_enabled')) {
-          this.set('refreshAfterTopicEdit', true)
-        }
-        return ratingsVisible
-      }.property('model.average_rating', 'model.rating_enabled', 'buffered.category_id', 'buffered.tags'),
 
       refreshPostRatingVisibility: function() {
         if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {

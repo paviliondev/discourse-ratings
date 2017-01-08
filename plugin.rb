@@ -137,14 +137,14 @@ after_initialize do
     attributes :average_rating, :rating_enabled, :can_rate
 
     def average_rating
-      object.topic.custom_fields["average_rating"]
+      object.topic.custom_fields["average_rating"].to_i
     end
 
     def rating_enabled
       topic = object.topic
       has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
       is_rating_category = topic.category && topic.category.custom_fields["rating_enabled"]
-      has_rating_tag || is_rating_category
+      average_rating > 0 && (has_rating_tag || is_rating_category)
     end
 
     def can_rate
