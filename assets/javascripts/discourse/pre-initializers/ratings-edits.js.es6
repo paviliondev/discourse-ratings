@@ -81,7 +81,7 @@ export default {
 
       saveRatingAfterEditing: function() {
        // only continue if user was editing and composer is now closed
-       if (!this.get('showRating')
+       if (!this.get('model.showRating')
            || this.get('model.action') !== Composer.EDIT
            || this.get('model.composeState') !== Composer.SAVING) {return}
 
