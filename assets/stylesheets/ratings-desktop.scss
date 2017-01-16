@@ -78,3 +78,10 @@ span.rating {
     width: 100%;
   }
 }
+
+.topic-list {
+  .topic-rating {
+    float: left;
+    margin-left: 7px;
+  }
+}
