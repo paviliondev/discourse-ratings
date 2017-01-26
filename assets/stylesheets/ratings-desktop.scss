@@ -1,5 +1,8 @@
 .composer-rating {
-  padding: 3px 7px;
+  padding: 0 2px;
+  .rating-container {
+    padding-top: 5px;
+  }
   .rating {
     margin-left: 2px;
   }

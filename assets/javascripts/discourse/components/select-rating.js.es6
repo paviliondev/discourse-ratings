@@ -1,3 +1,4 @@
 export default Ember.Component.extend({
-  tagName: "div"
+  tagName: "div",
+  classNames: ["rating-container"]
 })

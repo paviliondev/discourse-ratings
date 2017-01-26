@@ -131,9 +131,9 @@ export default {
     ComposerBody.reopen({
       resizeIfShowRating: function() {
         if (this.get('composer.composeState') === Composer.OPEN) {
-          this.resize()
+          this.resize();
         }
-      }.observes('targetObject.showRating')
+      }.observes('composer.showRating')
     })
 
     registerUnbound('rating-unbound', function(rating) {
