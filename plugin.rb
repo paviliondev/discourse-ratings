@@ -144,7 +144,8 @@ after_initialize do
       topic = object.topic
       has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
       is_rating_category = topic.category && topic.category.custom_fields["rating_enabled"]
-      average_rating > 0 && (has_rating_tag || is_rating_category)
+      is_rating_topic = topic.subtype == 'rating'
+      average_rating > 0 && (has_rating_tag || is_rating_category || is_rating_topic)
     end
 
     def can_rate

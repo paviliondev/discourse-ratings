@@ -10,6 +10,7 @@ import renderUnboundRating from 'discourse/plugins/discourse-ratings/lib/render-
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { ajax } from 'discourse/lib/ajax';
+import { default as computed, on, observes } from 'ember-addons/ember-computed-decorators';
 
 export default {
   name: 'ratings-edits',
@@ -28,11 +29,10 @@ export default {
     });
 
     Composer.serializeOnCreate('rating')
-
     Composer.serializeToTopic('rating')
-
     Composer.reopen({
       includeRating: true,
+      ratingEnabled: false,
 
       setRating: function() {
         const post = this.get('post')
@@ -41,17 +41,22 @@ export default {
         }
       }.observes('post').on('init'),
 
-      ratingEnabled: function() {
+      @observes('currentType','tags','categoryId')
+      setRatingEnabled: function() {
         let category = Discourse.Category.findById(this.get('categoryId')),
             tags = this.get('tags'),
             catEnabled = category && category.rating_enabled,
             tagEnabled = tags && tags.filter(function(t){
                             return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
-                         }).length > 0
-        return catEnabled || tagEnabled
-      }.property('tags', 'categoryId'),
+                         }).length > 0,
+            topicEnabled = this.get('topic.subtype') === 'rating' || this.get('currentType') === 'rating';
+
+        this.set('ratingEnabled', catEnabled || tagEnabled || topicEnabled);
+      },
 
       showRating: function() {
+        if (this.get('hideRating')) { return false }
+
         let topic = this.get('topic'),
             post = this.get('post'),
             firstPost = post && post.get('firstPost');
@@ -66,7 +71,7 @@ export default {
 
         // editing post other than first post
         return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT)
-      }.property('ratingEnabled', 'topic', 'post')
+      }.property('ratingEnabled', 'topic', 'post', 'hideRating')
     })
 
     ComposerController.reopen({
