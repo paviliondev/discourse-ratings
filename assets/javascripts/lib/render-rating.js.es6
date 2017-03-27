@@ -7,7 +7,7 @@ var renderUnboundRating = function(rating) {
         star = '<input type="radio" value="' + value + '" ' + checked + ' disabled><i></i>';
     stars = stars.concat(star)
   }
-  return '<span class="rating">' + stars + '</span>';
+  return '<span class="star-rating">' + stars + '</span>';
 };
 
 export default renderUnboundRating;

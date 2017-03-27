@@ -1,0 +1,21 @@
+import { createWidget } from 'discourse/widgets/widget';
+import { h } from 'virtual-dom';
+
+export default createWidget('star-rating', {
+  tagName: 'span.star-rating',
+
+  html(attrs, state) {
+    const stars = [1, 2, 3, 4, 5];
+    let contents = [];
+
+    stars.forEach((s) => {
+      let checked = s <= attrs.rating;
+      contents.push(
+        this.attach('rating-star', {value: s, checked: checked, disabled: attrs.disabled}),
+        h('i')
+      )
+    })
+
+    return contents;
+  }
+})
