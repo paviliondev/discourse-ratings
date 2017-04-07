@@ -33,6 +33,7 @@ export default {
     Composer.reopen({
       includeRating: true,
       ratingEnabled: false,
+      ratingPluginDisplay: true,
 
       setRating: function() {
         const post = this.get('post')
