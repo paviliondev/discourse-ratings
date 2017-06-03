@@ -32,39 +32,36 @@ export default {
     Composer.serializeToTopic('rating')
     Composer.reopen({
       includeRating: true,
-      ratingEnabled: false,
-      ratingPluginDisplay: true,
+      currentType: 'rating',
 
+      @on('init')
+      @observes('post')
       setRating: function() {
         const post = this.get('post')
         if (this.get('editingPost') && post && post.rating) {
           this.set('rating', post.rating)
         }
-      }.observes('post').on('init'),
+      },
 
-      @observes('currentType','tags','categoryId')
-      setRatingEnabled: function() {
-        let category = Discourse.Category.findById(this.get('categoryId')),
-            tags = this.get('tags'),
+      @computed('currentType','tags','categoryId')
+      ratingEnabled(type, tags, categoryId) {
+        let category = Discourse.Category.findById(categoryId),
             catEnabled = category && category.rating_enabled,
             tagEnabled = tags && tags.filter(function(t){
                             return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
                          }).length > 0,
-            topicEnabled = this.get('topic.subtype') === 'rating' || this.get('currentType') === 'rating';
+            typeEnabled = type === 'rating';
 
-        this.set('ratingEnabled', catEnabled || tagEnabled || topicEnabled);
+        return catEnabled || tagEnabled || typeEnabled;
       },
 
-      showRating: function() {
-        if (this.get('hideRating')) { return false }
-
-        let topic = this.get('topic'),
-            post = this.get('post'),
-            firstPost = post && post.get('firstPost');
+      @computed('ratingEnabled', 'hideRating', 'topic', 'post')
+      showRating(ratingEnabled, hideRating, topic, post) {
+        if (hideRating) return false;
 
         // creating or editing first post
-        if ((firstPost && topic.rating_enabled) || !topic) {
-          return this.get('ratingEnabled')
+        if ((post && post.get('firstPost') && topic.rating_enabled) || !topic) {
+          return ratingEnabled;
         }
 
         // creating post other than first post
@@ -72,7 +69,7 @@ export default {
 
         // editing post other than first post
         return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT)
-      }.property('ratingEnabled', 'topic', 'post', 'hideRating')
+      }
     })
 
     ComposerController.reopen({
@@ -85,6 +82,7 @@ export default {
         }
       },
 
+      @observes('model.composeState')
       saveRatingAfterEditing: function() {
        // only continue if user was editing and composer is now closed
        if (!this.get('model.showRating')
@@ -100,7 +98,7 @@ export default {
        } else {
          this.editRating(post, rating)
        }
-     }.observes('model.composeState'),
+     },
 
      removeRating: function(post) {
        let self = this
@@ -135,11 +133,12 @@ export default {
     })
 
     ComposerBody.reopen({
+      @observes('composer.showRating')
       resizeIfShowRating: function() {
         if (this.get('composer.composeState') === Composer.OPEN) {
           this.resize();
         }
-      }.observes('composer.showRating')
+      }
     })
 
     registerUnbound('rating-unbound', function(rating) {
@@ -149,6 +148,7 @@ export default {
     TopicController.reopen({
       refreshAfterTopicEdit: false,
 
+      @observes('model.postStream.loaded')
       subscribeToRatingUpdates: function() {
         let model = this.get('model'),
             postStream = model.get('postStream'),
@@ -168,14 +168,15 @@ export default {
             }
           })
         }
-      }.observes('model.postStream.loaded'),
+      },
 
+      @observes('editingTopic')
       refreshPostRatingVisibility: function() {
         if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
          this.get('model.postStream').refresh()
          this.set('refreshAfterTopicEdit', false)
         }
-      }.observes('editingTopic'),
+      },
 
       toggleCanRate: function() {
         if (this.get('model')) {
