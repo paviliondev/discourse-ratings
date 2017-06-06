@@ -32,7 +32,6 @@ export default {
     Composer.serializeToTopic('rating')
     Composer.reopen({
       includeRating: true,
-      currentType: 'rating',
 
       @on('init')
       @observes('post')
