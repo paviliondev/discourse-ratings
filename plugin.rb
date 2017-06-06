@@ -137,7 +137,7 @@ after_initialize do
     attributes :average_rating, :rating_enabled, :can_rate
 
     def average_rating
-      object.topic.custom_fields["average_rating"].to_i
+      object.topic.custom_fields["average_rating"].to_f
     end
 
     def rating_enabled
