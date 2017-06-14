@@ -179,7 +179,7 @@ export default {
               }
               if (data.post_id !== undefined) {
                 model.get('postStream').triggerChangedPost(data.post_id, data.updated_at).then(() =>
-                  refresh({ id: data.post_id });
+                  refresh({ id: data.post_id })
                 );
               }
             }
