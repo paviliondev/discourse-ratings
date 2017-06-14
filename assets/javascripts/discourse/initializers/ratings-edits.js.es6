@@ -18,27 +18,30 @@ export default {
 
     withPluginApi('0.1', api => {
       api.includePostAttributes('rating')
+
       api.decorateWidget('poster-name:after', function(helper) {
-        let rating = helper.attrs.rating,
-            model = helper.getModel();
+        const rating = helper.attrs.rating;
+        const model = helper.getModel();
+
         if (model && model.topic.rating_enabled && rating) {
-          var html = new Handlebars.SafeString(renderUnboundRating(rating))
-          return helper.rawHtml(`${html}`)
+          let html = new Handlebars.SafeString(renderUnboundRating(rating));
+          return helper.rawHtml(`${html}`);
         }
       })
     });
 
     Composer.serializeOnCreate('rating')
     Composer.serializeToTopic('rating')
+
     Composer.reopen({
       includeRating: true,
 
       @on('init')
       @observes('post')
-      setRating: function() {
+      setRating() {
         const post = this.get('post')
         if (this.get('editingPost') && post && post.rating) {
-          this.set('rating', post.rating)
+          this.set('rating', post.rating);
         }
       },
 
@@ -64,10 +67,10 @@ export default {
         }
 
         // creating post other than first post
-        if (topic.can_rate) { return true }
+        if (topic.can_rate) return true;
 
         // editing post other than first post
-        return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT)
+        return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT);
       }
     })
 
@@ -75,60 +78,29 @@ export default {
       actions: {
         save() {
           if (this.get('model.showRating') && this.get('model.includeRating') && !this.get('model.rating')) {
-            return bootbox.alert(I18n.t("composer.select_rating"))
+            return bootbox.alert(I18n.t("composer.select_rating"));
           }
-          this.save()
+          this.save();
         }
       },
 
       @observes('model.composeState')
-      saveRatingAfterEditing: function() {
-       // only continue if user was editing and composer is now closed
-       if (!this.get('model.showRating')
+      saveRatingAfterEditing() {
+        // only continue if user was editing and composer is now closed
+        if (!this.get('model.showRating')
            || this.get('model.action') !== Composer.EDIT
-           || this.get('model.composeState') !== Composer.SAVING) {return}
+           || this.get('model.composeState') !== Composer.SAVING) { return; }
 
-       let post = this.get('model.post'),
-           rating = this.get('model.rating');
+        const post = this.get('model.post');
+        const rating = this.get('model.rating');
 
-       if (rating && !this.get('model.includeRating')) {
-         this.removeRating(post)
-         this.get('topicController').toggleCanRate()
-       } else {
-         this.editRating(post, rating)
-       }
-     },
-
-     removeRating: function(post) {
-       let self = this
-        ajax("/rating/remove", {
-          type: 'POST',
-          data: {
-            id: post.id,
-          }
-        }).then(function (result, error) {
-          if (error) {
-            popupAjaxError(error);
-          }
-        });
-      },
-
-      editRating: function(post, rating) {
-        let self = this
-        post.set('rating', rating)
-        ajax("/rating/rate", {
-          type: 'POST',
-          data: {
-            id: post.id,
-            rating: rating
-          }
-        }).then(function (result, error) {
-          if (error) {
-            popupAjaxError(error);
-          }
-        });
+        if (rating && !this.get('model.includeRating')) {
+         Post.removeRating(post.id);
+         this.get('topicController').toggleCanRate();
+        } else {
+         Post.editRating(post.id, rating);
+        }
       }
-
     })
 
     ComposerBody.reopen({
@@ -144,42 +116,90 @@ export default {
       return new Handlebars.SafeString(renderUnboundRating(rating));
     });
 
+    Post.reopenClass({
+      removeRating(postId) {
+         return ajax("/rating/remove", {
+           type: 'POST',
+           data: {
+             id: postId,
+           }
+         }).then(function (result, error) {
+           if (error) {
+             popupAjaxError(error);
+           }
+         });
+       },
+
+       editRating(postId, rating) {
+         return ajax("/rating/rate", {
+           type: 'POST',
+           data: {
+             id: postId,
+             rating: rating
+           }
+         }).then(function (result, error) {
+           if (error) {
+             popupAjaxError(error);
+           }
+         });
+       }
+    })
+
     TopicController.reopen({
       refreshAfterTopicEdit: false,
+      unsubscribed: false,
 
-      @observes('model.postStream.loaded')
-      subscribeToRatingUpdates: function() {
-        let model = this.get('model'),
-            postStream = model.get('postStream'),
-            refresh = (args) => this.appEvents.trigger('post-stream:refresh', args);
+      unsubscribe() {
+        const topicId = this.get('content.id');
+        if (!topicId) return;
 
-        if (model.rating_enabled && postStream.get('loaded')) {
+        this.messageBus.unsubscribe('/topic/*');
+        this.set('unsubscribed', true);
+      },
+
+      @observes('unsubscribed', 'model.postStream')
+      subscribeToRatingUpdates() {
+        const unsubscribed = this.get('unsubscribed');
+        const model = this.get('model');
+        const subscribedTo = this.get('subscribedTo');
+
+        if (!unsubscribed) return;
+        this.set('unsubscribed', false);
+
+        if (model && model.id === subscribedTo) return this.set('subscribedTo', null);
+        this.set('subscribedTo', null);
+
+        if (model && model.get('postStream') && model.rating_enabled) {
+          const refresh = (args) => this.appEvents.trigger('post-stream:refresh', args);
+
           this.messageBus.subscribe("/topic/" + model.id, function(data) {
             if (data.type === 'revised') {
               if (data.average !== undefined) {
-                model.set('average_rating', data.average)
+                model.set('average_rating', data.average);
               }
               if (data.post_id !== undefined) {
-                postStream.triggerChangedPost(data.post_id, data.updated_at).then(() =>
-                  refresh({ id: data.post_id })
+                model.get('postStream').triggerChangedPost(data.post_id, data.updated_at).then(() =>
+                  refresh({ id: data.post_id });
                 );
               }
             }
           })
+
+          this.set('subscribedTo', model.id);
         }
       },
 
       @observes('editingTopic')
-      refreshPostRatingVisibility: function() {
+      refreshPostRatingVisibility() {
         if (!this.get('editingTopic') && this.get('refreshAfterTopicEdit')) {
-         this.get('model.postStream').refresh()
-         this.set('refreshAfterTopicEdit', false)
+         this.get('model.postStream').refresh();
+         this.set('refreshAfterTopicEdit', false);
         }
       },
 
-      toggleCanRate: function() {
+      toggleCanRate() {
         if (this.get('model')) {
-          this.toggleProperty('model.can_rate')
+          this.toggleProperty('model.can_rate');
         }
       }
     })

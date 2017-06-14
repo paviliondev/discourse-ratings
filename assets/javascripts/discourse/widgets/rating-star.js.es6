@@ -7,17 +7,17 @@ export default createWidget('rating-star', {
     let result = {
       type: 'radio',
       value: attrs.value
-    }
+    };
     if (attrs.checked) {
-      result["checked"] = true
+      result["checked"] = true;
     }
     if (attrs.disabled) {
-      result["disabled"] = true
+      result["disabled"] = true;
     }
     return result;
   },
 
   html() {
-    return
+    return;
   }
 })

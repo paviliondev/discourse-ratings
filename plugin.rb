@@ -24,7 +24,10 @@ after_initialize do
       post.custom_fields["rating_weight"] = 1
       post.save!
 
+      puts "IN THE NEIGHBORHOOD"
+
       average = RatingsHelper.calculate_topic_average(post.topic)
+      puts "CALCULATED AVERAGE: #{average}"
       RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
       render json: success_json
     end
@@ -94,6 +97,7 @@ after_initialize do
           post_id: updatedId,
           type: "revised"
         }
+        puts "PUBLISHING TO CLIENTS: #{msg}"
         MessageBus.publish(channel, msg, group_ids: topic.secure_group_ids)
       end
 
@@ -155,7 +159,6 @@ after_initialize do
       rated = PostCustomField.exists?(post_id: @user_posts.map(&:id), name: "rating")
       rating_enabled && !rated
     end
-
   end
 
   require 'topic_list_item_serializer'

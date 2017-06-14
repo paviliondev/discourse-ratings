@@ -1,18 +1,20 @@
+import { default as computed } from 'ember-addons/ember-computed-decorators';
+
 export default Ember.Component.extend({
   tagName: "input",
   disabled: Ember.computed.not('enabled'),
   attributeBindings: [ "value", "checked:checked", "disabled:disabled"],
 
-  willInsertElement: function() {
+  willInsertElement() {
     this.$().prop('type', 'radio')
   },
 
-  click: function() {
+  click() {
     this.set("rating", this.$().val());
   },
 
-  checked: function() {
-    return this.get("value") <= this.get("rating")
-  }.property('rating'),
-
+  @computed('rating')
+  checked(rating) {
+    return this.get("value") <= rating;
+  }
 });
