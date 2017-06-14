@@ -7,6 +7,14 @@ en:
       select_rating: "Please select a rating, or uncheck 'Add a rating'."
     topic:
       hidden_ratings: "Topic has hidden ratings"
+      tip:
+        ratings:
+          title: "Rating Topic"
+          details: "Users can rate the subject of the topic.
+                    <ul><li>Each user is allowed one rating.</li>
+                    <li>Each rating must be attached to a post.</li>
+                    <li>Users can post without rating.</li></ul>"
   site_settings:
-    show_exact_average_rating: "Show the exact numerical average next to a topic average rating."
+    rating_show_exact_average: "Show the exact numerical average next to a topic average rating."
     rating_tags: "Tag(s) used to designate a topic as a ratings topic."
+    rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"

@@ -8,4 +8,4 @@ es:
     topic:
       hidden_ratings: "El tema tiene valoraciones ocultas"
   site_settings:
-    show_exact_average_rating: "Mostrar el promedio numérico exacto al lado del promedio de valoraciones del tema."
+    rating_show_exact_average: "Mostrar el promedio numérico exacto al lado del promedio de valoraciones del tema."

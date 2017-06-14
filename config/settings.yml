@@ -1,5 +1,8 @@
 plugins:
-  show_exact_average_rating:
+  rating_show_topic_tip:
+    default: true
+    client: true
+  rating_show_exact_average:
     default: true
     client: true
   rating_tags:

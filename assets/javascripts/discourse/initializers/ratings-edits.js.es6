@@ -11,6 +11,7 @@ import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { ajax } from 'discourse/lib/ajax';
 import { default as computed, on, observes } from 'ember-addons/ember-computed-decorators';
+import { ratingEnabled } from '../lib/rating-utilities';
 
 export default {
   name: 'ratings-edits',
@@ -47,29 +48,19 @@ export default {
 
       @computed('currentType','tags','categoryId')
       ratingEnabled(type, tags, categoryId) {
-        let category = Discourse.Category.findById(categoryId),
-            catEnabled = category && category.rating_enabled,
-            tagEnabled = tags && tags.filter(function(t){
-                            return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) != -1;
-                         }).length > 0,
-            typeEnabled = type === 'rating';
-
-        return catEnabled || tagEnabled || typeEnabled;
+        return ratingEnabled(type, tags, categoryId);
       },
 
       @computed('ratingEnabled', 'hideRating', 'topic', 'post')
       showRating(ratingEnabled, hideRating, topic, post) {
         if (hideRating) return false;
 
-        // creating or editing first post
         if ((post && post.get('firstPost') && topic.rating_enabled) || !topic) {
           return ratingEnabled;
         }
 
-        // creating post other than first post
         if (topic.can_rate) return true;
 
-        // editing post other than first post
         return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT);
       }
     })
@@ -143,6 +134,18 @@ export default {
            }
          });
        }
+    })
+
+    Topic.reopen({
+      @computed('subtype','tags','category_id')
+      ratingEnabled(type, tags, categoryId) {
+        return ratingEnabled(type, tags, categoryId);
+      },
+
+      @computed('ratingEnabled')
+      showRatingTip(ratingEnabled) {
+        return ratingEnabled && this.siteSettings.rating_show_topic_tip;
+      }
     })
 
     TopicController.reopen({

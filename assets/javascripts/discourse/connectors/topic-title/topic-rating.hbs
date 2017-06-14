@@ -1,12 +1,25 @@
-{{#if model.rating_enabled}}
-  {{star-rating rating=model.average_rating}}
-  {{#if this.siteSettings.show_exact_average_rating}}
-    <span class="title-text">({{model.average_rating}})</span>
-  {{/if}}
-{{else}}
-  {{#if model.average_rating}}
-    {{#if currentUser.admin}}
-      <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
+<div class="average-rating">
+  {{#if model.rating_enabled}}
+    {{star-rating rating=model.average_rating}}
+    {{#if this.siteSettings.rating_show_exact_average}}
+      <span class="title-text">({{model.average_rating}})</span>
+    {{/if}}
+  {{else}}
+    {{#if model.average_rating}}
+      {{#if currentUser.admin}}
+        <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
+      {{/if}}
     {{/if}}
   {{/if}}
-{{/if}}
+</div>
+
+<div class="topic-tip">
+  {{#if model.showRatingTip}}
+    {{d-button class="btn btn-small" action="toggleDetails" label="topic.tip.ratings.title" icon="info"}}
+    {{#if showDetails}}
+      <div class="tip-details">
+        {{{i18n 'topic.tip.ratings.details'}}}
+      </div>
+    {{/if}}
+  {{/if}}
+</div>

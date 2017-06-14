@@ -1,7 +1,7 @@
 {{#if context.topic.show_average}}
   <div class="topic-rating">
     {{rating-unbound context.topic.average_rating}}
-    {{#if context.siteSettings.show_exact_average_rating}}
+    {{#if context.siteSettings.rating_show_exact_average}}
       <span class="exact-rating">({{context.topic.average_rating}})</span>
     {{/if}}
   </div>
