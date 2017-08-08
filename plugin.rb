@@ -97,7 +97,6 @@ after_initialize do
           post_id: updatedId,
           type: "revised"
         }
-        puts "PUBLISHING TO CLIENTS: #{msg}"
         MessageBus.publish(channel, msg, group_ids: topic.secure_group_ids)
       end
 
