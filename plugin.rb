@@ -24,10 +24,7 @@ after_initialize do
       post.custom_fields["rating_weight"] = 1
       post.save!
 
-      puts "IN THE NEIGHBORHOOD"
-
       average = RatingsHelper.calculate_topic_average(post.topic)
-      puts "CALCULATED AVERAGE: #{average}"
       RatingsHelper.push_ratings_to_clients(post.topic, average, post.id)
       render json: success_json
     end

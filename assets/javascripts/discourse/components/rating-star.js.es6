@@ -6,7 +6,7 @@ export default Ember.Component.extend({
   attributeBindings: [ "value", "checked:checked", "disabled:disabled"],
 
   willInsertElement() {
-    this.$().prop('type', 'radio')
+    this.$().prop('type', 'radio');
   },
 
   click() {
