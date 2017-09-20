@@ -61,28 +61,34 @@ after_initialize do
     end
   end
 
+  require 'topic'
+  class ::Topic
+    def average_rating
+      self.custom_fields["average_rating"].to_f
+    end
+
+    def rating_enabled?
+      has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
+      is_rating_category = self.category && self.category.custom_fields["rating_enabled"]
+      is_rating_topic = self.subtype == 'rating'
+      average_rating > 0 && (has_rating_tag || is_rating_category || is_rating_topic)
+    end
+  end
+
   require 'topic_view_serializer'
   class ::TopicViewSerializer
     attributes :average_rating, :rating_enabled, :can_rate
 
     def average_rating
-      object.topic.custom_fields["average_rating"].to_f
+      object.topic.average_rating
     end
 
     def rating_enabled
-      topic = object.topic
-      has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
-      is_rating_category = topic.category && topic.category.custom_fields["rating_enabled"]
-      is_rating_topic = topic.subtype == 'rating'
-      average_rating > 0 && (has_rating_tag || is_rating_category || is_rating_topic)
+      object.topic.rating_enabled?
     end
 
     def can_rate
-      return false if !scope.current_user
-      ## This should be replaced with a :rated? property in TopicUser - but how to do this in a plugin?
-      @user_posts = object.posts.select { |post| post.user_id === scope.current_user.id }
-      rated = PostCustomField.exists?(post_id: @user_posts.map(&:id), name: "rating")
-      rating_enabled && !rated
+      scope.current_user && rating_enabled && !RatingsHelper.has_rated?(object, scope.current_user.id)
     end
   end
 
@@ -91,18 +97,14 @@ after_initialize do
     attributes :average_rating, :show_average
 
     def average_rating
-      object.custom_fields["average_rating"]
+      object.average_rating
     end
 
     def show_average
-      return false if !average_rating
-      has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
-      is_rating_category = CategoryCustomField.where(category_id: object.category_id, name: "rating_enabled").pluck('value')
-      has_rating_tag || is_rating_category.first == "true"
+      object.rating_enabled?
     end
   end
 
-  ## Add the new fields to the serializers
   add_to_serializer(:basic_category, :rating_enabled) { object.custom_fields["rating_enabled"] }
   add_to_serializer(:post, :rating) { post_custom_fields["rating"] }
 end

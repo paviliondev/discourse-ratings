@@ -8,6 +8,7 @@ module RatingsHelper
     def calculate_topic_average(topic)
       @topic_posts = Post.with_deleted.where(topic_id: topic.id)
       @ratings = []
+
       @topic_posts.each do |tp|
         weight = tp.custom_fields["rating_weight"]
         if tp.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
@@ -15,10 +16,13 @@ module RatingsHelper
           @ratings.push(rating)
         end
       end
+
       average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
       average = average.round(1)
+
       topic.custom_fields["average_rating"] = average
-      topic.save!
+      topic.save_custom_fields(true)
+
       return average
     end
 
@@ -43,5 +47,11 @@ module RatingsHelper
     ## C = the mean vote for all topics
     ## See further http://bit.ly/1XLPS97 and http://bit.ly/1HJGW2g
     ##end
+
+    ## This should be replaced with a :rated? property in TopicUser - but how to do this in a plugin?
+    def has_rated?(topic, user_id)
+      @user_posts = topic.posts.select { |post| post.user_id === user_id }
+      PostCustomField.exists?(post_id: @user_posts.map(&:id), name: "rating")
+    end
   end
 end
