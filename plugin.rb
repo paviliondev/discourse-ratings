@@ -26,19 +26,21 @@ after_initialize do
     mount ::DiscourseRatings::Engine, at: "rating"
   end
 
+  load File.expand_path('../controllers/rating.rb', __FILE__)
+  load File.expand_path('../lib/ratings_helper.rb', __FILE__)
+
   TopicView.add_post_custom_fields_whitelister do |user|
     ["rating", "rating_weight"]
   end
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
 
-  load File.expand_path('../controllers/rating.rb', __FILE__)
-  load File.expand_path('../lib/ratings_helper.rb', __FILE__)
+  add_permitted_post_create_param('rating')
 
   DiscourseEvent.on(:post_created) do |post, opts, user|
     if opts[:rating]
       post.custom_fields['rating'] = opts[:rating]
-      post.save!
+      post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
   end
@@ -46,7 +48,7 @@ after_initialize do
   DiscourseEvent.on(:post_destroyed) do |post, opts, user|
     if post.custom_fields['rating']
       post.custom_fields["rating_weight"] = 0
-      post.save!
+      post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
   end
@@ -54,13 +56,9 @@ after_initialize do
   DiscourseEvent.on(:post_recovered) do |post, _opts, user|
     if post.custom_fields['rating']
       post.custom_fields["rating_weight"] = 1
-      post.save!
+      post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
-  end
-
-  PostRevisor.track_topic_field(:rating) do |tc, rating|
-    puts "track_topic_field: #{tc.as_json}, #{rating}"
   end
 
   require 'topic_view_serializer'

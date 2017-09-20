@@ -31,7 +31,6 @@ export default {
     });
 
     Composer.serializeOnCreate('rating');
-    Composer.serializeToTopic('rating');
 
     Composer.reopen({
       includeRating: true,
