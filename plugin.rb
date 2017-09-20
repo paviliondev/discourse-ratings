@@ -18,7 +18,6 @@ after_initialize do
 
   DiscourseRatings::Engine.routes.draw do
     post "/rate" => "rating#rate"
-    post "/weight" => "rating#weight"
     post "/remove" => "rating#remove"
   end
 
