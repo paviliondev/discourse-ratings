@@ -39,6 +39,7 @@ after_initialize do
   DiscourseEvent.on(:post_created) do |post, opts, user|
     if opts[:rating]
       post.custom_fields['rating'] = opts[:rating]
+      post.custom_fields["rating_weight"] = 1
       post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
