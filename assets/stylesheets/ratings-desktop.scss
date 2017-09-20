@@ -134,3 +134,18 @@ span.star-rating {
     cursor: initial;
   }
 }
+
+#reply-control .composer-controls-rating .rating-container {
+  display: inline-block;
+  background-color: $secondary;
+  padding: 6px 12px;
+
+  input {
+    margin-bottom: 0;
+    margin-top: 2px;
+  }
+
+  input, span {
+    vertical-align: middle;
+  }
+}

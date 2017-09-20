@@ -20,4 +20,4 @@ export default createWidget('rating-star', {
   html() {
     return;
   }
-})
+});

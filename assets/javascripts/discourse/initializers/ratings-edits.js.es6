@@ -1,6 +1,5 @@
 import Topic from 'discourse/models/topic';
 import TopicController from 'discourse/controllers/topic';
-import TopicRoute from 'discourse/routes/topic';
 import ComposerController from 'discourse/controllers/composer';
 import ComposerBody from 'discourse/components/composer-body';
 import Composer from 'discourse/models/composer';
@@ -18,7 +17,7 @@ export default {
   initialize(){
 
     withPluginApi('0.1', api => {
-      api.includePostAttributes('rating')
+      api.includePostAttributes('rating');
 
       api.decorateWidget('poster-name:after', function(helper) {
         const rating = helper.attrs.rating;
@@ -28,11 +27,11 @@ export default {
           let html = new Handlebars.SafeString(renderUnboundRating(rating));
           return helper.rawHtml(`${html}`);
         }
-      })
+      });
     });
 
-    Composer.serializeOnCreate('rating')
-    Composer.serializeToTopic('rating')
+    Composer.serializeOnCreate('rating');
+    Composer.serializeToTopic('rating');
 
     Composer.reopen({
       includeRating: true,
@@ -40,30 +39,30 @@ export default {
       @on('init')
       @observes('post')
       setRating() {
-        const post = this.get('post')
+        const post = this.get('post');
         if (this.get('editingPost') && post && post.rating) {
           this.set('rating', post.rating);
         }
       },
 
-      @computed('currentType','tags','categoryId')
-      ratingEnabled(type, tags, categoryId) {
-        return ratingEnabled(type, tags, categoryId);
+      @computed('subtype','tags','categoryId')
+      ratingEnabled(subtype, tags, categoryId) {
+        return ratingEnabled(subtype, tags, categoryId);
       },
 
       @computed('ratingEnabled', 'hideRating', 'topic', 'post')
-      showRating(ratingEnabled, hideRating, topic, post) {
-        if (hideRating) return false;
+      showRating(enabled, hide, topic, post) {
+        if (hide) return false;
 
         if ((post && post.get('firstPost') && topic.rating_enabled) || !topic) {
-          return ratingEnabled;
+          return enabled;
         }
 
         if (topic.can_rate) return true;
 
         return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT);
       }
-    })
+    });
 
     ComposerController.reopen({
       actions: {
@@ -92,7 +91,7 @@ export default {
          Post.editRating(post.id, rating);
         }
       }
-    })
+    });
 
     ComposerBody.reopen({
       @observes('composer.showRating')
@@ -101,7 +100,7 @@ export default {
           this.resize();
         }
       }
-    })
+    });
 
     registerUnbound('rating-unbound', function(rating) {
       return new Handlebars.SafeString(renderUnboundRating(rating));
@@ -134,7 +133,7 @@ export default {
            }
          });
        }
-    })
+    });
 
     Topic.reopen({
       @computed('subtype','tags','category_id')
@@ -143,10 +142,10 @@ export default {
       },
 
       @computed('ratingEnabled')
-      showRatingTip(ratingEnabled) {
-        return ratingEnabled && this.siteSettings.rating_show_topic_tip;
+      showRatingTip(enabled) {
+        return enabled && this.siteSettings.rating_show_topic_tip;
       }
-    })
+    });
 
     TopicController.reopen({
       refreshAfterTopicEdit: false,
@@ -186,7 +185,7 @@ export default {
                 );
               }
             }
-          })
+          });
 
           this.set('subscribedTo', model.id);
         }
@@ -205,6 +204,6 @@ export default {
           this.toggleProperty('model.can_rate');
         }
       }
-    })
+    });
   }
-}
+};
