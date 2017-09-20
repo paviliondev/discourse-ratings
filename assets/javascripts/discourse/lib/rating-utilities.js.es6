@@ -16,7 +16,7 @@ let removeRating = function(postId) {
   return ajax("/rating/remove", {
     type: 'POST',
     data: {
-      id: postId,
+      post_id: postId,
     }
   }).then(function (result, error) {
     if (error) {
@@ -29,7 +29,7 @@ let editRating = function(postId, rating) {
   return ajax("/rating/rate", {
     type: 'POST',
     data: {
-      id: postId,
+      post_id: postId,
       rating: rating
     }
   }).then(function (result, error) {
