@@ -8,7 +8,8 @@ describe PostsController do
 
   describe 'post rating' do
     it 'works' do
-      xhr :post, :create, topic_id: topic.id, title: 'Testing Ratings Plugin', raw: 'New rating', rating: 3
+      params = { topic_id: topic.id, title: 'Testing Ratings Plugin', raw: 'New rating', rating: 3 }
+      post :create, params: params, format: :json
       expect(response).to be_success
       json = ::JSON.parse(response.body)
       expect(PostCustomField.find_by(

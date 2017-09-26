@@ -10,7 +10,7 @@ describe ::DiscourseRatings::RatingController do
   describe "rate" do
 
     it 'works' do
-      xhr :post, :rate, post_id: post_1.id, rating: 3
+      post :rate, params: { post_id: post_1.id, rating: 3 }, format: :json
       expect(response).to be_success
 
       expect(post_1.custom_fields['rating']).to eq('3')
@@ -22,10 +22,10 @@ describe ::DiscourseRatings::RatingController do
       let!(:post_2) { Fabricate(:post, topic_id: topic.id) }
 
       it "updates the topic average correctly" do
-        xhr :post, :rate, post_id: post_1.id, rating: 3
+        post :rate, params: { post_id: post_1.id, rating: 3 }, format: :json
         expect(response).to be_success
 
-        xhr :post, :rate, post_id: post_2.id, rating: 1
+        post :rate, params: { post_id: post_2.id, rating: 1 }, format: :json
         expect(response).to be_success
 
         expect(post_2.custom_fields['rating']).to eq('1')
