@@ -17,7 +17,7 @@ export default {
         const rating = helper.attrs.rating;
         const model = helper.getModel();
 
-        if (model && model.topic.rating_enabled && rating) {
+        if (model && model.topic && model.topic.rating_enabled && rating) {
           let html = new Handlebars.SafeString(unboundRating(rating));
           return helper.rawHtml(`${html}`);
         }
