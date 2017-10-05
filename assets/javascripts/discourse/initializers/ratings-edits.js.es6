@@ -1,8 +1,7 @@
 import Composer from 'discourse/models/composer';
-import Post from 'discourse/models/post';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as computed, on, observes } from 'ember-addons/ember-computed-decorators';
-import { ratingEnabled, unboundRating } from '../lib/rating-utilities';
+import { ratingEnabled, removeRating, editRating, unboundRating } from '../lib/rating-utilities';
 
 export default {
   name: 'ratings-edits',
@@ -75,10 +74,10 @@ export default {
           const rating = this.get('model.rating');
 
           if (rating && !this.get('model.includeRating')) {
-           Post.removeRating(post.id);
+           removeRating(post.id);
            this.get('topicController').toggleCanRate();
           } else {
-           Post.editRating(post.id, rating);
+           editRating(post.id, rating);
           }
         }
       });
