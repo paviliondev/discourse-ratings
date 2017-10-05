@@ -1,0 +1,7 @@
+<div itemscope itemtype="http://schema.org/CreativeWork">
+  <span itemprop="name"><%= @topic_view.topic.title %></span>
+  <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+    <span itemprop="ratingValue"><%= @topic_view.topic.average_rating %></span>
+    <span itemprop="ratingCount"><%= @topic_view.topic.posts.count { |p| !!p.custom_fields['rating'] } %></span>
+  </div>
+</div>
