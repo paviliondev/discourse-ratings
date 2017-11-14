@@ -135,17 +135,21 @@ span.star-rating {
   }
 }
 
-#reply-control .composer-controls-rating .rating-container {
-  display: inline-block;
-  background-color: $secondary;
-  padding: 6px 12px;
+#reply-control .composer-controls-rating {
+  margin-bottom: 10px;
 
-  input {
-    margin-bottom: 0;
-    margin-top: 2px;
-  }
+  .rating-container {
+    display: inline-block;
+    background-color: $secondary;
+    padding: 4px 8px;
 
-  input, span {
-    vertical-align: middle;
+    input {
+      margin-bottom: 0;
+      margin-top: 2px;
+    }
+
+    input, span {
+      vertical-align: middle;
+    }
   }
 }
