@@ -59,7 +59,10 @@ export default {
             if (this.get('model.showRating') && this.get('model.includeRating') && !this.get('model.rating')) {
               return bootbox.alert(I18n.t("composer.select_rating"));
             }
-            this.save();
+            this.save().then(() => {
+              const controller = this.get('topicController');
+              controller.toggleCanRate();
+            });
           }
         },
 
@@ -75,7 +78,8 @@ export default {
 
           if (rating && !this.get('model.includeRating')) {
            removeRating(post.id);
-           this.get('topicController').toggleCanRate();
+           const controller = this.get('topicController');
+           controller.toggleCanRate();
           } else {
            editRating(post.id, rating);
           }
