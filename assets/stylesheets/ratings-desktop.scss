@@ -136,14 +136,13 @@ span.star-rating {
 }
 
 #reply-control .composer-controls-rating {
-  float: left;
-  margin-bottom: 10px;
-
   .rating-container {
     display: inline-block;
     background-color: $secondary;
-    padding: 4px 8px;
+    border: 1px solid $primary-medium;
+    padding: 6px 10px;
     line-height: 17px;
+    margin-bottom: 10px;
 
     input {
       margin-bottom: 0;
