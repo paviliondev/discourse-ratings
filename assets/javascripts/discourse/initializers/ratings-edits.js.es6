@@ -56,12 +56,19 @@ export default {
       api.modifyClass('controller:composer', {
         actions: {
           save() {
-            if (this.get('model.showRating') && this.get('model.includeRating') && !this.get('model.rating')) {
+            const showRating = this.get('model.showRating');
+            const includeRating = this.get('model.includeRating');
+            const rating = this.get('model.rating');
+
+            if (showRating && includeRating && !rating) {
               return bootbox.alert(I18n.t("composer.select_rating"));
             }
+
             this.save().then(() => {
-              const controller = this.get('topicController');
-              controller.toggleCanRate();
+              if (showRating && includeRating && rating) {
+                const controller = this.get('topicController');
+                controller.toggleCanRate();
+              }
             });
           }
         },
