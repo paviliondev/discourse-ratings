@@ -26,6 +26,7 @@ after_initialize do
   end
 
   load File.expand_path('../controllers/rating.rb', __FILE__)
+  load File.expand_path('../serializers/rating_list.rb', __FILE__)
   load File.expand_path('../lib/ratings_helper.rb', __FILE__)
 
   TopicView.add_post_custom_fields_whitelister do |user|
