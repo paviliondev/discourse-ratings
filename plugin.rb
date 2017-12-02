@@ -3,7 +3,8 @@
 # version: 0.2
 # authors: Angus McLeod
 
-register_asset 'stylesheets/ratings-desktop.scss'
+register_asset 'stylesheets/common/ratings.scss'
+register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
 after_initialize do
 
