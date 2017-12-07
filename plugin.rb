@@ -75,11 +75,17 @@ after_initialize do
       is_rating_topic = self.subtype == 'rating'
       has_rating_tag || is_rating_category || is_rating_topic
     end
+
+    def rating_count
+      posts.count("id in (
+        SELECT post_id FROM post_custom_fields WHERE name = 'rating'
+      )")
+    end
   end
 
   require 'topic_view_serializer'
   class ::TopicViewSerializer
-    attributes :average_rating, :rating_enabled, :can_rate
+    attributes :average_rating, :rating_enabled, :rating_count, :can_rate
 
     def average_rating
       object.topic.average_rating
@@ -87,6 +93,10 @@ after_initialize do
 
     def rating_enabled
       object.topic.rating_enabled?
+    end
+
+    def rating_count
+      object.topic.rating_count
     end
 
     def can_rate

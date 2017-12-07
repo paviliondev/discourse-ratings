@@ -5,6 +5,9 @@ plugins:
   rating_show_exact_average:
     default: true
     client: true
+  rating_show_count:
+    default: false
+    client: true
   rating_tags:
     client: true
     type: list

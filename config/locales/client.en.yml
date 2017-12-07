@@ -16,5 +16,6 @@ en:
                     <li>Users can post without rating.</li></ul>"
   site_settings:
     rating_show_exact_average: "Show the exact numerical average next to a topic average rating."
+    rating_show_count: "Show count of ratings in topic next to average rating."
     rating_tags: "Tag(s) used to designate a topic as a ratings topic."
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"

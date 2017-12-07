@@ -2,7 +2,9 @@
   {{#if model.rating_enabled}}
     {{star-rating rating=model.average_rating}}
     {{#if this.siteSettings.rating_show_exact_average}}
-      <span class="title-text">({{model.average_rating}})</span>
+      <span class="title-text">
+        {{average-rating model}}
+      </span>
     {{/if}}
   {{else}}
     {{#if model.average_rating}}
