@@ -35,6 +35,7 @@ after_initialize do
   end
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
+  TopicList.preloaded_custom_fields << "rating_count" if TopicList.respond_to? :preloaded_custom_fields
 
   add_permitted_post_create_param('rating')
 
@@ -106,10 +107,14 @@ after_initialize do
 
   require 'topic_list_item_serializer'
   class ::TopicListItemSerializer
-    attributes :average_rating, :show_average
+    attributes :average_rating, :rating_count, :show_average
 
     def average_rating
       object.average_rating
+    end
+
+    def rating_count
+      object.rating_count
     end
 
     def show_average
