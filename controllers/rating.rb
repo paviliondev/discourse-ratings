@@ -18,8 +18,8 @@ class DiscourseRatings::RatingController < ::ApplicationController
 
     id = params[:post_id].to_i
     post = Post.find(id)
-    PostCustomField.destroy_all(post_id: id, name: "rating")
-    PostCustomField.destroy_all(post_id: id, name: "rating_weight")
+    PostCustomField.where(post_id: id, name: "rating").destroy_all
+    PostCustomField.where(post_id: id, name: "rating_weight").destroy_all
 
     RatingsHelper.handle_rating_update(post)
 
