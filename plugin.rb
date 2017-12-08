@@ -87,9 +87,10 @@ after_initialize do
     end
 
     def rating_count
-      self.posts.count("id in (
-        SELECT post_id FROM post_custom_fields WHERE name = 'rating'
-      )")
+      self.posts.where("id in (
+        (SELECT post_id FROM post_custom_fields WHERE name = 'rating') INTERSECT
+        (SELECT post_id FROM post_custom_fields WHERE name = 'rating_weight' AND value = '1')
+      )").count
     end
 
     def rating_target_id
