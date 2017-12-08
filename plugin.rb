@@ -7,7 +7,6 @@ register_asset 'stylesheets/common/ratings.scss'
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
 after_initialize do
-
   Category.register_custom_field_type('rating_enabled', :boolean)
 
   module ::DiscourseRatings
@@ -38,6 +37,7 @@ after_initialize do
   TopicList.preloaded_custom_fields << "rating_count" if TopicList.respond_to? :preloaded_custom_fields
 
   add_permitted_post_create_param('rating')
+  add_permitted_post_create_param('rating_target_id')
 
   DiscourseEvent.on(:post_created) do |post, opts, user|
     if opts[:rating]
@@ -64,6 +64,15 @@ after_initialize do
     end
   end
 
+  PostRevisor.track_topic_field(:rating_target_id)
+
+  PostRevisor.class_eval do
+    track_topic_field(:rating_target_id) do |tc, rating_target_id|
+      tc.record_change('rating_target_id', tc.topic.custom_fields['rating_target_id'], rating_target_id)
+      tc.topic.custom_fields['rating_target_id'] = rating_target_id
+    end
+  end
+
   require 'topic'
   class ::Topic
     def average_rating
@@ -78,18 +87,26 @@ after_initialize do
     end
 
     def rating_count
-      posts.count("id in (
+      self.posts.count("id in (
         SELECT post_id FROM post_custom_fields WHERE name = 'rating'
       )")
+    end
+
+    def rating_target_id
+      self.custom_fields["rating_target_id"]
     end
   end
 
   require 'topic_view_serializer'
   class ::TopicViewSerializer
-    attributes :average_rating, :rating_enabled, :rating_count, :can_rate
+    attributes :average_rating, :rating_enabled, :rating_count, :can_rate, :rating_target_id, :has_ratings
 
     def average_rating
       object.topic.average_rating
+    end
+
+    def include_average_rating?
+      has_ratings
     end
 
     def rating_enabled
@@ -100,21 +117,45 @@ after_initialize do
       object.topic.rating_count
     end
 
+    def include_rating_count?
+      has_ratings
+    end
+
+    def has_ratings
+      object.topic.rating_count.to_i > 0
+    end
+
     def can_rate
       scope.current_user && rating_enabled && !RatingsHelper.has_rated?(object, scope.current_user.id)
+    end
+
+    def rating_target_id
+      object.topic.rating_target_id
     end
   end
 
   require 'topic_list_item_serializer'
   class ::TopicListItemSerializer
-    attributes :average_rating, :rating_count, :show_average
+    attributes :average_rating, :rating_count, :show_average, :has_ratings
 
     def average_rating
       object.average_rating
     end
 
+    def include_average_rating?
+      has_ratings
+    end
+
     def rating_count
       object.rating_count
+    end
+
+    def include_rating_count?
+      has_ratings
+    end
+
+    def has_ratings
+      object.rating_count.to_i > 0
     end
 
     def show_average

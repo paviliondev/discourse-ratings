@@ -8,6 +8,8 @@ export default {
   initialize(){
 
     Composer.serializeOnCreate('rating');
+    Composer.serializeOnCreate('rating_target_id', 'rating_target_id');
+    Composer.serializeToTopic('rating_target_id', 'topic.rating_target_id');
 
     withPluginApi('0.8.10', api => {
       api.includePostAttributes('rating');
@@ -24,6 +26,8 @@ export default {
 
       api.modifyClass('model:composer', {
         includeRating: true,
+        includeRatingTargetId: false,
+        ratingTargetId: undefined,
 
         @on('init')
         @observes('post')
@@ -50,6 +54,23 @@ export default {
           if (topic.can_rate) return true;
 
           return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT);
+        },
+
+        @computed()
+        showRatingTargetId() {
+          const user = this.user;
+          return Discourse.SiteSettings.rating_target_id_enabled && user.admin;
+        },
+
+        @observes('topic.rating_target_id')
+        renderRatingTargetIdInput() {
+          const topicRatingTargetId = this.get('topic.rating_target_id');
+          const ratingTargetId = this.get('rating_target_id');
+          if (topicRatingTargetId && ratingTargetId === undefined) {
+            this.set('rating_target_id', topicRatingTargetId);
+            this.set('showRatingTargetId', false);
+            this.set('showRatingTargetId', true);
+          }
         }
       });
 

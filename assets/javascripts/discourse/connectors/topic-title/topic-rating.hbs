@@ -1,10 +1,14 @@
 <div class="average-rating">
   {{#if model.rating_enabled}}
-    {{star-rating rating=model.average_rating}}
-    {{#if this.siteSettings.rating_show_exact_average}}
-      <span class="title-text">
-        {{average-rating model}}
-      </span>
+    {{#if model.has_ratings}}
+      {{star-rating rating=model.average_rating}}
+      {{#if this.siteSettings.rating_show_exact_average}}
+        <span class="title-text">
+          {{average-rating model}}
+        </span>
+      {{/if}}
+    {{else}}
+      {{i18n 'topic.no_ratings'}}
     {{/if}}
   {{else}}
     {{#if model.average_rating}}

@@ -12,3 +12,6 @@ plugins:
     client: true
     type: list
     default: 'rating'
+  rating_target_id_enabled:
+    client: true
+    default: false

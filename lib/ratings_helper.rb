@@ -18,7 +18,7 @@ module RatingsHelper
       end
 
       average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
-      average = average.round(1)
+      average = average.round(1) if average
 
       topic.custom_fields["average_rating"] = average
       topic.save_custom_fields(true)

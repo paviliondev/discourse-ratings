@@ -5,8 +5,10 @@ en:
     composer:
       your_rating: "Add a rating"
       select_rating: "Please select a rating, or uncheck 'Add a rating'."
+      rating_target_id: "Rating target id"
     topic:
       hidden_ratings: "Topic has hidden ratings"
+      no_ratings: "No ratings yet"
       tip:
         ratings:
           title: "Rating Topic"
@@ -19,3 +21,4 @@ en:
     rating_show_count: "Show count of ratings in topic next to average rating."
     rating_tags: "Tag(s) used to designate a topic as a ratings topic."
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
+    rating_target_id_enabled: "Allows admins to associate rating topics with resource ids."
