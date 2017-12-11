@@ -1,8 +1,8 @@
 import { registerUnbound } from 'discourse-common/lib/helpers';
-import { unboundRating } from '../lib/rating-utilities';
+import { starRatingRaw } from '../lib/rating-utilities';
 
-registerUnbound('rating-unbound', function(rating) {
-  return new Handlebars.SafeString(unboundRating(rating));
+registerUnbound('star-rating-raw', function(rating, opts) {
+  return new Handlebars.SafeString(starRatingRaw(rating, opts));
 });
 
 registerUnbound('average-rating', function(topic) {

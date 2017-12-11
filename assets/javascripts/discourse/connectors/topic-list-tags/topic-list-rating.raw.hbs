@@ -1,10 +1,12 @@
 {{#if context.topic.show_average}}
   <div class="topic-rating">
     {{#if context.topic.has_ratings}}
-      {{rating-unbound context.topic.average_rating}}
-      {{#if context.siteSettings.rating_show_exact_average}}
-        <span class="exact-rating">{{average-rating context.topic}}</span>
-      {{/if}}
+      <a href='{{context.topic.url}}'>
+        {{star-rating-raw context.topic.average_rating clickable='true'}}
+        {{#if context.siteSettings.rating_show_exact_average}}
+          <span class="exact-rating">{{average-rating context.topic}}</span>
+        {{/if}}
+      </a>
     {{else}}
       {{i18n 'topic.no_ratings'}}
     {{/if}}

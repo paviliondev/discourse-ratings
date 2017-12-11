@@ -39,16 +39,25 @@ let editRating = function(postId, rating) {
   });
 };
 
-let unboundRating = function(rating) {
-  var stars = '';
-  for (var i = 0; i < 5; i++) {
-    var value = i + 1,
-        checked = value <= rating ? 'checked' : '',
-        disabled = disabled ? 'disabled' : '',
-        star = '<input type="radio" value="' + value + '" ' + checked + ' disabled><i></i>';
-    stars = stars.concat(star);
+let starRatingRaw = function(rating, opts = {}) {
+  let content = '';
+  for (let i = 0; i < 5; i++) {
+    let value = i + 1;
+    let checked = value <= rating ? 'checked' : '';
+    let disabled = opts.enabled ? '' : ' disabled';
+    let star = '';
+
+    if (opts.clickable) {
+      star += '<span class="' + checked + disabled + '"></span>';
+    } else {
+      star += '<input class="' + disabled + '"type="radio" value="' + value + '" ' + checked + disabled + '>';
+    }
+
+    star += '<i></i>';
+    content = content.concat(star);
   }
-  return '<span class="star-rating">' + stars + '</span>';
+
+  return '<span class="star-rating">' + content + '</span>';
 };
 
-export { ratingEnabled, removeRating, editRating, unboundRating };
+export { ratingEnabled, removeRating, editRating, starRatingRaw };

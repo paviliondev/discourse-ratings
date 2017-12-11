@@ -1,7 +1,7 @@
 import Composer from 'discourse/models/composer';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as computed, on, observes } from 'ember-addons/ember-computed-decorators';
-import { ratingEnabled, removeRating, editRating, unboundRating } from '../lib/rating-utilities';
+import { ratingEnabled, removeRating, editRating, starRatingRaw } from '../lib/rating-utilities';
 
 export default {
   name: 'ratings-edits',
@@ -19,7 +19,7 @@ export default {
         const model = helper.getModel();
 
         if (model && model.topic && model.topic.rating_enabled && rating) {
-          let html = new Handlebars.SafeString(unboundRating(rating));
+          let html = new Handlebars.SafeString(starRatingRaw(rating));
           return helper.rawHtml(`${html}`);
         }
       });
