@@ -46,6 +46,12 @@ after_initialize do
       post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
+
+    if opts[:rating_target_id]
+      topic = Topic.find(post.topic_id)
+      topic.custom_fields['rating_target_id'] = opts[:rating_target_id]
+      topic.save_custom_fields(true)
+    end
   end
 
   DiscourseEvent.on(:post_destroyed) do |post, opts, user|
