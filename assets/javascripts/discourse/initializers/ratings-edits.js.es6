@@ -56,10 +56,11 @@ export default {
           return topic.rating_enabled && post && post.rating && (this.get('action') === Composer.EDIT);
         },
 
-        @computed()
-        showRatingTargetId() {
+        @computed('ratingEnabled')
+        showRatingTargetId(enabled) {
           const user = this.user;
-          return Discourse.SiteSettings.rating_target_id_enabled && user.admin;
+          const setting = Discourse.SiteSettings.rating_target_id_enabled;
+          return enabled && setting && user.admin;
         },
 
         @observes('topic.rating_target_id')
