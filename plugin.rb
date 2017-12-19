@@ -6,6 +6,11 @@
 register_asset 'stylesheets/common/ratings.scss'
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
+Discourse.top_menu_items.push(:ratings)
+Discourse.anonymous_top_menu_items.push(:ratings)
+Discourse.filters.push(:ratings)
+Discourse.anonymous_filters.push(:ratings)
+
 after_initialize do
   Category.register_custom_field_type('rating_enabled', :boolean)
 
@@ -172,4 +177,13 @@ after_initialize do
 
   add_to_serializer(:basic_category, :rating_enabled) { object.custom_fields["rating_enabled"] }
   add_to_serializer(:post, :rating) { post_custom_fields["rating"] }
+
+  require_dependency 'topic_query'
+  class ::TopicQuery
+    def list_ratings
+      create_list(:ratings, ascending: 'true') do |topics|
+        topics.where(subtype: 'rating')
+      end
+    end
+  end
 end
