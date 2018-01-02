@@ -6,10 +6,9 @@ registerUnbound('star-rating-raw', function(rating, opts) {
 });
 
 registerUnbound('average-rating', function(topic) {
-  let html = `(${topic.average_rating}`;
+  let html = `${topic.average_rating}`;
   if (Discourse.SiteSettings.rating_show_count && topic.rating_count) {
-    html += `/${topic.rating_count}`;
+    html += ` – ${topic.rating_count} ${I18n.t('topic.rating_count')}`;
   }
-  html += ')';
   return new Handlebars.SafeString(html);
 });

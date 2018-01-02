@@ -3,7 +3,7 @@
     {{#if model.has_ratings}}
       {{star-rating-raw model.average_rating}}
       {{#if this.siteSettings.rating_show_exact_average}}
-        <span class="title-text">
+        <span class="exact-rating">
           {{average-rating model}}
         </span>
       {{/if}}
