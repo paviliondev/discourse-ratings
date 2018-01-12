@@ -2,6 +2,7 @@
 # about: A Discourse plugin that lets you use topics to rate things
 # version: 0.2
 # authors: Angus McLeod
+# url: https://github.com/angusmcleod/discourse-ratings
 
 register_asset 'stylesheets/common/ratings.scss'
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
