@@ -143,9 +143,11 @@ export default {
         unsubscribe() {
           const topicId = this.get('content.id');
           if (!topicId) return;
-
-          this.messageBus.unsubscribe('/topic/*');
-          this.set('unsubscribed', true);
+          const messageBus = this.messageBus;
+          if (messageBus) {
+            messageBus.unsubscribe('/topic/*');
+            this.set('unsubscribed', true);
+          }
         },
 
         @observes('unsubscribed', 'model.postStream')
