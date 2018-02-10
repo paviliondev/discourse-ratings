@@ -15,3 +15,9 @@ plugins:
   rating_target_id_enabled:
     client: true
     default: false
+  rating_topic_average_enabled:
+    client: true
+    default: true
+  rating_topic_list_average_enabled:
+    client: true
+    default: true

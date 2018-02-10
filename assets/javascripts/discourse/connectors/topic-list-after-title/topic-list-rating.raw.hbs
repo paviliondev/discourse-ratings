@@ -1,14 +1,16 @@
-{{#if context.topic.show_average}}
-  <div class="topic-rating">
-    {{#if context.topic.has_ratings}}
-      <a href='{{context.topic.url}}'>
-        {{star-rating-raw context.topic.average_rating clickable='true'}}
-        {{#if context.siteSettings.rating_show_exact_average}}
-          <span class="exact-rating">{{average-rating context.topic}}</span>
-        {{/if}}
-      </a>
-    {{else}}
-      {{i18n 'topic.no_ratings'}}
-    {{/if}}
-  </div>
+{{#if context.siteSettings.rating_topic_list_average_enabled}}
+  {{#if context.topic.show_average}}
+    <div class="topic-rating">
+      {{#if context.topic.has_ratings}}
+        <a href='{{context.topic.url}}'>
+          {{star-rating-raw context.topic.average_rating clickable='true'}}
+          {{#if context.siteSettings.rating_show_exact_average}}
+            <span class="exact-rating">{{average-rating context.topic}}</span>
+          {{/if}}
+        </a>
+      {{else}}
+        {{i18n 'topic.no_ratings'}}
+      {{/if}}
+    </div>
+  {{/if}}
 {{/if}}

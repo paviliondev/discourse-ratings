@@ -1,31 +1,32 @@
-<div class="average-rating">
-  {{#if model.rating_enabled}}
-    {{#if model.has_ratings}}
-      {{star-rating-raw model.average_rating}}
-      {{#if this.siteSettings.rating_show_exact_average}}
-        <span class="exact-rating">
-          {{average-rating model}}
-        </span>
+{{#if siteSettings.rating_topic_average_enabled}}
+  <div class="average-rating">
+    {{#if model.rating_enabled}}
+      {{#if model.has_ratings}}
+        {{star-rating-raw model.average_rating}}
+        {{#if this.siteSettings.rating_show_exact_average}}
+          <span class="exact-rating">
+            {{average-rating model}}
+          </span>
+        {{/if}}
+      {{else}}
+        {{i18n 'topic.no_ratings'}}
       {{/if}}
     {{else}}
-      {{i18n 'topic.no_ratings'}}
-    {{/if}}
-  {{else}}
-    {{#if model.average_rating}}
-      {{#if currentUser.admin}}
-        <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
+      {{#if model.average_rating}}
+        {{#if currentUser.admin}}
+          <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
+        {{/if}}
       {{/if}}
     {{/if}}
-  {{/if}}
-</div>
-
-<div class="topic-tip">
-  {{#if model.showRatingTip}}
+  </div>
+{{/if}}
+{{#if model.showRatingTip}}
+  <div class="topic-tip">
     {{d-button class="btn btn-small" action="toggleDetails" label="topic.tip.ratings.title" icon="info"}}
     {{#if showDetails}}
       <div class="tip-details">
         {{{i18n 'topic.tip.ratings.details'}}}
       </div>
     {{/if}}
-  {{/if}}
-</div>
+  </div>
+{{/if}}

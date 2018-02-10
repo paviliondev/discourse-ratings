@@ -27,3 +27,5 @@ en:
     rating_tags: "Tag(s) used to designate a topic as a ratings topic."
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
     rating_target_id_enabled: "Allows admins to associate rating topics with resource ids."
+    rating_topic_average_enabled: "Show the average of all ratings in topic under the topic title."
+    rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
