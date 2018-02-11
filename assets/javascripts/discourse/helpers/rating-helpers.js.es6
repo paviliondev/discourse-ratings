@@ -5,10 +5,10 @@ registerUnbound('star-rating-raw', function(rating, opts) {
   return new Handlebars.SafeString(starRatingRaw(rating, opts));
 });
 
-registerUnbound('average-rating', function(topic) {
-  let html = `${topic.average_rating}`;
-  if (Discourse.SiteSettings.rating_show_count && topic.rating_count) {
-    html += ` – ${topic.rating_count} ${I18n.t('topic.rating_count')}`;
+registerUnbound('average-rating', function(average, args = {}) {
+  let html = `${average}`;
+  if (Discourse.SiteSettings.rating_show_count && args.count) {
+    html += ` – ${args.count} ${I18n.t('topic.rating_count')}`;
   }
   return new Handlebars.SafeString(html);
 });

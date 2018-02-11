@@ -5,7 +5,9 @@
         <a href='{{context.topic.url}}'>
           {{star-rating-raw context.topic.average_rating clickable='true'}}
           {{#if context.siteSettings.rating_show_exact_average}}
-            <span class="exact-rating">{{average-rating context.topic}}</span>
+            <span class="exact-rating">
+              {{average-rating context.topic.average_rating count=context.topic.rating_count}}
+            </span>
           {{/if}}
         </a>
       {{else}}

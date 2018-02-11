@@ -167,8 +167,11 @@ export default {
 
             this.messageBus.subscribe("/topic/" + model.id, function(data) {
               if (data.type === 'revised') {
-                if (data.average !== undefined) {
-                  model.set('average_rating', data.average);
+                if (data.average_rating !== undefined) {
+                  model.set('average_rating', data.average_rating);
+                }
+                if (data.rating_count !== undefined) {
+                  model.set('rating_count', data.rating_count);
                 }
                 if (data.post_id !== undefined) {
                   model.get('postStream').triggerChangedPost(data.post_id, data.updated_at).then(() =>

@@ -14,6 +14,7 @@ Discourse.anonymous_filters.push(:ratings)
 
 after_initialize do
   Category.register_custom_field_type('rating_enabled', :boolean)
+  Topic.register_custom_field_type('rating_count', :integer)
 
   module ::DiscourseRatings
     class Engine < ::Rails::Engine
@@ -99,10 +100,16 @@ after_initialize do
     end
 
     def rating_count
-      self.posts.where("id in (
-        (SELECT post_id FROM post_custom_fields WHERE name = 'rating') INTERSECT
-        (SELECT post_id FROM post_custom_fields WHERE name = 'rating_weight' AND value = '1')
-      )").count
+      if self.custom_fields['rating_count']
+        self.custom_fields['rating_count'].to_i
+      else
+        ## 'mirgration' - to be removed
+        if rating_enabled? && average_rating.present?
+          RatingsHelper.update_rating_count(Topic.find(self.id))
+        else
+          0
+        end
+      end
     end
 
     def rating_target_id
@@ -119,7 +126,7 @@ after_initialize do
     end
 
     def include_average_rating?
-      has_ratings
+      SiteSetting.rating_topic_average_enabled && has_ratings
     end
 
     def rating_enabled
@@ -135,7 +142,7 @@ after_initialize do
     end
 
     def has_ratings
-      object.topic.rating_count.to_i > 0
+      object.topic.rating_count > 0
     end
 
     def can_rate
@@ -156,7 +163,7 @@ after_initialize do
     end
 
     def include_average_rating?
-      has_ratings
+      SiteSetting.rating_topic_list_average_enabled && has_ratings
     end
 
     def rating_count
@@ -168,7 +175,7 @@ after_initialize do
     end
 
     def has_ratings
-      object.rating_count.to_i > 0
+      object.rating_count > 0
     end
 
     def show_average

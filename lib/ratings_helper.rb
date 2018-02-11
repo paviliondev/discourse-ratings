@@ -1,8 +1,21 @@
 module RatingsHelper
   class << self
     def handle_rating_update(post)
+      count = update_rating_count(post.topic)
       average = calculate_topic_average(post.topic)
-      push_ratings_to_clients(post.topic, average, post.id)
+      push_ratings_to_clients(post.topic, average, count, post.id)
+    end
+
+    def update_rating_count(topic)
+      count = topic.posts.where("id in (
+        (SELECT post_id FROM post_custom_fields WHERE name = 'rating') INTERSECT
+        (SELECT post_id FROM post_custom_fields WHERE name = 'rating_weight' AND value = '1')
+      )").count
+
+      topic.custom_fields['rating_count'] = count
+      topic.save_custom_fields(true)
+
+      count
     end
 
     def calculate_topic_average(topic)
@@ -23,14 +36,15 @@ module RatingsHelper
       topic.custom_fields["average_rating"] = average
       topic.save_custom_fields(true)
 
-      return average
+      average
     end
 
-    def push_ratings_to_clients(topic, average, updatedId = '')
+    def push_ratings_to_clients(topic, average, count, updatedId = '')
       channel = "/topic/#{topic.id}"
       msg = {
         updated_at: Time.now,
-        average: average,
+        average_rating: average,
+        rating_count: count,
         post_id: updatedId,
         type: "revised"
       }

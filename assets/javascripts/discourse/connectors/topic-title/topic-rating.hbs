@@ -5,7 +5,7 @@
         {{star-rating-raw model.average_rating}}
         {{#if this.siteSettings.rating_show_exact_average}}
           <span class="exact-rating">
-            {{average-rating model}}
+            {{average-rating model.average_rating count=model.rating_count}}
           </span>
         {{/if}}
       {{else}}
