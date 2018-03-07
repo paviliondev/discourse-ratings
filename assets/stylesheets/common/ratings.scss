@@ -132,8 +132,23 @@ span.star-rating {
 }
 
 .topic-list {
+  a {
+    vertical-align: middle;
+  }
   .topic-rating {
-    margin-left: 7px;
+    display: inline-block;
+
+    a {
+      vertical-align: top;
+    }
+  }
+
+  .topic-rating + .topic-post-badges {
+    vertical-align: middle;
+
+    .badge-notification {
+      top: initial;
+    }
   }
 }
 

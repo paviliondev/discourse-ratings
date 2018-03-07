@@ -1,7 +1,7 @@
 {{#if context.siteSettings.rating_topic_list_average_enabled}}
   {{#if context.topic.show_average}}
-    <div class="topic-rating">
-      {{#if context.topic.has_ratings}}
+    {{#if context.topic.has_ratings}}
+      <div class="topic-rating">
         <a href='{{context.topic.url}}'>
           {{star-rating-raw context.topic.average_rating clickable='true'}}
           {{#if context.siteSettings.rating_show_exact_average}}
@@ -10,7 +10,7 @@
             </span>
           {{/if}}
         </a>
-      {{/if}}
-    </div>
+      </div>
+    {{/if}}
   {{/if}}
 {{/if}}
