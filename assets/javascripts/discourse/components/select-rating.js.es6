@@ -1,4 +1,5 @@
 export default Ember.Component.extend({
   tagName: "div",
-  classNames: ["rating-container"]
+  classNames: ["rating-container"],
+  showIncludeRating: true
 });
