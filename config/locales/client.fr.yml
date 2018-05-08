@@ -1,26 +1,26 @@
 fr:
   js:
     category:
-      enable_rating: "Use topics in this category to rate things."
+      enable_rating: "Utiliser les publications dans cette catégorie pour noter."
     composer:
       your_rating: "Ajouter une note"
       select_rating: "SVP ajoutez une note ou décochez 'Ajouter une note'."
-      rating_target_id: "Rating target id"
+      rating_target_id: "id cible de la note"
     topic:
-      hidden_ratings: "Le sujet a des notes cachés"
+      hidden_ratings: "La publication a des notes cachés"
       no_ratings: "Aucune note"
       rating_count: "Notes"
       tip:
         ratings:
-          title: "Rating Topic"
-          details: "Users can rate the subject of the topic.
-                    <ul><li>Each user is allowed one rating.</li>
-                    <li>Each rating must be attached to a post.</li>
-                    <li>Users can post without rating.</li></ul>"
+          title: "Sujet avec notes"
+          details: "Les utilisateurs peuvent noter cette publication.
+                    <ul><li>Chaque utilisateur peut noter une seule fois.</li>
+                    <li>Chaque note doit être attaché à une publication.</li>
+                    <li>Les utilisateurs peuvent publier sans noter.</li></ul>"
     filters:
       ratings:
-        title: "Ratings"
-        help: "List latest ratings."
+        title: "Notes"
+        help: "La liste des dernières notes."
   site_settings:
     rating_show_exact_average: "Show the exact numerical average next to a topic average rating."
     rating_show_count: "Show count of ratings in topic next to average rating."
