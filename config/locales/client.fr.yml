@@ -1,0 +1,31 @@
+fr:
+  js:
+    category:
+      enable_rating: "Utiliser les publications dans cette catégorie pour noter."
+    composer:
+      your_rating: "Ajouter une note"
+      select_rating: "SVP ajoutez une note ou décochez 'Ajouter une note'."
+      rating_target_id: "id cible de la note"
+    topic:
+      hidden_ratings: "La publication a des notes cachés"
+      no_ratings: "Aucune note"
+      rating_count: "Notes"
+      tip:
+        ratings:
+          title: "Sujet avec notes"
+          details: "Les utilisateurs peuvent noter cette publication.
+                    <ul><li>Chaque utilisateur peut noter une seule fois.</li>
+                    <li>Chaque note doit être attaché à une publication.</li>
+                    <li>Les utilisateurs peuvent publier sans noter.</li></ul>"
+    filters:
+      ratings:
+        title: "Notes"
+        help: "La liste des dernières notes."
+  site_settings:
+    rating_show_exact_average: "Show the exact numerical average next to a topic average rating."
+    rating_show_count: "Show count of ratings in topic next to average rating."
+    rating_tags: "Tag(s) used to designate a topic as a ratings topic."
+    rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
+    rating_target_id_enabled: "Allows admins to associate rating topics with resource ids."
+    rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."
+    rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
