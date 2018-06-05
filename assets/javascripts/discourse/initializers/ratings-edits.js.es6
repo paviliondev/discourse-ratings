@@ -25,16 +25,27 @@ export default {
       });
 
       api.modifyClass('model:composer', {
-        includeRating: true,
+        includeRating: false,
         includeRatingTargetId: false,
         ratingTargetId: undefined,
 
         @on('init')
-        @observes('post')
+        @observes('post', 'ratingEnabled')
         setRating() {
           const post = this.get('post');
-          if (this.get('editingPost') && post && post.rating) {
-            this.set('rating', post.rating);
+          const editing = this.get('editingPost');
+          const creating = this.get('creatingTopic');
+          const enabled = this.get('ratingEnabled');
+
+          if (editing && post && post.rating) {
+            this.setProperties({
+              rating: post.rating,
+              includeRating: true
+            });
+          }
+
+          if (enabled && creating) {
+            this.set('includeRating', true);
           }
         },
 
