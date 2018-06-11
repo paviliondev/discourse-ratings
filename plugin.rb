@@ -100,8 +100,8 @@ after_initialize do
     end
 
     def rating_count
-      if self.custom_fields['rating_count']
-        self.custom_fields['rating_count'].to_i
+      if count = self.custom_fields['rating_count']
+        count.is_a?(Array) ? count[0].to_i : count.to_i
       else
         ## 'mirgration' - to be removed
         if rating_enabled? && average_rating.present?
