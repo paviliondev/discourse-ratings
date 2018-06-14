@@ -12,7 +12,7 @@ en:
       rating_count: "Ratings"
       tip:
         ratings:
-          title: "Rating Topic"
+          title: "Rating"
           details: "Users can rate the subject of the topic.
                     <ul><li>Each user is allowed one rating.</li>
                     <li>Each rating must be attached to a post.</li>
