@@ -97,12 +97,16 @@ export default {
               return bootbox.alert(I18n.t("composer.select_rating"));
             }
 
-            this.save().then(() => {
-              if (showRating && includeRating && rating) {
-                const controller = this.get('topicController');
-                controller.toggleCanRate();
-              }
-            });
+            let result = this.save();
+
+            if (result) {
+              Promise.resolve(result).then(() => {
+                if (showRating && includeRating && rating) {
+                  const controller = this.get('topicController');
+                  controller.toggleCanRate();
+                }
+              });
+            };
           }
         },
 
