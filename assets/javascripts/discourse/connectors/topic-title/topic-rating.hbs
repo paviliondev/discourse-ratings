@@ -21,12 +21,5 @@
   </div>
 {{/if}}
 {{#if model.showRatingTip}}
-  <div class="topic-tip">
-    {{d-button class="btn btn-small" action="toggleDetails" label="topic.tip.ratings.title" icon="info"}}
-    {{#if showDetails}}
-      <div class="tip-details">
-        {{{i18n 'topic.tip.ratings.details'}}}
-      </div>
-    {{/if}}
-  </div>
+  {{topic-tip label='topic.tip.ratings.title' details='topic.tip.ratings.details'}}
 {{/if}}
