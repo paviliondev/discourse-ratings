@@ -89,7 +89,9 @@ after_initialize do
   require 'topic'
   class ::Topic
     def average_rating
-      self.custom_fields["average_rating"].to_f
+      if average = self.custom_fields["average_rating"]
+        average.is_a?(Array) ? average[0].to_f : average.to_f
+      end
     end
 
     def rating_enabled?
