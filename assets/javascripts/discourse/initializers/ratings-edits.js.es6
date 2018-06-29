@@ -117,15 +117,19 @@ export default {
              || this.get('model.action') !== Composer.EDIT
              || this.get('model.composeState') !== Composer.SAVING) { return; }
 
-          const post = this.get('model.post');
           const rating = this.get('model.rating');
 
-          if (rating && !this.get('model.includeRating')) {
-           removeRating(post.id);
-           const controller = this.get('topicController');
-           controller.toggleCanRate();
-          } else {
-           editRating(post.id, rating);
+          if (rating) {
+            const post = this.get('model.post');
+            const includeRating = this.get('model.includeRating');
+
+            if (includeRating) {
+              editRating(post.id, rating);
+            } else {
+              removeRating(post.id);
+              const controller = this.get('topicController');
+              controller.toggleCanRate();
+            }
           }
         }
       });
