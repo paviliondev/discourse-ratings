@@ -2,10 +2,9 @@
   margin-left: 2px;
 }
 
-.exact-rating {
+.exact-rating, .rating-count {
   vertical-align: middle;
   display: inline-block;
-  height: 17px;
   color: #777;
   margin-left: 2px;
 }
@@ -58,6 +57,7 @@
 }
 
 span.star-rating {
+  margin-bottom: 2px;
   vertical-align: middle;
   font-size: 0;
   padding: 0;

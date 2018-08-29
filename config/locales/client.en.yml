@@ -9,7 +9,9 @@ en:
     topic:
       hidden_ratings: "Topic has hidden ratings"
       no_ratings: "No ratings yet"
-      rating_count: "Ratings"
+      x_rating_count:
+        one: "rating"
+        other: "ratings"
       tip:
         ratings:
           title: "Rating"

@@ -6,7 +6,13 @@
           {{star-rating-raw context.topic.average_rating clickable='true'}}
           {{#if context.siteSettings.rating_show_exact_average}}
             <span class="exact-rating">
-              {{average-rating context.topic.average_rating count=context.topic.rating_count}}
+              ({{context.topic.average_rating}})
+            </span>
+          {{/if}}
+          {{#if context.siteSettings.rating_show_count}}
+            <span class="rating-count">
+              {{context.topic.rating_count}}
+              {{i18n 'topic.x_rating_count' count=context.topic.rating_count}}
             </span>
           {{/if}}
         </a>

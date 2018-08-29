@@ -195,5 +195,13 @@ after_initialize do
         topics.where(subtype: 'rating')
       end
     end
+
+    def list_top_ratings
+      create_list(:top_ratings, unordered: true) do |topics|
+        topics.where(subtype: 'rating')
+          .joins("left join topic_custom_fields tfv ON tfv.topic_id = topics.id AND tfv.name = 'average_rating'")
+          .order("coalesce(tfv.value,'0')::float desc, topics.bumped_at desc")
+      end
+    end
   end
 end
