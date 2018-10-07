@@ -23,4 +23,4 @@ export default Ember.Component.extend({
       this.toggleProperty('showDetails');
     }
   }
-})
+});
