@@ -1,0 +1,24 @@
+he:
+  js:
+    category:
+      enable_rating: "בקטגוריה זו ניתן להוסיף דירוג כוכבים לכל נושא."
+    composer:
+      your_rating: "הוספת דירוג כוכבים"
+      select_rating: "יש לבחור מספר כוכבים"
+    topic:
+      hidden_ratings: ""
+      no_ratings: "היו הראשונים לדרג!"
+      x_rating_count:
+        one: "דירוג"
+        other: "דירוג"
+      tip:
+        ratings:
+          title: "דירוג כוכבים"
+          details: "כל משתמש יכול לדרג!
+                    <ul><li>לכל משתמש מותר לדרג פעם אחת.</li>
+                    <li>את הדירוג עושים בתגובה שלכם.</li>
+                    <li>לא חובה לדרג! אפשר סתם לשאול שאלה או להגיב בלי דירוג.</li></ul>"
+    filters:
+      ratings:
+        title: "ביקורות"
+        help: "רשימת ביקורות אחרונות."
