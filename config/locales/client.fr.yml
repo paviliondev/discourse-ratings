@@ -9,14 +9,14 @@ fr:
     topic:
       hidden_ratings: "La publication a des notes cachés"
       no_ratings: "Aucune note"
-      rating_count: "Notes"
+      x_rating_count:
+        one: "évaluation"
+        other: "évaluations"
+
       tip:
         ratings:
           title: "Sujet avec notes"
-          details: "Les utilisateurs peuvent noter cette publication.
-                    <ul><li>Chaque utilisateur peut noter une seule fois.</li>
-                    <li>Chaque note doit être attaché à une publication.</li>
-                    <li>Les utilisateurs peuvent publier sans noter.</li></ul>"
+          details: "Les utilisateurs peuvent noter cette publication. <ul><li>Chaque utilisateur peut noter une seule fois.</li> <li>Chaque note doit être attaché à une publication.</li> <li>Les utilisateurs peuvent publier sans noter.</li></ul>"
     filters:
       ratings:
         title: "Notes"
