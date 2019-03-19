@@ -185,6 +185,7 @@ after_initialize do
     end
   end
 
+  Site.preloaded_category_custom_fields << 'rating_enabled' if Site.respond_to? :preloaded_category_custom_fields
   add_to_serializer(:basic_category, :rating_enabled) { object.custom_fields["rating_enabled"] }
   add_to_serializer(:post, :rating) { post_custom_fields["rating"] }
 
