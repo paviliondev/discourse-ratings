@@ -9,6 +9,11 @@ export default Ember.Component.extend({
     this.$().prop('type', 'radio');
   },
 
+  didRender() {
+    // For IE support
+    this.element.value = this.value;
+  },
+
   click() {
     this.set("rating", this.$().val());
   },
