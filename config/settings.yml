@@ -1,4 +1,7 @@
 plugins:
+  rating_enabled:
+    default: true
+    client: true
   rating_show_topic_tip:
     default: true
     client: true

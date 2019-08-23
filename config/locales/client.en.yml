@@ -24,6 +24,7 @@ en:
         title: "Ratings"
         help: "List latest ratings."
   site_settings:
+    rating_enabled: "Enable ratings."
     rating_show_exact_average: "Show the exact numerical average next to a topic average rating."
     rating_show_count: "Show count of ratings in topic next to average rating."
     rating_tags: "Tag(s) used to designate a topic as a ratings topic."

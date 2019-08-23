@@ -4,6 +4,8 @@
 # authors: Angus McLeod
 # url: https://github.com/angusmcleod/discourse-ratings
 
+enabled_site_setting :rating_enabled
+
 register_asset 'stylesheets/common/ratings.scss'
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
