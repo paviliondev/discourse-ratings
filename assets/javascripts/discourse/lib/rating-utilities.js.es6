@@ -1,8 +1,9 @@
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
+import Category from 'discourse/models/category';
 
 let ratingEnabled = function(type, tags, categoryId) {
-  let category = Discourse.Category.findById(categoryId),
+  let category = Category.findById(categoryId),
       catEnabled = category && category.rating_enabled,
       tagEnabled = tags && tags.filter(function(t){
                       return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) !== -1;
