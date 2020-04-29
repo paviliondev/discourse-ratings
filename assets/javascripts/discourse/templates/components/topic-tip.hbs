@@ -1,4 +1,6 @@
-{{d-button class="btn btn-small" action="toggleDetails" label=label icon='info'}}
+<a {{action "toggleDetails"}}>
+  {{d-icon "info-circle"}}
+</a>
 {{#if showDetails}}
   <div class="tip-details">
     {{{i18n details}}}

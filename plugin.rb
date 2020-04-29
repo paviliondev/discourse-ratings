@@ -9,6 +9,8 @@ enabled_site_setting :rating_enabled
 register_asset 'stylesheets/common/ratings.scss'
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
+register_svg_icon "info" if respond_to?(:register_svg_icon)
+
 Discourse.top_menu_items.push(:ratings)
 Discourse.anonymous_top_menu_items.push(:ratings)
 Discourse.filters.push(:ratings)

@@ -25,6 +25,7 @@
     }
 
     .fa {
+      color: $primary-medium;
       margin-right: 2px;
     }
   }
@@ -34,7 +35,7 @@
     box-shadow: shadow('dropdown');
     padding: 10px 15px;
     position: absolute;
-    top: 22px;
+    top: 20px;
     z-index: 10;
     width: 300px;
 
