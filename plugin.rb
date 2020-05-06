@@ -40,17 +40,19 @@ after_initialize do
   load File.expand_path('../serializers/rating_list.rb', __FILE__)
   load File.expand_path('../lib/ratings_helper.rb', __FILE__)
 
-  TopicView.add_post_custom_fields_whitelister do |user|
-    ["rating", "rating_weight"]
+  topic_view_post_custom_fields_whitelister do |user|
+    # ["rating", "rating_weight"]
+    ["ratings"]
   end
 
-  TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
-  TopicList.preloaded_custom_fields << "rating_count" if TopicList.respond_to? :preloaded_custom_fields
+  TopicList.preloaded_custom_fields << "ratings" if TopicList.respond_to? :preloaded_custom_fields
+  # TopicList.preloaded_custom_fields << "rating_count" if TopicList.respond_to? :preloaded_custom_fields
 
-  add_permitted_post_create_param('rating')
-  add_permitted_post_create_param('rating_target_id')
+  add_permitted_post_create_param('ratings')
+  # add_permitted_post_create_param('rating_target_id')
 
   DiscourseEvent.on(:post_created) do |post, opts, user|
+    ## tighten this logic not to depend on client for access control
     if opts[:rating]
       post.custom_fields['rating'] = opts[:rating]
       post.custom_fields["rating_weight"] = 1
@@ -92,12 +94,24 @@ after_initialize do
 
   require 'topic'
   class ::Topic
-    def average_rating
-      if average = self.custom_fields["average_rating"]
-        average.is_a?(Array) ? average[0].to_f : average.to_f
+    # def average_rating
+    #   if average = self.custom_fields["average_rating"]
+    #     average.is_a?(Array) ? average[0].to_f : average.to_f
+    #   end
+    # end
+    def ratings
+      ratings_fields = self.custom_fields.filter { |k,v| k.include?('average_rating_') || k.include?('rating_count_') }
+      rating_type_ids = ratings_fields.map{ |k, v| k.split("_")[2] }.uniq
+      rating_array = []
+      rating_type_ids.each do |id|
+        rating_array << {'rating_type' => id,
+                        'average_rating' => self.custom_fields['average_rating_'+id],
+                        'rating_count' => self.custom_fields['rating_count_'+id] 
+                        }
       end
-    end
 
+      rating_array 
+    end
     def rating_enabled?
       has_rating_tag = !(tags & SiteSetting.rating_tags.split('|')).empty?
       is_rating_category = self.category && self.category.custom_fields["rating_enabled"]
@@ -105,18 +119,18 @@ after_initialize do
       has_rating_tag || is_rating_category || is_rating_topic
     end
 
-    def rating_count
-      if count = self.custom_fields['rating_count']
-        count.is_a?(Array) ? count[0].to_i : count.to_i
-      else
-        ## 'mirgration' - to be removed
-        if rating_enabled? && average_rating.present?
-          RatingsHelper.update_rating_count(Topic.find(self.id))
-        else
-          0
-        end
-      end
-    end
+    # def rating_count
+    #   if count = self.custom_fields['rating_count']
+    #     count.is_a?(Array) ? count[0].to_i : count.to_i
+    #   else
+    #     ## 'mirgration' - to be removed
+    #     if rating_enabled? && average_rating.present?
+    #       RatingsHelper.update_rating_count(Topic.find(self.id))
+    #     else
+    #       0
+    #     end
+    #   end
+    # end
 
     def rating_target_id
       self.custom_fields["rating_target_id"]
@@ -125,67 +139,58 @@ after_initialize do
 
   require 'topic_view_serializer'
   class ::TopicViewSerializer
-    attributes :average_rating, :rating_enabled, :rating_count, :can_rate, :rating_target_id, :has_ratings
+    attributes :rating_enabled, :ratings, :can_rate, :rating_target_id, :has_ratings
 
-    def average_rating
-      object.topic.average_rating
-    end
+    # def average_ratings
+    #   object.topic.average_rating
+    # end
 
-    def include_average_rating?
-      SiteSetting.rating_topic_average_enabled && has_ratings
-    end
+    # def include_average_ratings?
+    #   SiteSetting.rating_topic_average_enabled && has_ratings
+    # end
 
     def rating_enabled
       object.topic.rating_enabled?
     end
 
-    def rating_count
-      object.topic.rating_count
+    # def rating_counts
+    #   object.topic.rating_count
+    # end
+    def ratings
+      object.topic.ratings
     end
 
-    def include_rating_count?
+    def include_ratings?
       has_ratings
     end
 
     def has_ratings
-      object.topic.rating_count > 0
+      object.topic.ratings.length > 0
     end
 
     def can_rate
       scope.current_user && rating_enabled && !RatingsHelper.has_rated?(object, scope.current_user.id)
     end
 
-    def rating_target_id
-      object.topic.rating_target_id
-    end
+    # def rating_target_id
+    #   object.topic.rating_target_id
+    # end
   end
 
   require 'topic_list_item_serializer'
   class ::TopicListItemSerializer
-    attributes :average_rating, :rating_count, :show_average, :has_ratings
+    attributes :ratings :has_ratings
 
-    def average_rating
-      object.average_rating
+    def ratings
+      object.ratings
     end
-
-    def include_average_rating?
-      SiteSetting.rating_topic_list_average_enabled && has_ratings
-    end
-
-    def rating_count
-      object.rating_count
-    end
-
-    def include_rating_count?
+    
+    def include_ratings?
       has_ratings
     end
 
     def has_ratings
-      object.rating_count > 0
-    end
-
-    def show_average
-      object.rating_enabled?
+      object.ratings.length > 0
     end
   end
 
