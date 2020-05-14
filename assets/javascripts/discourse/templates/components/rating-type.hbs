@@ -1,0 +1,17 @@
+{{input value=type.value}}
+{{#if newType}}
+  {{d-button
+    class="btn-default"
+    action=(action "add")
+    label="ratings.rating_types.add"}}
+{{else}}
+  {{d-button
+    class="btn-default"
+    action=(action "update")
+    label="ratings.rating_types.update"}}
+
+  {{d-button
+    class="btn-default btn-danger"
+    action=(action "delete")
+    label="ratings.rating_types.delete"}}
+{{/if}}

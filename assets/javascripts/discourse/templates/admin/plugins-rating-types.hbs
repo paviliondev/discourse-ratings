@@ -1,0 +1,14 @@
+<h3>{{i18n 'ratings.rating_types.heading'}}</h3>
+
+{{#each types as |type|}}
+  {{rating-type type=type}}
+{{/each}}
+
+{{#if newType}}
+  {{rating-type  value=newRatingType newType=true added=(action 'addToList')}}
+{{/if}}
+
+{{d-button
+  class="btn-default"
+  action=(action "add")
+  label="ratings.rating_types.new"}}
