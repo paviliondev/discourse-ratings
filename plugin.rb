@@ -17,8 +17,12 @@ Discourse.filters.push(:ratings)
 Discourse.anonymous_filters.push(:ratings)
 
 after_initialize do
-  Category.register_custom_field_type('rating_enabled', :boolean)
-  Topic.register_custom_field_type('rating_count', :integer)
+  add_admin_route 'ratings.rating_types.settings_page', 'rating-types'
+
+  register_category_custom_field_type('rating_enabled', :boolean)
+  register_topic_custom_field_type('ratings', :json)
+  register_post_custom_field_type('ratings', :json)
+  register_category_custom_field_type('rating_types', :json)
 
   module ::DiscourseRatings
     class Engine < ::Rails::Engine
@@ -30,30 +34,41 @@ after_initialize do
   DiscourseRatings::Engine.routes.draw do
     post "/rate" => "rating#rate"
     post "/remove" => "rating#remove"
+
+    post "/add_type" => "rating_types#add", constraints: StaffConstraint.new 
+    put "/update_type" => "rating_types#update", constraints: StaffConstraint.new
+    get "/list_types" => "rating_types#list", constraints: StaffConstraint.new
+    delete "/delete_type" => "rating_types#destroy", constraints: StaffConstraint.new
   end
 
   Discourse::Application.routes.append do
+    get '/admin/plugins/rating-types' => 'admin/plugins#index', constraints: StaffConstraint.new
     mount ::DiscourseRatings::Engine, at: "rating"
   end
 
   load File.expand_path('../controllers/rating.rb', __FILE__)
+  load File.expand_path('../controllers/rating_types.rb', __FILE__)
   load File.expand_path('../serializers/rating_list.rb', __FILE__)
   load File.expand_path('../lib/ratings_helper.rb', __FILE__)
 
   TopicView.add_post_custom_fields_whitelister do |user|
-    ["rating", "rating_weight"]
+    ['ratings']
   end
 
   TopicList.preloaded_custom_fields << "average_rating" if TopicList.respond_to? :preloaded_custom_fields
   TopicList.preloaded_custom_fields << "rating_count" if TopicList.respond_to? :preloaded_custom_fields
-
-  add_permitted_post_create_param('rating')
+  TopicList.preloaded_custom_fields << "ratings" if TopicList.respond_to? :preloaded_custom_fields
+  add_permitted_post_create_param('ratings', :hash)
   add_permitted_post_create_param('rating_target_id')
 
   DiscourseEvent.on(:post_created) do |post, opts, user|
-    if opts[:rating]
-      post.custom_fields['rating'] = opts[:rating]
-      post.custom_fields["rating_weight"] = 1
+    if opts[:ratings]
+      ratingsParams = opts[:ratings]
+      ratings = []
+      ratingsParams.each do |_, rating|
+        ratings << {rating_type_id: rating[:id], rating: rating[:value], rating_weight: 1 }
+      end
+      post.custom_fields['ratings'] = ratings
       post.save_custom_fields(true)
       RatingsHelper.handle_rating_update(post)
     end
@@ -92,6 +107,10 @@ after_initialize do
 
   require 'topic'
   class ::Topic
+    def ratings
+    self.custom_fields['ratings']
+    end
+
     def average_rating
       if average = self.custom_fields["average_rating"]
         average.is_a?(Array) ? average[0].to_f : average.to_f
@@ -106,16 +125,7 @@ after_initialize do
     end
 
     def rating_count
-      if count = self.custom_fields['rating_count']
-        count.is_a?(Array) ? count[0].to_i : count.to_i
-      else
-        ## 'mirgration' - to be removed
-        if rating_enabled? && average_rating.present?
-          RatingsHelper.update_rating_count(Topic.find(self.id))
-        else
-          0
-        end
-      end
+      rating_enabled? && self.ratings ? self.ratings.length : 0 
     end
 
     def rating_target_id
@@ -125,7 +135,11 @@ after_initialize do
 
   require 'topic_view_serializer'
   class ::TopicViewSerializer
-    attributes :average_rating, :rating_enabled, :rating_count, :can_rate, :rating_target_id, :has_ratings
+    attributes :average_rating, :rating_enabled, :rating_count, :can_rate, :rating_target_id, :has_ratings, :ratings
+
+    def ratings
+      object.topic.ratings
+    end
 
     def average_rating
       object.topic.average_rating
@@ -162,10 +176,14 @@ after_initialize do
 
   require 'topic_list_item_serializer'
   class ::TopicListItemSerializer
-    attributes :average_rating, :rating_count, :show_average, :has_ratings
+    attributes :average_rating, :rating_count, :show_average, :has_ratings, :ratings
 
     def average_rating
       object.average_rating
+    end
+
+    def ratings
+      object.ratings
     end
 
     def include_average_rating?
@@ -190,8 +208,12 @@ after_initialize do
   end
 
   Site.preloaded_category_custom_fields << 'rating_enabled' if Site.respond_to? :preloaded_category_custom_fields
+  Site.preloaded_category_custom_fields << 'rating_types' if Site.respond_to? :preloaded_category_custom_fields
+
   add_to_serializer(:basic_category, :rating_enabled) { object.custom_fields["rating_enabled"] }
-  add_to_serializer(:post, :rating) { post_custom_fields["rating"] }
+  add_to_serializer(:basic_category, :rating_types) { JSON.parse(object.custom_fields["rating_types"] || {}) }
+  add_to_serializer(:site, :rating_types) { PluginStoreRow.where(plugin_name: 'rating_type') }
+  add_to_serializer(:post, :ratings) { post_custom_fields["ratings"] }
 
   require_dependency 'topic_query'
   class ::TopicQuery

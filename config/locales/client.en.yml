@@ -23,6 +23,14 @@ en:
       ratings:
         title: "Ratings"
         help: "List latest ratings."
+    ratings:
+      rating_types:
+        new: "Add new"
+        add: "Add"
+        update: "Update"
+        delete: "Delete"
+        heading: "Rating Types"
+        settings_page: "Rating Types"
   site_settings:
     rating_enabled: "Enable ratings."
     rating_show_exact_average: "Show the exact numerical average next to a topic average rating."

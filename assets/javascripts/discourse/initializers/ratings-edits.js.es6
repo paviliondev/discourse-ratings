@@ -1,13 +1,13 @@
 import Composer from 'discourse/models/composer';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as computed, on, observes } from 'ember-addons/ember-computed-decorators';
-import { ratingEnabled, removeRating, editRating, starRatingRaw } from '../lib/rating-utilities';
+import { ratingEnabled, removeRating, editRating, starRatingRaw, starRatingArrayRaw } from '../lib/rating-utilities';
 
 export default {
   name: 'ratings-edits',
   initialize(){
 
-    Composer.serializeOnCreate('rating');
+    Composer.serializeOnCreate('ratings');
     Composer.serializeOnCreate('rating_target_id', 'rating_target_id');
     Composer.serializeToTopic('rating_target_id', 'topic.rating_target_id');
 
@@ -15,11 +15,10 @@ export default {
       api.includePostAttributes('rating');
 
       api.decorateWidget('poster-name:after', function(helper) {
-        const rating = helper.attrs.rating;
         const model = helper.getModel();
-
-        if (model && model.topic && model.topic.rating_enabled && rating) {
-          let html = new Handlebars.SafeString(starRatingRaw(rating));
+        const ratings = model.ratings;
+        if (model && model.topic && model.topic.rating_enabled && ratings) {
+          let html = new Handlebars.SafeString(starRatingArrayRaw(ratings));
           return helper.rawHtml(`${html}`);
         }
       });
@@ -37,9 +36,9 @@ export default {
           const creating = this.get('creatingTopic');
           const enabled = this.get('ratingEnabled');
 
-          if (editing && post && post.rating) {
+          if (editing && post && post.ratings) {
             this.setProperties({
-              rating: post.rating,
+              ratings: post.ratings,
               includeRating: true
             });
           }
@@ -91,9 +90,9 @@ export default {
           save() {
             const showRating = this.get('model.showRating');
             const includeRating = this.get('model.includeRating');
-            const rating = this.get('model.rating');
+            const ratings = this.get('model.ratings');
 
-            if (showRating && includeRating && !rating) {
+            if (showRating && includeRating && !ratings) {
               return bootbox.alert(I18n.t("composer.select_rating"));
             }
 
@@ -101,7 +100,7 @@ export default {
 
             if (result) {
               Promise.resolve(result).then(() => {
-                if (showRating && includeRating && rating) {
+                if (showRating && includeRating && ratings) {
                   const controller = this.get('topicController');
                   controller.toggleCanRate();
                 }
@@ -185,6 +184,7 @@ export default {
             const refresh = (args) => this.appEvents.trigger('post-stream:refresh', args);
 
             this.messageBus.subscribe("/topic/" + model.id, function(data) {
+
               if (data.type === 'revised') {
                 if (data.average_rating !== undefined) {
                   model.set('average_rating', data.average_rating);
@@ -218,6 +218,20 @@ export default {
           }
         }
       });
+
+      api.modifyClass('component:topic-list-item', {
+        @on('didReceiveAttrs')
+        injectRatingTypeNames() {
+          if(this.topic.ratings) {
+            const ratingTypes = this.site.rating_types;
+            this.topic.ratings.forEach((rating) => {
+              let ratingType = ratingTypes.find(type => type.id == rating.rating_type_id);
+              ratingType ? rating.name = ratingType.value : null;
+            });
+          }
+        }
+      });
+
     });
   }
 };

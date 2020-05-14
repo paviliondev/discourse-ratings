@@ -61,4 +61,19 @@ let starRatingRaw = function(rating, opts = {}) {
   return '<span class="star-rating">' + content + '</span>';
 };
 
-export { ratingEnabled, removeRating, editRating, starRatingRaw };
+let starRatingArrayRaw = function(ratings, opts = {}) {
+  let ratingsString = "<div>";
+  if(ratings ) {
+    if(Array.isArray(ratings)) {
+      ratings.forEach(rating => {
+        ratingsString += starRatingRaw(rating.rating) + "<br/>";
+      });
+    } else {
+      ratingsString += starRatingRaw(ratings.rating) + "<br/>";
+    }
+  }
+  ratingsString += "</div>";
+
+  return ratingsString;
+}
+export { ratingEnabled, removeRating, editRating, starRatingRaw, starRatingArrayRaw };

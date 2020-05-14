@@ -6,37 +6,82 @@ module RatingsHelper
       push_ratings_to_clients(post.topic, average, count, post.id)
     end
 
-    def update_rating_count(topic)
-      count = topic.posts.where("id in (
-        (SELECT post_id FROM post_custom_fields WHERE name = 'rating') INTERSECT
-        (SELECT post_id FROM post_custom_fields WHERE name = 'rating_weight' AND value = '1')
-      )").count
+    def aggregate_rating_array(topic)
+      post_rating_arrays = topic.posts.map{ |p| p.custom_fields['ratings'] }
+      post_rating_arrays.flatten
+    end
 
-      topic.custom_fields['rating_count'] = count
+    def filter_by_type(rating_array, type)
+      rating_array.select { |rating| rating ? rating['rating_type_id'] == type.to_s : false }
+    end
+
+    def average_rating(filtered_array)
+      filtered_array.map {|rating| rating['rating'].to_i}.inject(:+) / filtered_array.length
+    end
+
+    def rating_count(filtered_array)
+      filtered_array.length
+    end
+
+    def update_rating_count(topic)
+      count = {}
+      rating_types = topic.category.custom_fields['rating_types']
+      rating_types = JSON.parse rating_types
+      return if !rating_types
+
+      rating_array = aggregate_rating_array(topic)
+      if rating_array
+        rating_types.each do |type|
+          type_ratings = filter_by_type(rating_array, type)
+          type_count = rating_count(type_ratings)
+          count[type] = type_count
+        end
+      end
+
+      if topic.custom_fields['ratings'] 
+        topic.custom_fields['ratings'].each do |rating|
+          rating['rating_count'] = count[rating['rating_type_id']]
+        end
+      else
+        ratings = []
+        rating_types.each do |type|
+          ratings << {rating_type_id: type, rating_count: count[type]}
+        end
+
+        topic.custom_fields['ratings'] = ratings
+      end
       topic.save_custom_fields(true)
 
       count
     end
 
     def calculate_topic_average(topic)
-      @topic_posts = Post.with_deleted.where(topic_id: topic.id)
-      @ratings = []
+      average = {}
+      rating_types = topic.category.custom_fields['rating_types']
+      rating_types = JSON.parse rating_types
+      return if !rating_types
 
-      @topic_posts.each do |tp|
-        weight = tp.custom_fields["rating_weight"]
-        if tp.custom_fields["rating"] && (weight.blank? || weight.to_i > 0)
-          rating = tp.custom_fields["rating"].to_i
-          @ratings.push(rating)
+      rating_array = aggregate_rating_array(topic)
+      if rating_array
+        rating_types.each do |type|
+          type_ratings = filter_by_type(rating_array, type)
+          type_average = average_rating(type_ratings)
+          average[type] = type_average
         end
       end
+    if topic.custom_fields['ratings'] 
+      topic.custom_fields['ratings'].each do |rating|
+        rating['average_rating'] = average[rating['rating_type_id']]
+      end
+    else
+      topic.custom_fields['ratings'] = ratings =  []
+      rating_types.each do |type|
+        ratings << {rating_type_id: type, average_rating: count[type]}
+      end
+    end
+  topic.save_custom_fields(true)
 
-      average = @ratings.empty? ? nil : @ratings.inject(:+).to_f / @ratings.length
-      average = average.round(1) if average
-
-      topic.custom_fields["average_rating"] = average
-      topic.save_custom_fields(true)
-
-      average
+    average
     end
 
     def push_ratings_to_clients(topic, average, count, updatedId = '')

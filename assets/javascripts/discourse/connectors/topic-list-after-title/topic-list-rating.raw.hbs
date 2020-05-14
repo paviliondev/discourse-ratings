@@ -3,18 +3,25 @@
     {{#if context.topic.has_ratings}}
       <div class="topic-rating">
         <a href='{{context.topic.url}}'>
-          {{star-rating-raw context.topic.average_rating clickable='true'}}
-          {{#if context.siteSettings.rating_show_exact_average}}
-            <span class="exact-rating">
-              ({{context.topic.average_rating}})
-            </span>
-          {{/if}}
-          {{#if context.siteSettings.rating_show_count}}
-            <span class="rating-count">
-              {{context.topic.rating_count}}
-              {{i18n 'topic.x_rating_count' count=context.topic.rating_count}}
-            </span>
-          {{/if}}
+        {{#if context.topic.ratings}}
+          {{#each context.topic.ratings as |rating|}}
+              <span>{{rating.name}}</span>
+              <div class="topic-list-rating">
+                {{star-rating-raw rating.average_rating clickable='true'}}
+              </div>
+              {{#if context.siteSettings.rating_show_exact_average}}
+                <span class="exact-rating">
+                  ({{rating.average_rating}})
+                </span>
+              {{/if}}
+              {{#if context.siteSettings.rating_show_count}}
+                <span class="rating-count">
+                  {{rating.rating_count}}
+                  {{i18n 'topic.x_rating_count' count=context.topic.rating_count}}
+                </span>
+              {{/if}}
+          {{/each}}
+        {{/if}}
         </a>
       </div>
     {{/if}}

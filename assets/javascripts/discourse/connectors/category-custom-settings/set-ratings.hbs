@@ -4,3 +4,15 @@
     {{i18n 'category.enable_rating'}}
   </label>
 </section>
+    {{#if category.custom_fields.rating_enabled}}
+<section class='field'>
+  <label>
+    {{i18n 'category.enable_rating'}}
+    {{multi-select
+      valueProperty="id"
+      nameProperty="value"
+      content=ratingTypes
+      value=selectedRatingTypes}}
+  </label>
+</section>
+{{/if}}
