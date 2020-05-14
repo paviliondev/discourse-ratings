@@ -1,18 +1,16 @@
+<h3>{{i18n 'category.ratings.heading'}}</h3>
+
 <section class='field'>
   <label>
     {{input type="checkbox" checked=category.custom_fields.rating_enabled}}
-    {{i18n 'category.enable_rating'}}
+    {{i18n 'category.ratings.enabled'}}
   </label>
 </section>
-    {{#if category.custom_fields.rating_enabled}}
+
 <section class='field'>
-  <label>
-    {{i18n 'category.enable_rating'}}
-    {{multi-select
-      valueProperty="id"
-      nameProperty="value"
-      content=ratingTypes
-      value=selectedRatingTypes}}
-  </label>
+  <label>{{i18n 'category.ratings.types'}}</label>
+  {{rating-type-chooser
+    valueProperty="slug"
+    types=category.custom_fields.rating_types
+    content=site.rating_types}}
 </section>
-{{/if}}

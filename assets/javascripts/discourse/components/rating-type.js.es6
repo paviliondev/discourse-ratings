@@ -1,36 +1,15 @@
 import Component from "@ember/component";
-import { ajax } from "discourse/lib/ajax";
-import { popupAjaxError } from "discourse/lib/ajax-error";
+import RatingType from '../models/rating-type';
+import { lt, or, alias } from "@ember/object/computed";
+
+const minSlugLength = 2;
+const minNameLength = 2;
 
 export default Component.extend({
-  init(){
-    this._super(...arguments);
-    this.set('type', this.type || {});
-  },
-
-  actions: {
-    add(){
-      ajax('/rating/add_type', {
-        type: "POST",
-        data: {
-          type_name: this.type.value
-        }
-      }).then(response => {
-        this.added(this.value);
-      }).catch(popupAjaxError)
-    },
-    update(){
-
-    },
-    delete(){
-      ajax('/rating/delete_type', {
-        type: "DELETE",
-        data: {
-          type_id: this.get('type.id')
-        }
-      }).then(response => {
-        console.log(response)
-      }).catch(popupAjaxError)
-    }
-  }
+  classNameBindings: [':rating-type', 'hasError'],
+  tagName: 'tr',
+  invalidSlug: lt('type.slug.length', minSlugLength),
+  invalidName: lt('type.name.length', minNameLength),
+  addDisabled: or('invalidSlug', 'invalidName'),
+  updateDisabled: alias('invalidName')
 })

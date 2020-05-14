@@ -1,14 +1,30 @@
-<h3>{{i18n 'ratings.rating_types.heading'}}</h3>
+<h3>{{i18n 'admin.ratings.type.heading'}}</h3>
 
-{{#each types as |type|}}
-  {{rating-type type=type}}
-{{/each}}
-
-{{#if newType}}
-  {{rating-type  value=newRatingType newType=true added=(action 'addToList')}}
+{{#if hasTypes}}
+  <table>
+    <thead>
+      <tr>
+        <th>{{i18n "admin.ratings.type.slug"}}</th>
+        <th>{{i18n "admin.ratings.type.name"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each ratingTypes as |type|}}
+        {{rating-type
+          addType=(action "addType")
+          updateType=(action "updateType")
+          destroyType=(action "destroyType")
+          type=type}}
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  {{i18n "admin.ratings.type.none"}}
 {{/if}}
 
-{{d-button
-  class="btn-default"
-  action=(action "add")
-  label="ratings.rating_types.new"}}
+<div class="type-list-controls">
+  {{d-button
+    action=(action "newType")
+    label="admin.ratings.type.new"
+    icon="plus"}}
+</div>

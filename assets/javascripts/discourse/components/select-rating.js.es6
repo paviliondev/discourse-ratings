@@ -1,16 +1,14 @@
 import discourseComputed from "discourse-common/utils/decorators";
+import { typeName } from '../lib/rating-utilities';
 
 export default Ember.Component.extend({
   tagName: "div",
   classNames: ["rating-container"],
   showIncludeRating: true,
-  init(){
-    this._super(...arguments);
-  },
+
   @discourseComputed('ratingType')
-  ratingTypeName(ratingType){
-    let type = this.site.rating_types.find(type => type.id === ratingType);
-    return type ? type.value : "";
+  typeName(ratingType) {
+    return typeName(ratingType);
   },
 
   actions: {

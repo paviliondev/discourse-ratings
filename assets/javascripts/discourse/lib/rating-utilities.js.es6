@@ -1,6 +1,7 @@
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import Category from 'discourse/models/category';
+import Site from "discourse/models/site";
 
 let ratingEnabled = function(type, tags, categoryId) {
   let category = Category.findById(categoryId),
@@ -76,4 +77,18 @@ let starRatingArrayRaw = function(ratings, opts = {}) {
 
   return ratingsString;
 }
-export { ratingEnabled, removeRating, editRating, starRatingRaw, starRatingArrayRaw };
+
+function typeName(ratingType) {
+  const ratingTypes = Site.currentProp('rating_types');
+  const type = ratingTypes.find(t => t.slug === ratingType);
+  return type ? type.name : "";
+}
+
+export {
+  ratingEnabled,
+  removeRating,
+  editRating,
+  starRatingRaw,
+  starRatingArrayRaw,
+  typeName
+};

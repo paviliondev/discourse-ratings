@@ -1,11 +1,16 @@
 en:
   js:
     category:
-      enable_rating: "Use topics in this category to rate things."
+      ratings:
+        heading: "Ratings"
+        enabled: "Enable ratings in this category."
+        types: "Rating types enabled in this category."
+    
     composer:
       your_rating: "Add a rating"
       select_rating: "Please select a rating, or uncheck 'Add a rating'."
       rating_target_id: "Rating target id"
+    
     topic:
       hidden_ratings: "Topic has hidden ratings"
       no_ratings: "No ratings yet"
@@ -15,22 +20,36 @@ en:
       tip:
         ratings:
           title: "Rating"
-          details: "Users can rate the subject of the topic.
-                    <ul><li>Each user is allowed one rating.</li>
-                    <li>Each rating must be attached to a post.</li>
-                    <li>Users can post without rating.</li></ul>"
+          details: |
+            Users can rate the subject of the topic.
+            <ul><li>Each user is allowed one rating.</li>
+            <li>Each rating must be attached to a post.</li>
+            <li>Users can post without rating.</li></ul>
+  
     filters:
       ratings:
         title: "Ratings"
         help: "List latest ratings."
-    ratings:
-      rating_types:
-        new: "Add new"
-        add: "Add"
-        update: "Update"
-        delete: "Delete"
-        heading: "Rating Types"
-        settings_page: "Rating Types"
+  
+  admin_js:
+    admin:
+      ratings:
+        type:
+          none: "No types."
+          slug: "Slug"
+          slug_placeholder: "Dasherized uneditable slug."
+          name: "Name"
+          name_placeholder: "Visible editable name."
+          new: "New"
+          add: "Add"
+          update: "Update"
+          destroy: "Delete"
+          confirm_destroy: |
+            Are you sure you want to delete this type?
+            All existing ratings with this type will be given a generic type.
+          heading: "Rating Types"
+          settings_page: "Rating Types"
+  
   site_settings:
     rating_enabled: "Enable ratings."
     rating_show_exact_average: "Show the exact numerical average next to a topic average rating."

@@ -1,17 +1,40 @@
-{{input value=type.value}}
-{{#if newType}}
-  {{d-button
-    class="btn-default"
-    action=(action "add")
-    label="ratings.rating_types.add"}}
-{{else}}
-  {{d-button
-    class="btn-default"
-    action=(action "update")
-    label="ratings.rating_types.update"}}
+<td>
+  {{#if type.isNew}}
+    {{input
+      value=type.slug
+      placeholder=(i18n 'admin.ratings.type.slug_placeholder')}}
+  {{else}}
+    {{type.slug}}
+  {{/if}}
+</td>
 
+<td>
+  {{input
+    value=type.name
+    placeholder=(i18n 'admin.ratings.type.name_placeholder')}}
+</td>
+
+<td class="type-controls">
+  {{#if type.isNew}}
+    {{d-button
+      class="btn-primary"
+      action=addType
+      actionParam=type
+      label="admin.ratings.type.add"
+      icon="save"
+      disabled=addDisabled}}
+  {{else}}
+    {{d-button
+      class="btn-primary"
+      action=updateType
+      actionParam=type
+      label="admin.ratings.type.update"
+      icon="save"
+      disabled=updateDisabled}}
+  {{/if}}
+  
   {{d-button
-    class="btn-default btn-danger"
-    action=(action "delete")
-    label="ratings.rating_types.delete"}}
-{{/if}}
+    action=destroyType
+    actionParam=type
+    icon="times"}}
+</td>

@@ -1,0 +1,22 @@
+{{#if siteSettings.rating_topic_average_enabled}}
+  <div class="average-rating">
+    {{#if model.rating_enabled}}
+      {{#if model.has_ratings}}
+        {{#each model.ratings as |rating|}}
+          {{topic-rating rating model}}
+        {{/each}}
+      {{else}}
+        {{i18n 'topic.no_ratings'}}
+      {{/if}}
+    {{else}}
+      {{#if model.average_rating}}
+        {{#if currentUser.admin}}
+          <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  </div>
+{{/if}}
+{{#if model.showRatingTip}}
+  {{topic-tip details='topic.tip.ratings.details'}}
+{{/if}}

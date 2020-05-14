@@ -1,95 +1,70 @@
 module RatingsHelper
   class << self
-    def handle_rating_update(post)
-      count = update_rating_count(post.topic)
-      average = calculate_topic_average(post.topic)
-      push_ratings_to_clients(post.topic, average, count, post.id)
+    def handle_rating_update(post, ratings, weight: 1)
+      ratings.each do |rating|
+        rating[:weight] = weight
+      end
+      
+      byebug
+            
+      post.custom_fields['ratings'] = ratings
+      post.save_custom_fields(true)
+      
+      update_topic(post.topic)
+      push_ratings_to_clients(post.topic,  post.id)
     end
 
     def aggregate_rating_array(topic)
-      post_rating_arrays = topic.posts.map{ |p| p.custom_fields['ratings'] }
-      post_rating_arrays.flatten
+      topic.posts.map { |p| p.ratings }.flatten
     end
 
-    def filter_by_type(rating_array, type)
-      rating_array.select { |rating| rating ? rating['rating_type_id'] == type.to_s : false }
+    def filter_by_type(ratings, type)
+      ratings.select do |rating|
+        if rating && rating[:weight].to_i === 1
+          rating[:type] == type.to_s
+        else
+          false
+        end
+      end
     end
 
-    def average_rating(filtered_array)
-      filtered_array.map {|rating| rating['rating'].to_i}.inject(:+) / filtered_array.length
+    def average_rating(ratings)
+      ratings.map { |rating| rating[:value].to_i }.inject(:+) / ratings.length
     end
 
-    def rating_count(filtered_array)
-      filtered_array.length
+    def rating_count(ratings)
+      ratings.length
     end
 
-    def update_rating_count(topic)
-      count = {}
-      rating_types = topic.category.custom_fields['rating_types']
-      rating_types = JSON.parse rating_types
-      return if !rating_types
-
+    def update_topic(topic)
+      rating_types = topic.category.rating_types
       rating_array = aggregate_rating_array(topic)
-      if rating_array
-        rating_types.each do |type|
-          type_ratings = filter_by_type(rating_array, type)
-          type_count = rating_count(type_ratings)
-          count[type] = type_count
-        end
-      end
-
-      if topic.custom_fields['ratings'] 
-        topic.custom_fields['ratings'].each do |rating|
-          rating['rating_count'] = count[rating['rating_type_id']]
-        end
-      else
-        ratings = []
-        rating_types.each do |type|
-          ratings << {rating_type_id: type, rating_count: count[type]}
-        end
-
-        topic.custom_fields['ratings'] = ratings
-      end
-      topic.save_custom_fields(true)
-
-      count
-    end
-
-    def calculate_topic_average(topic)
-      average = {}
-      rating_types = topic.category.custom_fields['rating_types']
-      rating_types = JSON.parse rating_types
-      return if !rating_types
-
-      rating_array = aggregate_rating_array(topic)
-      if rating_array
-        rating_types.each do |type|
-          type_ratings = filter_by_type(rating_array, type)
-          type_average = average_rating(type_ratings)
-          average[type] = type_average
-        end
-      end
-    if topic.custom_fields['ratings'] 
-      topic.custom_fields['ratings'].each do |rating|
-        rating['average_rating'] = average[rating['rating_type_id']]
-      end
-    else
-      topic.custom_fields['ratings'] = ratings =  []
+      
+      return if rating_types.blank? || rating_array.blank?
+      
+      ratings = []
+      
       rating_types.each do |type|
-        ratings << {rating_type_id: type, average_rating: count[type]}
+        type_ratings = filter_by_type(rating_array, type)
+        
+        byebug
+
+        ratings.push(
+          type: type,
+          count: rating_count(type_ratings),
+          average: average_rating(type_ratings)
+        )
       end
-    end
-  topic.save_custom_fields(true)
 
-    average
+      topic.custom_fields['ratings'] = ratings
+      topic.save_custom_fields(true)
     end
 
-    def push_ratings_to_clients(topic, average, count, updatedId = '')
+    def push_ratings_to_clients(topic, updatedId = '')
       channel = "/topic/#{topic.id}"
       msg = {
         updated_at: Time.now,
-        average_rating: average,
-        rating_count: count,
+        topic_ratings: topic.ratings,
         post_id: updatedId,
         type: "revised"
       }
