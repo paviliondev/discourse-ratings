@@ -4,14 +4,12 @@ module RatingsHelper
       ratings.each do |rating|
         rating[:weight] = weight
       end
-      
-      byebug
-            
+                  
       post.custom_fields['ratings'] = ratings
       post.save_custom_fields(true)
       
       update_topic(post.topic)
-      push_ratings_to_clients(post.topic,  post.id)
+      push_ratings_to_clients(post)
     end
 
     def aggregate_rating_array(topic)
@@ -47,12 +45,10 @@ module RatingsHelper
       rating_types.each do |type|
         type_ratings = filter_by_type(rating_array, type)
         
-        byebug
-
         ratings.push(
           type: type,
           count: rating_count(type_ratings),
-          average: average_rating(type_ratings)
+          value: average_rating(type_ratings)
         )
       end
 
@@ -60,15 +56,8 @@ module RatingsHelper
       topic.save_custom_fields(true)
     end
 
-    def push_ratings_to_clients(topic, updatedId = '')
-      channel = "/topic/#{topic.id}"
-      msg = {
-        updated_at: Time.now,
-        topic_ratings: topic.ratings,
-        post_id: updatedId,
-        type: "revised"
-      }
-      MessageBus.publish(channel, msg, group_ids: topic.secure_group_ids)
+    def push_ratings_to_clients(post)
+      post.publish_change_to_clients!("ratings", topic_ratings: post.topic.ratings)
     end
 
     ##def update_top_topics(post)

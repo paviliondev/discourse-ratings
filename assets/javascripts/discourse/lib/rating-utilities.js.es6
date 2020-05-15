@@ -3,11 +3,13 @@ import { popupAjaxError } from 'discourse/lib/ajax-error';
 import Category from 'discourse/models/category';
 import Site from "discourse/models/site";
 
+const siteSettings = Discourse.SiteSettings;
+
 let ratingEnabled = function(type, tags, categoryId) {
   let category = Category.findById(categoryId),
       catEnabled = category && category.rating_enabled,
       tagEnabled = tags && tags.filter(function(t){
-                      return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) !== -1;
+                      return siteSettings.rating_tags.split('|').indexOf(t) !== -1;
                    }).length > 0,
       typeEnabled = type === 'rating';
 
@@ -62,20 +64,59 @@ let starRatingRaw = function(rating, opts = {}) {
   return '<span class="star-rating">' + content + '</span>';
 };
 
-let starRatingArrayRaw = function(ratings, opts = {}) {
-  let ratingsString = "<div>";
-  if(ratings ) {
-    if(Array.isArray(ratings)) {
-      ratings.forEach(rating => {
-        ratingsString += starRatingRaw(rating.rating) + "<br/>";
+function ratingHtml(rating, opts={}) {
+  let html = '';
+  let link = null;
+    
+  const name = typeName(rating.type);
+  if (name) {
+    html += `<span>${name}</span>`;
+  }
+  
+  html += starRatingRaw(rating.value);
+  
+  if (opts.topic) {
+    link = opts.topic.url;
+    
+    if (siteSettings.rating_show_exact_average) {
+      html += `<span class="exact-rating">(${rating.value})</span>`;
+    }
+
+    if (siteSettings.rating_show_count) {
+      let countLabel = I18n.t('topic.x_rating_count', {
+        count: topic.rating_count
       });
-    } else {
-      ratingsString += starRatingRaw(ratings.rating) + "<br/>";
+      let countContent = rating.rating_count + countLabel;
+      html += `<span class="rating-count">${countContent}</span>`;
     }
   }
-  ratingsString += "</div>";
+  
+  if (opts.linkTo && link) {
+    return `<a href="${link}" class="rating">${html}</a>`;
+  } else {
+    return `<div class="rating">${html}</div>`;
+  }
+}
 
-  return ratingsString;
+function ratingListHtml(ratings, opts={}) {
+  if (typeof ratings === 'string') {
+    try {
+      ratings = JSON.parse(ratings);
+    } catch(e) {
+      console.log(e);
+      ratings = null;
+    }
+  }
+  
+  if (!ratings) return '';
+  
+  let html = '';
+  
+  ratings.forEach(rating => {
+    html += ratingHtml(rating, opts);
+  });
+  
+  return `<div class="rating-list">${html}</div>`;
 }
 
 function typeName(ratingType) {
@@ -88,7 +129,6 @@ export {
   ratingEnabled,
   removeRating,
   editRating,
-  starRatingRaw,
-  starRatingArrayRaw,
+  ratingListHtml,
   typeName
 };

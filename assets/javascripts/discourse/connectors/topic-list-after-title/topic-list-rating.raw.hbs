@@ -2,13 +2,7 @@
   {{#if context.siteSettings.rating_topic_list_average_enabled}}
     {{#if context.topic.show_average}}
       {{#if context.topic.has_ratings}}
-        <div class="topic-rating">
-          <a href='{{context.topic.url}}'>
-            {{#each context.topic.ratings as |rating|}}
-              {{topic-rating rating context.topic}}
-            {{/each}}
-          </a>
-        </div>
+        {{rating-list context.topic.ratings topic=context.topic linkTo=true}}
       {{/if}}
     {{/if}}
   {{/if}}

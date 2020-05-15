@@ -5,8 +5,7 @@ import {
   ratingEnabled,
   removeRating,
   editRating,
-  starRatingRaw,
-  starRatingArrayRaw,
+  ratingListHtml,
   typeName
 } from '../lib/rating-utilities';
 
@@ -22,10 +21,10 @@ export default {
 
       api.decorateWidget('poster-name:after', function(helper) {
         const model = helper.getModel();
-        const ratings = model.ratings;
-        if (model && model.topic && model.topic.rating_enabled && ratings) {
-          let html = new Handlebars.SafeString(starRatingArrayRaw(ratings));
-          return helper.rawHtml(`${html}`);
+        
+        if (model.topic.rating_enabled && model.ratings) {
+          let html = ratingListHtml(model.ratings);
+          return helper.rawHtml(`${new Handlebars.SafeString(html)}`);
         }
       });
 
@@ -166,50 +165,6 @@ export default {
 
       api.modifyClass('controller:topic', {
         refreshAfterTopicEdit: false,
-        unsubscribed: false,
-
-        unsubscribe() {
-          const topicId = this.get('content.id');
-          if (!topicId) return;
-          const messageBus = this.messageBus;
-          if (messageBus) {
-            messageBus.unsubscribe('/topic/*');
-            this.set('unsubscribed', true);
-          }
-        },
-
-        @observes('unsubscribed', 'model.postStream')
-        subscribeToRatingUpdates() {
-          const unsubscribed = this.get('unsubscribed');
-          const model = this.get('model');
-          const subscribedTo = this.get('subscribedTo');
-
-          if (!unsubscribed) return;
-          this.set('unsubscribed', false);
-
-          if (model && model.id === subscribedTo) return this.set('subscribedTo', null);
-          this.set('subscribedTo', null);
-
-          if (model && model.get('postStream') && model.rating_enabled) {
-            const refresh = (args) => this.appEvents.trigger('post-stream:refresh', args);
-
-            this.messageBus.subscribe("/topic/" + model.id, function(data) {
-
-              if (data.type === 'revised') {
-                if (data.topic_ratings !== undefined) {
-                  model.set('ratings', data.topic_ratings);
-                }
-                if (data.post_id !== undefined) {
-                  model.get('postStream').triggerChangedPost(data.post_id, data.updated_at).then(() =>
-                    refresh({ id: data.post_id })
-                  );
-                }
-              }
-            });
-
-            this.set('subscribedTo', model.id);
-          }
-        },
 
         @observes('editingTopic')
         refreshPostRatingVisibility() {
@@ -224,6 +179,18 @@ export default {
             this.toggleProperty('model.can_rate');
           }
         }
+      });
+      
+      api.registerCustomPostMessageCallback("ratings", (controller, data) => {
+        const model = controller.get("model");        
+        model.set('ratings', data.topic_ratings);
+        model.get('postStream')
+          .triggerChangedPost(data.id, data.updated_at)
+          .then(() => {
+            controller.appEvents.trigger("post-stream:refresh", { id: data.id });
+          });
+        
+        controller.appEvents.trigger("header:update-topic", model);
       });
 
       api.modifyClass('component:topic-list-item', {

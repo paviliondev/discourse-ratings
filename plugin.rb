@@ -187,7 +187,7 @@ after_initialize do
     end
   end
   
-  add_to_serializer(:post, :ratings) { post.ratings }
+  add_to_serializer(:post, :ratings) { object.ratings }
   
   add_to_class(:topic_query, :list_ratings) do
     create_list(:ratings, ascending: 'true') do |topics|
