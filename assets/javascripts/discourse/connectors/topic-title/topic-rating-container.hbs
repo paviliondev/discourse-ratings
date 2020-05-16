@@ -6,12 +6,6 @@
       {{else}}
         {{i18n 'topic.no_ratings'}}
       {{/if}}
-    {{else}}
-      {{#if model.average_rating}}
-        {{#if currentUser.admin}}
-          <span class="exact-rating">{{i18n "topic.hidden_ratings"}}</span>
-        {{/if}}
-      {{/if}}
     {{/if}}
   </div>
 {{/if}}

@@ -1,13 +1,5 @@
 {{#if model.showRating}}
-  {{#each model.category.rating_types as |ratingType|}}
-    {{select-rating
-      ratingType=ratingType
-      updateRating=(action 'updateRating')}}
+  {{#each model.bufferedRatings as |rating|}}
+    {{select-rating rating=rating updateRating=(action 'updateRating')}}
   {{/each}}
-{{/if}}
-{{#if model.showRatingTargetId}}
-  {{input
-    class='rating-target-id'
-    value=model.rating_target_id
-    placeholder=(i18n 'composer.rating_target_id')}}
 {{/if}}

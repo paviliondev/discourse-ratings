@@ -5,15 +5,11 @@ import Site from "discourse/models/site";
 
 const siteSettings = Discourse.SiteSettings;
 
-let ratingEnabled = function(type, tags, categoryId) {
-  let category = Category.findById(categoryId),
-      catEnabled = category && category.rating_enabled,
-      tagEnabled = tags && tags.filter(function(t){
-                      return siteSettings.rating_tags.split('|').indexOf(t) !== -1;
-                   }).length > 0,
-      typeEnabled = type === 'rating';
-
-  return catEnabled || tagEnabled || typeEnabled;
+let ratingEnabled = function(tags, categoryId) {
+  const ratingTags = siteSettings.rating_tags.split('|');
+  const category = Category.findById(categoryId);
+  return (category && category.rating_enabled) ||
+    (tags && tags.filter((t) => ratingTags.indexOf(t) !== -1).length > 0);
 };
 
 let removeRating = function(postId) {
@@ -78,7 +74,7 @@ function ratingHtml(rating, opts={}) {
   if (opts.topic) {
     link = opts.topic.url;
     
-    if (siteSettings.rating_show_exact_average) {
+    if (siteSettings.rating_show_numeric_average) {
       html += `<span class="exact-rating">(${rating.value})</span>`;
     }
 

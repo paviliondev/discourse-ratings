@@ -4,14 +4,14 @@ export default {
   },
 
   actions: {
-    updateRating(type, value){
+    updateRating(rating){
       const ratings = (this.get('model.ratings') || []);
-      const index = ratings.findIndex(r => r.type === type);
+      const index = ratings.findIndex(r => r.type === rating.type);
       
       if (index === -1) {
         ratings.push({
-          type,
-          value
+          type: rating.type,
+          value: rating.value
         });
       } else {
         ratings[index].value = value;

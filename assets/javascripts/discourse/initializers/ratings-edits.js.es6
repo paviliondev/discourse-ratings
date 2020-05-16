@@ -13,8 +13,6 @@ export default {
   name: 'ratings-edits',
   initialize(){
     Composer.serializeOnCreate('ratings', 'ratingsString');
-    Composer.serializeOnCreate('rating_target_id', 'rating_target_id');
-    Composer.serializeToTopic('rating_target_id', 'topic.rating_target_id');
 
     withPluginApi('0.8.10', api => {
       api.includePostAttributes('ratings');
@@ -34,58 +32,55 @@ export default {
         ratingTargetId: undefined,
 
         @on('init')
-        @observes('post', 'ratingEnabled')
+        @observes('post', 'showRating')
         setRating() {
-          const post = this.get('post');
-          const editing = this.get('editingPost');
-          const creating = this.get('creatingTopic');
-          const enabled = this.get('ratingEnabled');
+          const post = this.post;
+          const category = this.category;
+          
+          if (this.showRating) {
+            let ratings;
+            
+            if (this.creatingTopic && this.category) {
+              ratings = category.rating_types.map(type => {
+                return {
+                  value: null,
+                  type,
+                  include: true
+                }
+              })
+            }
 
-          if (editing && post && post.ratings) {
-            this.setProperties({
-              ratings: post.ratings,
-              includeRating: true
-            });
-          }
-
-          if (enabled && creating) {
-            this.set('includeRating', true);
+            if (this.editingPost && post && post.ratings) {
+              ratings = post.ratings.map(rating => {
+                return {
+                  value: rating.value,
+                  type: rating.type,
+                  include: true
+                }
+              });
+            }
+            
+            if (ratings) {
+              this.set('bufferedRatings', ratings);
+            }
           }
         },
 
-        @computed('subtype','tags','categoryId')
-        ratingEnabled(subtype, tags, categoryId) {
-          return ratingEnabled(subtype, tags, categoryId);
+        @computed('tags','categoryId')
+        ratingEnabled(tags, categoryId) {
+          return ratingEnabled(tags, categoryId);
         },
 
         @computed('ratingEnabled', 'hideRating', 'topic', 'post')
-        showRating(enabled, hide, topic, post) {
+        showRating(ratingEnabled, hide, topic, post) {
           if (hide) return false;
 
-          if ((post && post.get('firstPost') && topic.rating_enabled) || !topic) {
-            return enabled;
+          if (!topic || ((post && post.firstPost) && (topic.rating_enabled))) {
+            return ratingEnabled;
           }
           
           return topic.can_rate ||
             (topic.rating_enabled && post && post.ratings && (this.get('action') === Composer.EDIT));
-        },
-
-        @computed('ratingEnabled')
-        showRatingTargetId(enabled) {
-          const user = this.user;
-          const setting = Discourse.SiteSettings.rating_target_id_enabled;
-          return enabled && setting && user.admin;
-        },
-
-        @observes('topic.rating_target_id')
-        renderRatingTargetIdInput() {
-          const topicRatingTargetId = this.get('topic.rating_target_id');
-          const ratingTargetId = this.get('rating_target_id');
-          if (topicRatingTargetId && ratingTargetId === undefined) {
-            this.set('rating_target_id', topicRatingTargetId);
-            this.set('showRatingTargetId', false);
-            this.set('showRatingTargetId', true);
-          }
         },
         
         @computed('ratings')
@@ -152,9 +147,9 @@ export default {
       });
 
       api.modifyClass('model:topic', {
-        @computed('subtype','tags','category_id')
-        ratingEnabled(type, tags, categoryId) {
-          return ratingEnabled(type, tags, categoryId);
+        @computed('tags','category_id')
+        ratingEnabled(tags, categoryId) {
+          return ratingEnabled(tags, categoryId);
         },
 
         @computed('ratingEnabled')
