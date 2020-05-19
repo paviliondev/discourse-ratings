@@ -1,4 +1,4 @@
-class DiscourseRatings::RatingTypeController < ::ApplicationController  
+class DiscourseRatings::RatingTypeController < ::Admin::AdminController  
   before_action :check_type_exists, only: [:update, :destroy]
   before_action :validate_name, only: [:update, :create]
   before_action :validate_slug, only: [:create]

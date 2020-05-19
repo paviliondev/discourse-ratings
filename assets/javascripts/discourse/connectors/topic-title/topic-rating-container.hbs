@@ -1,14 +1,3 @@
-{{#if siteSettings.rating_topic_average_enabled}}
-  <div class="average-rating">
-    {{#if model.rating_enabled}}
-      {{#if model.has_ratings}}
-        {{rating-list model.ratings topic=model}}
-      {{else}}
-        {{i18n 'topic.no_ratings'}}
-      {{/if}}
-    {{/if}}
-  </div>
-{{/if}}
-{{#if model.showRatingTip}}
-  {{topic-tip details='topic.tip.ratings.details'}}
+{{#if model.show_ratings}}
+  {{rating-list model.ratings topic=model}}
 {{/if}}

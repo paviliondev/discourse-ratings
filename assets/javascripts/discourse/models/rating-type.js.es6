@@ -3,10 +3,9 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 
 const RatingType = EmberObject.extend();
-const ratingPath = "/rating/rating-type";
 
-function request(path, type, data={}) {
-  return ajax(path, {
+function request(type, path='', data={}) {
+  return ajax(`/rating/rating-type/${path}`, {
     type,
     data
   }).catch(popupAjaxError)
@@ -14,19 +13,19 @@ function request(path, type, data={}) {
 
 RatingType.reopenClass({
   all() {
-    return request(ratingPath, "GET");
+    return request("GET");
   },
 
   add(type) {
-    return request(ratingPath, "POST", { type });
+    return request("POST", { type });
   },
   
   update(type) {
-    return request(`${ratingPath}/${type.slug}`, "PUT", { type });
+    return request("PUT", type.slug, { type });
   },
 
   destroy(type) {
-    return request(`${ratingPath}/${type.slug}`, "DELETE");
+    return request("DELETE", type.slug);
   }
 });
 

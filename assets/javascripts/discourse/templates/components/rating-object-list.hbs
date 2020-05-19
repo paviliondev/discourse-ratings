@@ -1,0 +1,35 @@
+<h3>{{title}}</h3>
+
+{{#if loading}}
+  {{loading-spinner}}
+{{else}}
+  {{#if hasObjects}}
+    <table>
+      <thead>
+        <tr>
+          <th>{{nameLabel}}</th>
+          <th>{{i18n "admin.ratings.type.title"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each objects as |object|}}
+          {{rating-object
+            object=object
+            objectList=objectList
+            ratingTypes=ratingTypes
+            updateObject=(action "updateObject")
+            destroyObject=(action "destroyObject")}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    {{noneLabel}}
+  {{/if}}
+{{/if}}
+
+<div class="type-list-controls">
+  {{d-button
+    action=(action "newObject")
+    label="admin.ratings.type.new"
+    icon="plus"}}
+</div>

@@ -16,7 +16,18 @@
     float: left;
     margin-right: 10px;
   }
+}
 
+.topic-list .exact-rating {
+  font-size: 14px;
+  height: 14px;
+}
+
+.topic-post .star-rating {
+  vertical-align: top;
+}
+
+.topic-rating-tip {
   .topic-tip {
     float: left;
     position: relative;
@@ -49,15 +60,6 @@
       margin: 2px 0;
     }
   }
-}
-
-.topic-list .exact-rating {
-  font-size: 14px;
-  height: 14px;
-}
-
-.topic-post .star-rating {
-  vertical-align: top;
 }
 
 span.star-rating {

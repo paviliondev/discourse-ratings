@@ -33,7 +33,9 @@ en:
   admin_js:
     admin:
       ratings:
+        settings_page: "Ratings"
         type:
+          title: "Types"
           none: "No types."
           slug: "Type"
           slug_placeholder: "Hidden, dasherized and uneditable."
@@ -46,8 +48,15 @@ en:
           confirm_destroy: |
             Are you sure you want to delete this type?
             All existing ratings with this type will be given a generic type.
-          heading: "Rating Types"
-          settings_page: "Rating Types"
+        enabled: "Enabled"
+        category:
+          title: "Categories"
+          name: "Category"
+          none: "No rating categories"
+        tag:
+          title: "Tags"
+          name: "Tag"
+          none: "No rating tags"
   
   site_settings:
     rating_enabled: "Enable ratings."

@@ -14,21 +14,27 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "save"
 end
 
-add_admin_route 'admin.ratings.type.settings_page', 'rating-types'
+add_admin_route 'admin.ratings.settings_page', 'ratings'
 
 after_initialize do
   %w[
-    ../lib/engine.rb
-    ../lib/rating.rb
-    ../lib/rating_type.rb
-    ../app/serializers/rating.rb
-    ../app/serializers/rating_type.rb
-    ../app/controllers/rating.rb
-    ../app/controllers/rating_type.rb
+    ../lib/ratings/engine.rb
+    ../lib/ratings/rating.rb
+    ../lib/ratings/rating_type.rb
+    ../lib/ratings/object.rb
+    ../config/routes.rb
+    ../app/serializers/ratings/object.rb
+    ../app/serializers/ratings/rating.rb
+    ../app/serializers/ratings/rating_type.rb
+    ../app/serializers/ratings/site.rb
+    ../app/controllers/ratings/object.rb
+    ../app/controllers/ratings/rating.rb
+    ../app/controllers/ratings/rating_type.rb
+    ../extensions/post_revisor.rb
+    ../extensions/posts_controller.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
-  
   
   ###### Site ######
   
@@ -36,37 +42,20 @@ after_initialize do
     DiscourseRatings::RatingType.all
   end
   
-  add_to_serializer(:site, :rating_types) do
-    ActiveModel::ArraySerializer.new(object.rating_types,
-      each_serializer: DiscourseRatings::RatingTypeSerializer
-    )
+  add_to_serializer(:site, :ratings) do
+    DiscourseRatings::SiteSerializer.new(object, root: false)
   end
   
+  ###### Category && Tag ######
   
-  ###### Category ######
-  
-  register_category_custom_field_type('rating_enabled', :boolean)
-
   add_to_class(:category, :rating_types) do
-    if custom_fields["rating_types"].present?
-      custom_fields["rating_types"].split('|')
-    else
-      []
-    end
+    DiscourseRatings::Object.get('category', full_slug)
   end
   
-  if Site.respond_to? :preloaded_category_custom_fields
-    Site.preloaded_category_custom_fields << 'rating_enabled' 
-    Site.preloaded_category_custom_fields << 'rating_types'
+  add_to_class(:tag, :rating_types) do
+    DiscourseRatings::Object.get('tag', name)
   end
 
-  add_to_serializer(:basic_category, :rating_enabled) do
-    object.custom_fields["rating_enabled"]
-  end
-  
-  add_to_serializer(:basic_category, :rating_types) { object.rating_types }
-  
-  
   ###### Post ######
   
   add_permitted_post_create_param('ratings')
@@ -75,14 +64,48 @@ after_initialize do
   on(:post_created) do |post, opts, user|
     if opts[:ratings].present?
       begin
-        data = JSON.parse(opts[:ratings])
+        ratings = JSON.parse(opts[:ratings])
       rescue JSON::ParserError
-        data = []
+        ratings = []
       end
-            
-      if data.any?
-        post.update_ratings(DiscourseRatings::Rating.build_list(data))
+      
+      topic = post.topic
+      user_can_rate = topic.user_can_rate(user)
+      
+      ratings = DiscourseRatings::Rating.build_list(ratings)
+        .select { |r| user_can_rate.include?(r.type) }
+                  
+      if ratings.any?
+        post.update_ratings(ratings)
       end
+    end
+  end
+  
+  ### These monkey patches are necessary as there is currently
+  ### no way to add post attributes on update
+   
+  class ::PostRevisor
+    cattr_accessor :ratings
+    prepend PostRevisorRatingsExtension
+  end
+
+  ::PostsController.prepend PostsControllerRatingsExtension
+  
+  on(:post_edited) do |post, topic_changed, revisor|
+    if revisor.ratings.present?
+      topic = post.topic
+      user = post.user
+      user_has_rated = topic.user_has_rated(user)
+      user_can_rate = topic.user_can_rate(user)
+
+      ratings = DiscourseRatings::Rating.build_list(revisor.ratings)
+        .select do |r|
+          user_has_rated.include?(r.type) ||
+          user_can_rate.include?(r.type)
+        end
+      
+      post.update_ratings(ratings)
+      revisor.ratings = nil
     end
   end
 
@@ -103,18 +126,23 @@ after_initialize do
   end
   
   add_to_class(:post, :update_ratings) do |ratings, weight: 1|
-    save_ratings(ratings, weight)
-    update_topic_ratings
+    Post.transaction do
+      save_ratings(ratings, weight)
+      update_topic_ratings
+    end
+    
     push_ratings_to_clients
   end
   
   add_to_class(:post, :save_ratings) do |ratings, weight|
-    data = {}
-    
+    data = []
+        
     ratings.each do |rating|
-      data[:type] = rating.type
-      data[:value] = rating.value
-      data[:weight] = weight
+      data.push(
+        type: rating.type,
+        value: rating.value,
+        weight: weight
+      )
     end
     
     custom_fields['ratings'] = data
@@ -122,42 +150,45 @@ after_initialize do
   end
   
   add_to_class(:post, :update_topic_ratings) do
-    types = topic.category.rating_types
-    ratings = topic.posts.map { |p| p.ratings }.flatten
+    types = topic.rating_types
+    post_ratings = topic.reload.posts.map { |p| p.ratings }.flatten
+        
+    return if types.blank? || post_ratings.blank?
     
-    return if types.blank? || ratings.blank?
-    
-    ratings = []
+    topic_ratings = []
     
     types.each do |type|
-      type_ratings = ratings.select do |rating|
-        (rating[:weight].to_i === 1) &&
-        (rating[:type] == type.to_s)
+      type_ratings = post_ratings.select do |r|
+        (r.weight === 1) && (r.type === type.to_s)
       end
-      
-      sum = type_ratings.map { |rating| rating[:value].to_i }.inject(:+)
-      count = ratings.length
-      average = (sum / count).to_f
-      
-      ratings.push(
-        type: type,
-        count: count,
-        value: average
-      )
+                  
+      if type_ratings.any?    
+        sum = type_ratings.map { |r| r.value }.inject(:+)
+        count = type_ratings.length
+        average = (sum / count).to_f
+                
+        topic_ratings.push(
+          type: type,
+          value: average,
+          count: count
+        )
+      end
     end
 
-    topic.custom_fields['ratings'] = ratings
+    topic.custom_fields['ratings'] = topic_ratings
     topic.save_custom_fields(true)
   end
   
   add_to_class(:post, :push_ratings_to_clients) do
-    publish_change_to_clients!("ratings", topic_ratings: topic.ratings)
+    publish_change_to_clients!("ratings",
+      ratings: topic.ratings.as_json,
+      user_can_rate: topic.user_can_rate(user)
+    )
   end
   
   add_to_serializer(:post, :ratings) do
     DiscourseRatings::Rating.serialize(object.ratings) 
   end
-  
   
   ###### Topic ######
   
@@ -167,29 +198,45 @@ after_initialize do
     DiscourseRatings::Rating.build_list(custom_fields["ratings"])
   end
   
+  add_to_class(:topic, :rating_types) do
+    types = []
+    types.push(category.rating_types) if category.present?
+    types.push(tags.map { |tag| tag.rating_types }) if tags.present?
+    types.flatten
+  end
+  
   add_to_class(:topic, :rating_enabled?) do
-    !(tags & SiteSetting.rating_tags.split('|')).empty? ||
-    (category && category.custom_fields["rating_enabled"])
+    rating_types.any?
+  end
+  
+  add_to_class(:topic, :user_can_rate) do |user|
+    category.rating_types.select do |type|
+      user_has_rated(user).exclude?(type)
+    end  
+  end
+  
+  add_to_class(:topic, :user_has_rated) do |user|
+    posts.select do |post|
+      post.user_id === user.id && post.ratings.present?
+    end.map do |post|
+      post.ratings.map(&:type)
+    end.flatten
   end
   
   add_to_serializer(:topic_view, :ratings) do
     DiscourseRatings::Rating.serialize(object.topic.ratings)
   end
-    
-  add_to_serializer(:topic_view, :rating_enabled) do
+
+  add_to_serializer(:topic_view, :show_ratings) do
     object.topic.rating_enabled?
   end
-
-  add_to_serializer(:topic_view, :has_ratings) do
-    object.ratings.present?
+  
+  add_to_serializer(:topic_view, :user_can_rate) do
+    object.topic.user_can_rate(scope.current_user)
   end
   
-  add_to_serializer(:topic_view, :user_rating_types) do
-    return {} if !scope.current_user || !rating_enabled
-    user_ratings = object.posts.select do |post|
-      post.user_id === scope.current_user.id &&
-      post.ratings.present?
-    end.map { |post| post.ratings.map(&:type) }
+  add_to_serializer(:topic_view, :include_user_can_rate?) do
+    scope.current_user && object.topic.rating_enabled?
   end
   
   if TopicList.respond_to? :preloaded_custom_fields

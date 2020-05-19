@@ -1,5 +1,4 @@
 import Component from "@ember/component";
-import RatingType from '../models/rating-type';
 import { lt, or, alias } from "@ember/object/computed";
 
 const minSlugLength = 2;

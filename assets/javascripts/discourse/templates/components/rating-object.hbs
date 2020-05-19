@@ -1,0 +1,32 @@
+<td>
+  {{#if object.isNew}}
+    {{combo-box
+      value=object.name
+      content=objectList
+      onChange=(action (mut object.name))
+      options=(hash
+        none="select_kit.default_header_text"
+      )}}
+  {{else}}
+    {{object.name}}
+  {{/if}}
+</td>
+<td>
+  {{multi-select
+    value=object.types
+    content=ratingTypes
+    valueProperty="slug"
+    onChange=(action (mut object.types))}}
+</td>
+<td class="type-controls">
+  {{d-button
+    class="btn-primary"
+    action=updateObject
+    actionParam=object
+    label="admin.ratings.type.update"
+    icon="save"}}
+  {{d-button
+    action=destroyObject
+    actionParam=object
+    icon="times"}}
+</td>

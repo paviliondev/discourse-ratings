@@ -5,40 +5,6 @@ import Site from "discourse/models/site";
 
 const siteSettings = Discourse.SiteSettings;
 
-let ratingEnabled = function(tags, categoryId) {
-  const ratingTags = siteSettings.rating_tags.split('|');
-  const category = Category.findById(categoryId);
-  return (category && category.rating_enabled) ||
-    (tags && tags.filter((t) => ratingTags.indexOf(t) !== -1).length > 0);
-};
-
-let removeRating = function(postId) {
-  return ajax("/rating/remove", {
-    type: 'POST',
-    data: {
-      post_id: postId,
-    }
-  }).then(function (result, error) {
-    if (error) {
-      popupAjaxError(error);
-    }
-  });
-};
-
-let editRating = function(postId, rating) {
-  return ajax("/rating/rate", {
-    type: 'POST',
-    data: {
-      post_id: postId,
-      rating: rating
-    }
-  }).then(function (result, error) {
-    if (error) {
-      popupAjaxError(error);
-    }
-  });
-};
-
 let starRatingRaw = function(rating, opts = {}) {
   let content = '';
   for (let i = 0; i < 5; i++) {
@@ -116,15 +82,12 @@ function ratingListHtml(ratings, opts={}) {
 }
 
 function typeName(ratingType) {
-  const ratingTypes = Site.currentProp('rating_types');
-  const type = ratingTypes.find(t => t.slug === ratingType);
+  const ratings = Site.currentProp('ratings');
+  const type = ratings.types.find(t => t.slug === ratingType);
   return type ? type.name : "";
 }
 
 export {
-  ratingEnabled,
-  removeRating,
-  editRating,
   ratingListHtml,
   typeName
 };
