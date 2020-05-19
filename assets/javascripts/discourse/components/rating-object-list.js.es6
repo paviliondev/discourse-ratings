@@ -23,28 +23,6 @@ export default Component.extend({
     return I18n.t(`admin.ratings.${objectType}.none`);
   },
   
-  @discourseComputed('objectType')
-  objectList(objectType) {
-    const site = this.site;
-        
-    if (objectType === 'category') {
-      return site.categories.map(c => {
-        return {
-          id: c.fullSlug,
-          name: c.name
-        }
-      });
-    }
-    if (objectType === 'tag' && site.top_tags) {
-      return site.top_tags.map(t => {
-        return {
-          id: t,
-          name: t
-        }
-      });
-    }
-  },
-  
   actions: {
     newObject() {
       this.get('objects').pushObject({
@@ -52,6 +30,23 @@ export default Component.extend({
         types: [],
         isNew: true
       })
+    },
+    
+    addObject(obj) {
+      let data = {
+        name: obj.name,
+        types: obj.types,
+        type: this.objectType
+      }
+      
+      this.set('loading', true);
+      RatingObject.add(data).then((result) => {
+        if (result.success) {
+          this.refresh();
+        } else {
+          this.set('loading', false)
+        }
+      });
     },
 
     updateObject(obj) {

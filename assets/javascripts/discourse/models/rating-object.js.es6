@@ -16,6 +16,10 @@ RatingObject.reopenClass({
     return request("GET", objectType);
   },
   
+  add(data) {
+    return request("POST", '', data);
+  },
+  
   update(objectType, data) {
     return request("PUT", objectType, data);
   },

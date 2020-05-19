@@ -1,8 +1,13 @@
 class DiscourseRatings::ObjectController < ::Admin::AdminController  
   before_action :validate_type
+  before_action :validate_object, only: [:create]
   
   def show
     render_serialized(DiscourseRatings::Object.list(params[:type]), DiscourseRatings::ObjectSerializer)
+  end
+  
+  def create
+    handle_render(DiscourseRatings::Object.create(params[:type], object_params[:name], object_params[:types]))
   end
   
   def update
@@ -22,6 +27,12 @@ class DiscourseRatings::ObjectController < ::Admin::AdminController
   def validate_type
     unless DiscourseRatings::Object::TYPES.include?(params[:type])
       raise Discourse::InvalidParameters.new(:type)
+    end
+  end
+  
+  def validate_object
+    if DiscourseRatings::Object.exists?(params[:type], object_params[:name])
+      raise Discourse::InvalidParameters.new(:name)
     end
   end
   

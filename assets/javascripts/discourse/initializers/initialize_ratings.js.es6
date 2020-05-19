@@ -62,7 +62,7 @@ export default {
         allowedRatingTypes(tags, category) {
           const siteRatings = this.site.ratings;
           let types = [];
-                    
+                              
           if (!siteRatings) {
             return types;
           }

@@ -19,8 +19,27 @@ class DiscourseRatings::Object
     end
   end
   
+  def self.exists?(object_type, name)
+    PluginStoreRow.where("
+      plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
+      key = ?
+    ", build_key(object_type, name)).exists?
+  end
+  
+  def self.create(object_type, name, types)
+    if exists?(object_type, name) ||
+       object_type.blank? ||
+       name.blank? ||
+       types.blank?
+       
+      false
+    else
+      set(object_type, name, types)
+    end
+  end
+  
   def self.get(object_type, name)
-    if (types = PluginStore.get(DiscourseRatings::PLUGIN_NAME, "#{object_type}_#{name}")).present?
+    if (types = PluginStore.get(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name))).present?
       types.split('|')
     else
       []
@@ -29,11 +48,17 @@ class DiscourseRatings::Object
   
   def self.set(object_type, name, types)
     if TYPES.include?(object_type)
-      PluginStore.set(DiscourseRatings::PLUGIN_NAME, "#{object_type}_#{name}", types.join('|'))
+      PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name), types.join('|'))
     end
   end
   
   def self.destroy(object_type, name)
-    PluginStore.remove(DiscourseRatings::PLUGIN_NAME, "#{object_type}_#{name}")
+    PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name))
+  end
+  
+  private
+  
+  def self.build_key(object_type, name)
+    "#{object_type}_#{name}"
   end
 end

@@ -49,7 +49,7 @@ after_initialize do
   ###### Category && Tag ######
   
   add_to_class(:category, :rating_types) do
-    DiscourseRatings::Object.get('category', full_slug)
+    DiscourseRatings::Object.get('category', full_slug("/"))
   end
   
   add_to_class(:tag, :rating_types) do
@@ -210,7 +210,7 @@ after_initialize do
   end
   
   add_to_class(:topic, :user_can_rate) do |user|
-    category.rating_types.select do |type|
+    rating_types.select do |type|
       user_has_rated(user).exclude?(type)
     end  
   end

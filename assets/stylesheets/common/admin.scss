@@ -1,6 +1,11 @@
-.admin-contents.rating-types {
+.admin-contents.ratings {
   input {
     margin-bottom: 0;
+  }
+  
+  .types,
+  .object-types {
+    margin-bottom: 30px;
   }
   
   .type-controls {
@@ -9,5 +14,24 @@
   
   .type-list-controls {
     margin-top: 10px;
+  }
+  
+  .rating-object {
+    position: relative;
+    
+    td:first-of-type {
+      width: 350px;
+    }
+    
+    &.error {
+      border: 2px solid $danger;
+      min-height: 70px;
+      
+      .error {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+    }
   }
 }

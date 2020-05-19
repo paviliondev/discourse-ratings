@@ -1,7 +1,4 @@
 DiscourseRatings::Engine.routes.draw do
-  post "/rate" => "rating#rate"
-  post "/remove" => "rating#remove"
-  
   scope constraints: AdminConstraint.new do
     resources :rating_type, param: :slug, :path => '/rating-type'
     resources :object, param: :type
@@ -9,6 +6,6 @@ DiscourseRatings::Engine.routes.draw do
 end
 
 Discourse::Application.routes.append do
-  get '/admin/plugins/ratings' => 'admin/plugins#index', constraints: StaffConstraint.new
+  get '/admin/plugins/ratings' => 'admin/plugins#index', constraints: AdminConstraint.new
   mount ::DiscourseRatings::Engine, at: "rating"
 end

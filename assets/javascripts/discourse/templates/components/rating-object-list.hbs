@@ -15,8 +15,10 @@
         {{#each objects as |object|}}
           {{rating-object
             object=object
-            objectList=objectList
+            objects=objects
+            objectType=objectType
             ratingTypes=ratingTypes
+            addObject=(action "addObject")
             updateObject=(action "updateObject")
             destroyObject=(action "destroyObject")}}
         {{/each}}
