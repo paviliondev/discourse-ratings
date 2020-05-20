@@ -126,22 +126,17 @@ after_initialize do
   end
   
   add_to_class(:post, :update_ratings) do |ratings, weight: 1|
+    ratings.each do |rating|
+      rating.weight = weight
+    end
+    
     Post.transaction do
-      save_ratings(ratings, weight)
+      DiscourseRatings::Rating.set_custom_fields(self, ratings)
+      save_custom_fields(true)
       update_topic_ratings
     end
     
     push_ratings_to_clients
-  end
-  
-  add_to_class(:post, :save_ratings) do |ratings, weight|
-    ratings.each do |rating|
-      custom_fields["#{DiscourseRatings::Rating::KEY}_#{rating.type}"] = {
-        value: rating.value,
-        weight: weight
-      }.to_json
-    end
-    save_custom_fields(true)
   end
   
   add_to_class(:post, :update_topic_ratings) do
@@ -149,9 +144,7 @@ after_initialize do
     post_ratings = topic.reload.posts.map { |p| p.ratings }.flatten
         
     return if types.blank? || post_ratings.blank?
-    
-    topic_ratings = []
-    
+        
     types.each do |type|
       type_ratings = post_ratings.select do |r|
         (r.weight === 1) && (r.type === type.to_s)
@@ -162,10 +155,13 @@ after_initialize do
         count = type_ratings.length
         average = (sum / count).to_f
         
-        topic.custom_fields["#{DiscourseRatings::Rating::KEY}_#{type}"] = {
+        topic_rating = {
+          type: type,
           value: average,
           count: count
-        }.to_json
+        }
+        
+        DiscourseRatings::Rating.set_custom_fields(topic, [topic_rating])
       end
     end
 
@@ -230,9 +226,7 @@ after_initialize do
     scope.current_user && object.topic.rating_enabled?
   end
   
-  if TopicList.respond_to? :preloaded_custom_fields
-    DiscourseRatings::RatingType.preload_custom_fields
-  end
+  DiscourseRatings::Rating.preload_custom_fields
   
   add_to_serializer(:topic_list_item, :ratings) do
     DiscourseRatings::Rating.serialize(object.ratings)

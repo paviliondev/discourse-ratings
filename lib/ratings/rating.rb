@@ -12,12 +12,81 @@ class DiscourseRatings::Rating
     @count = attrs[:count].to_i if attrs[:count] != nil
   end
   
+  def self.set_custom_fields(model, ratings)
+    [*ratings].each do |rating|
+      data = {
+        value: rating.value
+      }
+      data[:weight] = rating.weight if rating.weight.present?
+      data[:count] = rating.count if rating.count.present?  
+      model.custom_fields[field_name(rating.type)] = data.to_json
+    end
+  end
+  
+  def self.destroy_type(type)
+    name = field_name(type)
+    
+    ActiveRecord::Base.transaction do
+      TopicCustomField.where(name: name).destroy_all
+      PostCustomField.where(name: name).destroy_all
+    end
+  end
+    
+  def self.migrate_type(args, opts={})
+    if args.keys.exclude?(:current_type) ||
+       args.keys.exclude?(:new_type) ||
+       args.values.exclude?(DiscourseRatings::RatingType::NONE)
+      return nil
+    end
+    
+    topics = Topic.all
+    
+    if args[:category_id]
+      topics = topics.where(category_id: args[:category_id])
+    end
+    
+    current_name = field_name(args[:current_type])
+    new_name = field_name(args[:new_type])
+    
+    topics = topics.where("id in (
+      SELECT topic_id FROM topic_custom_fields
+      WHERE name = '#{current_name}'
+    )")
+    
+    unless opts[:ignore_duplicates]
+      topics = topics.where("id not in (
+        SELECT topic_id FROM topic_custom_fields
+        WHERE name = '#{new_name}'
+      )")
+    end
+    
+    topic_ids = topics.pluck(:id)
+    
+    if topic_ids.any?
+      post_ids = Post.where(topic_id: topic_ids).pluck(:id)
+      
+      ActiveRecord::Base.transaction do
+        TopicCustomField.where(
+          topic_id: topic_ids,
+          name: current_name
+        ).update_all(name: new_name)
+        
+        PostCustomField.where(
+          post_id: post_ids,
+          name: current_name
+        ).update_all(name: new_name)
+      end
+    end
+    
+    preload_custom_fields
+  end
+  
   def self.build_model_list(custom_fields, types)
     types.push(DiscourseRatings::RatingType::NONE)
     
     build_list(
       types.reduce([]) do |result, type|
-        data = custom_fields["#{KEY}_#{type}"]
+        data = custom_fields[field_name(type)]
         
         ## There should only be one rating type per instance
         data = data.first if data.is_a?(Array)
@@ -51,5 +120,18 @@ class DiscourseRatings::Rating
     ActiveModel::ArraySerializer.new(ratings,
       each_serializer: DiscourseRatings::RatingSerializer
     )
+  end
+  
+  def self.preload_custom_fields    
+    DiscourseRatings::RatingType.all.each do |row|
+      type = row.key.split(DiscourseRatings::RatingType::KEY_PREFIX).last
+      TopicList.preloaded_custom_fields << field_name(type)
+    end
+    
+    TopicList.preloaded_custom_fields << field_name(DiscourseRatings::RatingType::NONE)
+  end
+    
+  def self.field_name(type)
+    "#{KEY}_#{type.underscore}"
   end
 end

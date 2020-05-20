@@ -56,6 +56,13 @@ class DiscourseRatings::Object
     PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name))
   end
   
+  def self.remove_type(object_type, rating_type)
+    PluginStoreRow.where("
+      plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
+      key LIKE '#{object_type}_%'
+    ").update_all("value = replace(value, '#{rating_type}', '');")
+  end
+  
   private
   
   def self.build_key(object_type, name)

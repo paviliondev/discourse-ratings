@@ -28,22 +28,11 @@ class DiscourseRatings::RatingType
   
   def self.set(type, name)
     PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(type), name)
-    preload_custom_fields
+    DiscourseRatings::Rating.preload_custom_fields
   end
   
   def self.destroy(type)
     PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(type))
-  end
-  
-  def self.preload_custom_fields
-    all.each do |row|
-      type = row.key.split(DiscourseRatings::RatingType::KEY_PREFIX).last
-      TopicList.preloaded_custom_fields << "#{DiscourseRatings::Rating::KEY}_#{type}"
-    end 
-  end
-  
-  def self.migrate(data)
-    Jobs.enqueue(:migrate_rating_type, data)
   end
   
   private

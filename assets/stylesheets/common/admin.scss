@@ -39,7 +39,6 @@
     }
   }
   
-  
   .migration-controls {
     display: flex;
     align-items: flex-start;
@@ -52,5 +51,9 @@
     .combo-box {
       min-width: 130px;
     }
+  }
+  
+  .migration-message {
+    margin-top: 10px;
   }
 }

@@ -19,11 +19,11 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   end
 
   def destroy
-    handle_render(DiscourseRatings::RatingType.destroy(type_params[:type]))
+    handle_render(Jobs.enqueue(:destory_rating_type, type_params[:type]))
   end
   
   def migrate
-    handle_render(DiscourseRatings::RatingType.migrate(migrate_params.to_h))
+    handle_render(Jobs.enqueue(:migrate_rating_type, migrate_params.to_h))
   end
   
   private
