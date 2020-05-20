@@ -15,11 +15,11 @@ class DiscourseRatings::Rating
   def self.set_custom_fields(model, ratings)
     [*ratings].each do |rating|
       data = {
-        value: rating.value
+        value: rating[:value]
       }
-      data[:weight] = rating.weight if rating.weight.present?
-      data[:count] = rating.count if rating.count.present?  
-      model.custom_fields[field_name(rating.type)] = data.to_json
+      data[:weight] = rating[:weight] if rating[:weight].present?
+      data[:count] = rating[:count] if rating[:count].present?
+      model.custom_fields[field_name(rating[:type])] = data.to_json
     end
   end
   
