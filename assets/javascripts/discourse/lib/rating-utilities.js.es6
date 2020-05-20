@@ -45,10 +45,8 @@ function ratingHtml(rating, opts={}) {
     }
 
     if (siteSettings.rating_show_count) {
-      let countLabel = I18n.t('topic.x_rating_count', {
-        count: topic.rating_count
-      });
-      let countContent = rating.rating_count + countLabel;
+      let countLabel = I18n.t('topic.x_rating_count', { count: rating.count });
+      let countContent = rating.count + countLabel;
       html += `<span class="rating-count">${countContent}</span>`;
     }
   }
