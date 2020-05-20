@@ -9,7 +9,8 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
         value: post.custom_fields["rating"],
         weight: post.custom_fields["rating_weight"]
       }
-      DiscourseRatings::Rating.set_custom_fields(post, [rating])
+      ratings = DiscourseRatings::Rating.build_list(rating)
+      DiscourseRatings::Rating.set_custom_fields(post, ratings)
       post.save_custom_fields(true)
     end
     
@@ -19,7 +20,8 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
         value: topic.custom_fields['average_rating'],
         count: topic.custom_fields['rating_count']
       }
-      DiscourseRatings::Rating.set_custom_fields(topic, [rating])
+      ratings = DiscourseRatings::Rating.build_list(rating)
+      DiscourseRatings::Rating.set_custom_fields(topic, ratings)
       topic.save_custom_fields(true)
     end
   end
