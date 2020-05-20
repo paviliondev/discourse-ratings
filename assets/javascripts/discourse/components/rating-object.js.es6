@@ -5,7 +5,7 @@ import Category from 'discourse/models/category';
 import I18n from "I18n";
 
 export default Component.extend({
-  classNameBindings: [':rating-object', 'error:error'],
+  classNameBindings: [':rating-object', ':admin-ratings-list-object', 'error:hasError'],
   tagName: 'tr',
   isCategory: equal('objectType', 'category'),
   isTag: equal('objectType', 'tag'),

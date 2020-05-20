@@ -1,7 +1,7 @@
 class DiscourseRatings::RatingTypeSerializer < ::ApplicationSerializer
-  attributes :slug, :name
+  attributes :type, :name
   
-  def slug
+  def type
     object[:key].split("type_").last
   end
   

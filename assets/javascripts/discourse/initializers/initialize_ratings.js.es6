@@ -1,4 +1,5 @@
 import Composer from 'discourse/models/composer';
+import Category from 'discourse/models/category';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, on, observes } from "discourse-common/utils/decorators";
 import { notEmpty, and } from "@ember/object/computed";
@@ -68,7 +69,7 @@ export default {
           }
           
           if (category) {
-            const categoryTypes = siteRatings.categories[category.fullSlug];
+            const categoryTypes = siteRatings.categories[Category.slugFor(category)];
             if (categoryTypes) {
               types.push(...categoryTypes);
             }

@@ -5,7 +5,7 @@ import { notEmpty } from "@ember/object/computed";
 import I18n from "I18n";
 
 export default Component.extend({
-  classNameBindings: [':object-types', 'objectType'],
+  classNameBindings: [':object-types', ':admin-ratings-list', 'objectType'],
   hasObjects: notEmpty('objects'),
   
   @discourseComputed('objectType')

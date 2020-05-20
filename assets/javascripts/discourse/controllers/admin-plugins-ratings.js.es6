@@ -11,20 +11,20 @@ export default Controller.extend({
       this.get('ratingTypes').pushObject(
         RatingType.create({
           isNew: true,
-          slug: '',
+          type: '',
           name: ''
         })
       )
     },
     
     addType(typeObj) {
-      let type = {
-        slug: typeObj.slug,
+      let data = {
+        type: typeObj.type,
         name: typeObj.name
       }
       
       this.set('loading', true);
-      RatingType.add(type).then((result) => {
+      RatingType.add(data).then((result) => {
         if (result.success) {
           this.send('refresh');
         } else {
@@ -35,13 +35,12 @@ export default Controller.extend({
     },
     
     updateType(typeObj) {
-      let type = {
-        slug: typeObj.slug,
+      let data = {
         name: typeObj.name
       }
       
       this.set('loading', true);
-      RatingType.update(type).then((result) => {
+      RatingType.update(typeObj.type, data).then((result) => {
         if (result.success) {
           this.send('refresh');
         } else {
@@ -61,12 +60,8 @@ export default Controller.extend({
           I18n.t("yes_value"),
           result => {
             if (result) {
-              let type = {
-                slug: typeObj.slug
-              }
-              
               this.set('loading', true);
-              RatingType.destroy(type).then((result) => {
+              RatingType.destroy(typeObj.type).then((result) => {
                 if (result.success) {
                   this.send('refresh');
                 } else {

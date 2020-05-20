@@ -9,27 +9,34 @@ class DiscourseRatings::RatingType
     ")
   end
 
-  def self.exists?(slug)
+  def self.exists?(type)
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key = ?
-    ", slug).exists?
+    ", build_key(type)).exists?
   end
   
-  def self.create(slug, name)
-    return false if slug.dasherize == NONE
-    self.set(KEY_PREFIX + slug.dasherize, name)
+  def self.create(type, name)
+    type = type.underscore
+    return false if type == NONE ## none type can only be set via bulk operation
+    self.set(build_key(type), name)
   end
   
-  def self.get(slug)
-    PluginStore.get(DiscourseRatings::PLUGIN_NAME, slug)
+  def self.get(type)
+    PluginStore.get(DiscourseRatings::PLUGIN_NAME, build_key(type))
   end
   
-  def self.set(slug, name)
-    PluginStore.set(DiscourseRatings::PLUGIN_NAME, slug, name)
+  def self.set(type, name)
+    PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(type), name)
   end
   
-  def self.destroy(slug)
-    PluginStore.remove(DiscourseRatings::PLUGIN_NAME, slug)
+  def self.destroy(type)
+    PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(type))
+  end
+  
+  private
+  
+  def self.build_key(type)
+    KEY_PREFIX + type.underscore
   end
 end

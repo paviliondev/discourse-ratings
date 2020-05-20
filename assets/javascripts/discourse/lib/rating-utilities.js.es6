@@ -83,7 +83,7 @@ function ratingListHtml(ratings, opts={}) {
 
 function typeName(ratingType) {
   const ratings = Site.currentProp('ratings');
-  const type = ratings.types.find(t => t.slug === ratingType);
+  const type = ratings.types.find(t => t.type === ratingType);
   return type ? type.name : "";
 }
 

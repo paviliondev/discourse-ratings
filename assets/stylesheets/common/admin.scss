@@ -1,29 +1,33 @@
 .admin-contents.ratings {
-  input {
-    margin-bottom: 0;
+  
+  .admin-ratings-list {
+    margin-bottom: 30px;
+    
+    input {
+      margin-bottom: 0;
+    }
   }
   
-  .types,
-  .object-types {
-    margin-bottom: 30px;
+  .rating-type input {
+    width: 300px;
   }
   
   .type-controls {
     text-align: right;
   }
   
-  .type-list-controls {
+  .admin-ratings-list-controls {
     margin-top: 10px;
   }
   
-  .rating-object {
+  .admin-ratings-list-object {
     position: relative;
     
     td:first-of-type {
       width: 350px;
     }
     
-    &.error {
+    &.has-error {
       border: 2px solid $danger;
       min-height: 70px;
       

@@ -1,6 +1,6 @@
 DiscourseRatings::Engine.routes.draw do
   scope constraints: AdminConstraint.new do
-    resources :rating_type, param: :slug, :path => '/rating-type'
+    resources :rating_type, param: :type, :path => '/rating-type'
     resources :object, param: :type
   end
 end

@@ -37,8 +37,8 @@ en:
         type:
           title: "Types"
           none: "No types."
-          slug: "Type"
-          slug_placeholder: "Hidden, dasherized and uneditable."
+          type: "Type"
+          type_placeholder: "Hidden, dasherized and uneditable."
           name: "Name"
           name_placeholder: "Visible, sentence case and editable."
           new: "New"

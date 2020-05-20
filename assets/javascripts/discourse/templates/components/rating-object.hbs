@@ -25,7 +25,7 @@
   {{multi-select
     value=object.types
     content=ratingTypes
-    valueProperty="slug"
+    valueProperty="type"
     onChange=(action (mut object.types))}}
 </td>
 
@@ -38,7 +38,7 @@
       action=addObject
       actionParam=object
       label="admin.ratings.type.add"
-      icon="save"
+      icon="plus"
       disabled=saveDisabled}}
   {{else}}
     {{d-button

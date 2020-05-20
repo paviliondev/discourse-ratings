@@ -16,16 +16,16 @@ RatingType.reopenClass({
     return request("GET");
   },
 
-  add(type) {
-    return request("POST", { type });
+  add(data) {
+    return request("POST", '', data);
   },
   
-  update(type) {
-    return request("PUT", type.slug, { type });
+  update(type, data) {
+    return request("PUT", type, data);
   },
 
   destroy(type) {
-    return request("DELETE", type.slug);
+    return request("DELETE", type);
   }
 });
 

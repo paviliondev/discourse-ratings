@@ -1,10 +1,10 @@
 <td>
   {{#if type.isNew}}
     {{input
-      value=type.slug
-      placeholder=(i18n 'admin.ratings.type.slug_placeholder')}}
+      value=type.type
+      placeholder=(i18n 'admin.ratings.type.type_placeholder')}}
   {{else}}
-    {{type.slug}}
+    {{type.type}}
   {{/if}}
 </td>
 
@@ -21,7 +21,7 @@
       action=addType
       actionParam=type
       label="admin.ratings.type.add"
-      icon="save"
+      icon="plus"
       disabled=addDisabled}}
   {{else}}
     {{d-button

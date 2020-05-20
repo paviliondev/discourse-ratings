@@ -1,11 +1,11 @@
-<div class="types">
+<div class="types admin-ratings-list">
   <h3>{{i18n 'admin.ratings.type.title'}}</h3>
   
   {{#if hasTypes}}
     <table>
       <thead>
         <tr>
-          <th>{{i18n "admin.ratings.type.slug"}}</th>
+          <th>{{i18n "admin.ratings.type.type"}}</th>
           <th>{{i18n "admin.ratings.type.name"}}</th>
         </tr>
       </thead>
@@ -23,7 +23,7 @@
     {{i18n "admin.ratings.type.none"}}
   {{/if}}
 
-  <div class="type-list-controls">
+  <div class="admin-ratings-list-controls">
     {{d-button
       action=(action "newType")
       label="admin.ratings.type.new"

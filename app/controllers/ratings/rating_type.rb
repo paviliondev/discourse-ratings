@@ -1,9 +1,9 @@
 class DiscourseRatings::RatingTypeController < ::Admin::AdminController  
   before_action :check_type_exists, only: [:update, :destroy]
   before_action :validate_name, only: [:update, :create]
-  before_action :validate_slug, only: [:create]
+  before_action :validate_type, only: [:create]
   
-  MIN_SLUG_LENGTH = 2
+  MIN_TYPE_LENGTH = 2
   MIN_NAME_LENGTH = 2
   
   def index
@@ -11,28 +11,29 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   end
   
   def create
-    handle_render(DiscourseRatings::RatingType.create(type_params[:slug], type_params[:name]))
+    handle_render(DiscourseRatings::RatingType.create(type_params[:type], type_params[:name]))
   end
   
   def update
-    handle_render(DiscourseRatings::RatingType.set(params[:slug], type_params[:name]))
+    handle_render(DiscourseRatings::RatingType.set(type_params[:type], type_params[:name]))
   end
 
   def destroy
-    handle_render(DiscourseRatings::RatingType.destroy(params[:slug]))
+    handle_render(DiscourseRatings::RatingType.destroy(type_params[:type]))
   end
   
   private
   
   def type_params
-    params.require(:type).permit(:slug, :name)
+    params.permit(:type, :name)
   end
   
-  def validate_slug
-    if type_params[:slug].length < MIN_SLUG_LENGTH || 
-       type_params[:slug] == DiscourseRatings::RatingType::NONE
+  def validate_type
+    if type_params[:type].length < MIN_TYPE_LENGTH || 
+       type_params[:type] == DiscourseRatings::RatingType::NONE ||
+       DiscourseRatings::RatingType.exists?(type_params[:type])
       
-      raise Discourse::InvalidParameters.new(:slug)
+      raise Discourse::InvalidParameters.new(:type)
     end
   end
   
@@ -43,8 +44,8 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   end
   
   def check_type_exists
-    unless DiscourseRatings::RatingType.exists?(params[:slug])
-      raise Discourse::InvalidParameters.new(:slug) 
+    unless DiscourseRatings::RatingType.exists?(type_params[:type])
+      raise Discourse::InvalidParameters.new(:type) 
     end
   end
 
