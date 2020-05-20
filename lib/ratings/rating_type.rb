@@ -1,11 +1,11 @@
 class DiscourseRatings::RatingType
-  KEY_PREFIX ||= "type_"
+  KEY ||= "type"
   NONE ||= "none"
   
   def self.all
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
-      key LIKE '#{KEY_PREFIX}%'
+      key LIKE '#{KEY}_%'
     ")
   end
 
@@ -17,9 +17,8 @@ class DiscourseRatings::RatingType
   end
   
   def self.create(type, name)
-    type = type.underscore
     return false if type == NONE ## none type can only be set via bulk operation
-    self.set(build_key(type), name)
+    self.set(type, name)
   end
   
   def self.get(type)
@@ -34,10 +33,12 @@ class DiscourseRatings::RatingType
   def self.destroy(type)
     PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(type))
   end
-  
-  private
-  
+    
   def self.build_key(type)
-    KEY_PREFIX + type.underscore
+    "#{KEY}_#{type.parameterize.underscore}"
+  end
+  
+  def self.type_from_key(key)
+    key.split('_', 2).last
   end
 end

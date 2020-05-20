@@ -14,8 +14,8 @@ class DiscourseRatings::Object
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key LIKE '#{object_type}_%'
-    ").map do |record|
-      new(record.key.split('_').last, record.value.split("|"))
+    ").map do |r|
+      new(name_from_key(r.key), types_from_value(r.value))
     end
   end
   
@@ -39,8 +39,8 @@ class DiscourseRatings::Object
   end
   
   def self.get(object_type, name)
-    if (types = PluginStore.get(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name))).present?
-      types.split('|')
+    if (value = PluginStore.get(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name))).present?
+      types_from_value(value)
     else
       []
     end
@@ -48,7 +48,7 @@ class DiscourseRatings::Object
   
   def self.set(object_type, name, types)
     if TYPES.include?(object_type)
-      PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name), types.join('|'))
+      PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(object_type, name), build_value(types))
     end
   end
   
@@ -60,12 +60,31 @@ class DiscourseRatings::Object
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key LIKE '#{object_type}_%'
-    ").update_all("value = replace(value, '#{rating_type}', '');")
+    ").each do |r|
+      types = types_from_value(r.value).select { |t| t != rating_type }
+      
+      if types.any?
+        r.value = build_value(types)
+        r.save
+      else
+        r.destroy
+      end
+    end
   end
-  
-  private
-  
+    
   def self.build_key(object_type, name)
     "#{object_type}_#{name}"
+  end
+  
+  def self.name_from_key(key)
+    key.split('_', 2).last
+  end
+  
+  def self.types_from_value(value)
+    value.split('|')
+  end
+  
+  def self.build_value(types)
+    types.join('|')
   end
 end

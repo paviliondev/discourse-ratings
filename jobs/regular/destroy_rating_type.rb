@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Jobs
-  class DestoryRatingType < ::Jobs::Base
+  class DestroyRatingType < ::Jobs::Base
     def execute(args)
       type = args[:type]
       

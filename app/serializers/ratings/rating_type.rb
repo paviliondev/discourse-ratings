@@ -2,7 +2,7 @@ class DiscourseRatings::RatingTypeSerializer < ::ApplicationSerializer
   attributes :type, :name
   
   def type
-    object[:key].split(DiscourseRatings::RatingType::KEY_PREFIX).last
+    DiscourseRatings::RatingType.type_from_key(object[:key])
   end
   
   def name

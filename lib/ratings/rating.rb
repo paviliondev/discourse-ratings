@@ -124,7 +124,7 @@ class DiscourseRatings::Rating
   
   def self.preload_custom_fields    
     DiscourseRatings::RatingType.all.each do |row|
-      type = row.key.split(DiscourseRatings::RatingType::KEY_PREFIX).last
+      type = DiscourseRatings::RatingType.type_from_key(row.key)
       TopicList.preloaded_custom_fields << field_name(type)
     end
     
@@ -132,6 +132,6 @@ class DiscourseRatings::Rating
   end
     
   def self.field_name(type)
-    "#{KEY}_#{type.underscore}"
+    "#{KEY}_#{type.parameterize.underscore}"
   end
 end

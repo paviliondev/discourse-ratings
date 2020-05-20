@@ -22,7 +22,7 @@ export default Component.extend({
     if (object.name) {
       if (this.isCategory) {
         const slugPath = object.name.split('/');
-        this.set('categoryId', Category.findBySlugPath(slugPath))
+        this.set('category', Category.findBySlugPath(slugPath))
       }
       
       if (this.isTag) {
@@ -49,7 +49,7 @@ export default Component.extend({
       if (objects.every(o => o.name !== slug)) {
         this.setProperties({
           'object.name': slug,
-          categoryId,
+          category,
           error: null
         });
       } else {

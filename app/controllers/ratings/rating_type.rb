@@ -19,7 +19,7 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   end
 
   def destroy
-    handle_render(Jobs.enqueue(:destory_rating_type, type_params[:type]))
+    handle_render(Jobs.enqueue(:destroy_rating_type, type: type_params[:type]))
   end
   
   def migrate
@@ -33,9 +33,6 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   end
   
   def migrate_params
-    params.require(:category_id)
-    params.require(:current_type)
-    params.require(:new_type)
     params.permit(:category_id, :current_type, :new_type)
   end
   

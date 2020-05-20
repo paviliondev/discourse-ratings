@@ -2,7 +2,7 @@
   {{#if object.isNew}}
     {{#if isCategory}}
       {{category-chooser
-        value=categoryId
+        value=category.id
         onChange=(action "updateCategory")}}
     {{/if}}
     {{#if isTag}}
@@ -17,7 +17,12 @@
         )}}
     {{/if}}
   {{else}}
-    {{object.name}}
+    {{#if isCategory}}
+      {{category-badge category}}
+    {{/if}}
+    {{#if isTag}}
+      {{discourse-tag tag}}
+    {{/if}}
   {{/if}}
 </td>
 
