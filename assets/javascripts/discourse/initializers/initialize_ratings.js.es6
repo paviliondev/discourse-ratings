@@ -32,13 +32,27 @@ export default {
         
         @discourseComputed('editingPostWithRatings', 'post.ratings', 'topicFirstPost', 'allowedRatingTypes.[]', 'topic.user_can_rate.[]')
         ratingTypes(editingPostWithRatings, postRatings, topicFirstPost, allowedRatingTypes, userCanRate) {
+          let types = [];
+          
           if (editingPostWithRatings) {
-            return postRatings.map(r => r.type);
-          } else if (topicFirstPost) {
-            return allowedRatingTypes;
-          } else {
-            return userCanRate;
+            types.push(...postRatings.map(r => r.type));
           }
+          
+          if (topicFirstPost) {
+            allowedRatingTypes.forEach(t => {
+              if (types.indexOf(t) === -1) {
+                types.push(t);
+              }
+            });
+          } else {
+            userCanRate.forEach(t => {
+              if (types.indexOf(t) === -1) {
+                types.push(t);
+              }
+            })
+          }
+          
+          return types;
         },
         
         @discourseComputed('ratingTypes', 'editingPostWithRatings', 'post.ratings')
