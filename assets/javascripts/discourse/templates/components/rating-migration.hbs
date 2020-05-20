@@ -1,0 +1,42 @@
+<h3>{{i18n 'admin.ratings.migrate.title'}}</h3>
+
+<div class="migration-description">
+  {{i18n 'admin.ratings.migrate.description'}}
+</div>
+
+<div class="migration-controls">
+  {{category-chooser
+    value=categoryId
+    onChange=(action (mut categoryId))}}
+    
+  {{combo-box
+    value=fromType
+    content=migrateTypes
+    valueProperty="type"
+    onChange=(action (mut fromType))
+    options=(hash
+      none="admin.ratings.type.select"
+    )}}
+
+  {{combo-box
+    value=toType
+    content=migrateTypes
+    valueProperty="type"
+    onChange=(action (mut toType))
+    options=(hash
+      none="admin.ratings.type.select"
+    )}}
+
+  {{d-button
+    action="migrate"
+    label="admin.ratings.migrate.btn_label"
+    disabled=migrateDisabled}}
+
+  {{#if startingMigration}}
+    {{loading-spinner size="small"}}
+  {{else}}
+    {{#if migrationMessage}}
+      {{i18n migrationMessage}}
+    {{/if}}
+  {{/if}}
+</div>

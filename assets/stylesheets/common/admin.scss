@@ -38,4 +38,19 @@
       }
     }
   }
+  
+  
+  .migration-controls {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+    
+    > * {
+      margin-right: 10px;
+    }
+    
+    .combo-box {
+      min-width: 130px;
+    }
+  }
 }

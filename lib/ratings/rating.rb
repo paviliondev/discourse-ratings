@@ -13,16 +13,25 @@ class DiscourseRatings::Rating
   end
   
   def self.build_model_list(custom_fields, types)
+    types.push(DiscourseRatings::RatingType::NONE)
+    
     build_list(
       types.reduce([]) do |result, type|
-        if (data = custom_fields["#{KEY}_#{type}"]).present?
+        data = custom_fields["#{KEY}_#{type}"]
+        
+        ## There should only be one rating type per instance
+        data = data.first if data.is_a?(Array)
+        
+        if data.present?
           begin
             rating_data = JSON.parse(data)
           rescue JSON::ParserError
             rating_data = {}
           end
+          
           result.push({ type: type }.merge(rating_data))
         end
+        
         result
       end
     )

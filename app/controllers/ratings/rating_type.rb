@@ -22,10 +22,21 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
     handle_render(DiscourseRatings::RatingType.destroy(type_params[:type]))
   end
   
+  def migrate
+    handle_render(DiscourseRatings::RatingType.migrate(migrate_params.to_h))
+  end
+  
   private
   
   def type_params
     params.permit(:type, :name)
+  end
+  
+  def migrate_params
+    params.require(:category_id)
+    params.require(:current_type)
+    params.require(:new_type)
+    params.permit(:category_id, :current_type, :new_type)
   end
   
   def validate_type

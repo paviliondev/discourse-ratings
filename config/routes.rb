@@ -1,6 +1,7 @@
 DiscourseRatings::Engine.routes.draw do
   scope constraints: AdminConstraint.new do
     resources :rating_type, param: :type, :path => '/rating-type'
+    post "/rating-type/migrate" => "rating_type#migrate"
     resources :object, param: :type
   end
 end

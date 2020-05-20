@@ -26,6 +26,10 @@ RatingType.reopenClass({
 
   destroy(type) {
     return request("DELETE", type);
+  },
+  
+  migrate(data) {
+    return request("POST", "migrate", data);
   }
 });
 

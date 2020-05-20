@@ -42,6 +42,10 @@ class DiscourseRatings::RatingType
     end 
   end
   
+  def self.migrate(data)
+    Jobs.enqueue(:migrate_rating_type, data)
+  end
+  
   private
   
   def self.build_key(type)

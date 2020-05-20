@@ -41,6 +41,8 @@ en:
           type_placeholder: "Hidden, dasherized and uneditable."
           name: "Name"
           name_placeholder: "Visible, sentence case and editable."
+          none_type: "None"
+          select: "Select type"
           new: "New"
           add: "Add"
           update: "Save"
@@ -57,8 +59,18 @@ en:
           title: "Tags"
           name: "Tag"
           none: "No rating tags"
+        migrate:
+          title: "Migrate"
+          description: You can migrate ratings to or from no type ("none")
+          category: "Category"
+          current_type: "Current Type"
+          new_type: "New Type"
+          btn_label: "Migrate"
+          started: "Migration started. It may take a few minutes to complete."
+        
         error:
           object_already_exists: "Entry for {{objectType}} already exists"
+          migration_failed_to_start: "Migration failed to start"
   
   site_settings:
     rating_enabled: "Enable ratings."
