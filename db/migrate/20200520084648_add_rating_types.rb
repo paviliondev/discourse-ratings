@@ -1,11 +1,11 @@
 class AddRatingTypes < ActiveRecord::Migration[6.0]
   def up
-    posts = Post.where("id in (SELECT post_id from post_custom_field where name = 'rating')")
+    posts = Post.where("id in (SELECT post_id from post_custom_fields where name = 'rating')")
     topics = Topic.where(id: posts.pluck(:topic_id).uniq)
     
     posts.each do |post|
       rating = {
-        type: DiscourseRatings::RatingType::NONE
+        type: DiscourseRatings::RatingType::NONE,
         value: post.custom_fields["rating"],
         weight: post.custom_fields["rating_weight"]
       }
@@ -15,7 +15,7 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
     
     topics.each do |topic|
       rating = {
-        type: DiscourseRatings::RatingType::NONE
+        type: DiscourseRatings::RatingType::NONE,
         value: topic.custom_fields['average_rating'],
         count: topic.custom_fields['rating_count']
       }
