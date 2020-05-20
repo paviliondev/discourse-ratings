@@ -12,6 +12,11 @@ class DiscourseRatings::Rating
     @count = attrs[:count].to_i if attrs[:count] != nil
   end
   
+  def self.build_and_set(model, ratings)
+    ratings = build_list(ratings)
+    set_custom_fields(model, ratings)
+  end
+  
   def self.set_custom_fields(model, ratings)
     [*ratings].each do |rating|
       data = {

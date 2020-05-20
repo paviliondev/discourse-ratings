@@ -127,9 +127,7 @@ after_initialize do
   end
   
   add_to_class(:post, :update_ratings) do |ratings, weight: 1|
-    ratings.each do |rating|
-      rating.weight = weight
-    end
+    ratings.each { |rating| rating.weight = weight }
     
     Post.transaction do
       DiscourseRatings::Rating.set_custom_fields(self, ratings)
@@ -162,7 +160,7 @@ after_initialize do
           count: count
         }
         
-        DiscourseRatings::Rating.set_custom_fields(topic, [topic_rating])
+        DiscourseRatings::Rating.build_and_set(topic, topic_rating)
       end
     end
 
