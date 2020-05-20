@@ -1,9 +1,7 @@
 {{#if context.siteSettings.rating_enabled}}
   {{#if context.siteSettings.rating_topic_list_average_enabled}}
-    {{#if context.topic.show_average}}
-      {{#if context.topic.has_ratings}}
-        {{rating-list context.topic.ratings topic=context.topic linkTo=true}}
-      {{/if}}
+    {{#if context.topic.has_ratings}}
+      {{rating-list context.topic.ratings topic=context.topic linkTo=true}}
     {{/if}}
   {{/if}}
 {{/if}}

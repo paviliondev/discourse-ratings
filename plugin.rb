@@ -14,7 +14,7 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "save"
 end
 
-add_admin_route 'admin.ratings.settings_page', 'ratings'
+add_admin_route "admin.ratings.settings_page", "ratings"
 
 after_initialize do
   %w[
@@ -59,8 +59,7 @@ after_initialize do
 
   ###### Post ######
   
-  add_permitted_post_create_param('ratings')
-  register_post_custom_field_type('ratings', :json)
+  add_permitted_post_create_param("ratings")
   
   on(:post_created) do |post, opts, user|
     if opts[:ratings].present?
@@ -123,7 +122,7 @@ after_initialize do
   end
   
   add_to_class(:post, :ratings) do
-    DiscourseRatings::Rating.build_list(custom_fields["ratings"])
+    DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
   end
   
   add_to_class(:post, :update_ratings) do |ratings, weight: 1|
@@ -136,17 +135,12 @@ after_initialize do
   end
   
   add_to_class(:post, :save_ratings) do |ratings, weight|
-    data = []
-        
     ratings.each do |rating|
-      data.push(
-        type: rating.type,
+      custom_fields["#{DiscourseRatings::Rating::KEY}_#{rating.type}"] = {
         value: rating.value,
         weight: weight
-      )
+      }.to_json
     end
-    
-    custom_fields['ratings'] = data
     save_custom_fields(true)
   end
   
@@ -167,16 +161,14 @@ after_initialize do
         sum = type_ratings.map { |r| r.value }.inject(:+)
         count = type_ratings.length
         average = (sum / count).to_f
-                
-        topic_ratings.push(
-          type: type,
+        
+        topic.custom_fields["#{DiscourseRatings::Rating::KEY}_#{type}"] = {
           value: average,
           count: count
-        )
+        }.to_json
       end
     end
 
-    topic.custom_fields['ratings'] = topic_ratings
     topic.save_custom_fields(true)
   end
   
@@ -192,11 +184,9 @@ after_initialize do
   end
   
   ###### Topic ######
-  
-  register_topic_custom_field_type('ratings', :json)
-  
+      
   add_to_class(:topic, :ratings) do
-    DiscourseRatings::Rating.build_list(custom_fields["ratings"])
+    DiscourseRatings::Rating.build_model_list(custom_fields, rating_types)
   end
   
   add_to_class(:topic, :rating_types) do
@@ -241,7 +231,7 @@ after_initialize do
   end
   
   if TopicList.respond_to? :preloaded_custom_fields
-    TopicList.preloaded_custom_fields << "ratings" 
+    DiscourseRatings::RatingType.preload_custom_fields
   end
   
   add_to_serializer(:topic_list_item, :ratings) do

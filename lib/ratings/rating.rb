@@ -1,6 +1,8 @@
 class DiscourseRatings::Rating
   include ActiveModel::SerializerSupport
   
+  KEY ||= "rating"
+  
   attr_accessor :type, :value, :weight, :count
   
   def initialize(attrs)
@@ -8,6 +10,22 @@ class DiscourseRatings::Rating
     @value = attrs[:value].to_f
     @weight = attrs[:weight].to_i if attrs[:weight] != nil
     @count = attrs[:count].to_i if attrs[:count] != nil
+  end
+  
+  def self.build_model_list(custom_fields, types)
+    build_list(
+      types.reduce([]) do |result, type|
+        if (data = custom_fields["#{KEY}_#{type}"]).present?
+          begin
+            rating_data = JSON.parse(data)
+          rescue JSON::ParserError
+            rating_data = {}
+          end
+          result.push({ type: type }.merge(rating_data))
+        end
+        result
+      end
+    )
   end
   
   def self.build_list(raw)
