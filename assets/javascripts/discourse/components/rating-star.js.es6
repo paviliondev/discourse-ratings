@@ -1,6 +1,7 @@
 import { default as computed } from 'ember-addons/ember-computed-decorators';
+import Component from "@ember/component";
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: "input",
   disabled: Ember.computed.not('enabled'),
   attributeBindings: [ "value", "checked:checked", "disabled:disabled"],

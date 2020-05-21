@@ -1,7 +1,8 @@
 import discourseComputed from "discourse-common/utils/decorators";
 import { typeName } from '../lib/rating-utilities';
+import Component from "@ember/component";
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: "div",
   classNames: ["rating-container"],
 

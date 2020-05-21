@@ -1,17 +1,21 @@
-export default Ember.Component.extend({
+import Component from "@ember/component";
+import { bind } from "@ember/runloop";
+
+export default Component.extend({
   classNames: 'topic-rating-tip',
 
   didInsertElement() {
-    Ember.$(document).on('click', Ember.run.bind(this, this.documentClick));
+    $(document).on('click', bind(this, this.documentClick));
   },
 
   willDestroyElement() {
-    Ember.$(document).off('click', Ember.run.bind(this, this.documentClick));
+    $(document).off('click', bind(this, this.documentClick));
   },
 
   documentClick(e) {
     let $element = this.$();
     let $target = $(e.target);
+    
     if ($target.closest($element).length < 1 && this._state !== 'destroying') {
       this.set('showDetails', false);
     }
