@@ -28,7 +28,10 @@ class DiscourseRatings::RatingType
   end
   
   def self.create(type, name)
-    return false if type == NONE ## none type can only be set via bulk operation
+    ## none type can only be set via bulk operation
+    ## 'count' is a legacy type from 0.2. Remove 'count' exception in early 2021
+    return false if [NONE, 'count'].include?(type)
+    
     self.set(type, name)
   end
   
