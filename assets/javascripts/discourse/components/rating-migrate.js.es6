@@ -13,18 +13,6 @@ export default Component.extend({
       (toType !== noneType && fromType !== noneType);
   },
   
-  @discourseComputed('ratingTypes.[]', 'toType', 'fromType')
-  migrateTypes(ratingTypes, toType, fromType) {
-    let types = [...ratingTypes];
-    if (!types.any(t => t.type === noneType)) {
-      types.push({
-        type: noneType,
-        name: I18n.t('admin.ratings.type.none_type')
-      });
-    }
-    return types;
-  },
-  
   actions: {
     migrate() {
       let data = {
