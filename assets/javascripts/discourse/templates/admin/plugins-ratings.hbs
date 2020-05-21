@@ -5,7 +5,7 @@
     <table>
       <thead>
         <tr>
-          <th>{{i18n "admin.ratings.type.type"}}</th>
+          <th>{{i18n "admin.ratings.type.label"}}</th>
           <th>{{i18n "admin.ratings.type.name"}}</th>
         </tr>
       </thead>
@@ -42,5 +42,5 @@
   objects=tagTypes
   ratingTypes=ratingTypes
   refresh=(route-action "refresh")}}
-  
-{{rating-migration ratingTypes=ratingTypes}}
+
+{{rating-actions ratingTypes=ratingTypes}}

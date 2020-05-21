@@ -22,18 +22,10 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
     handle_render(Jobs.enqueue(:destroy_rating_type, type: type_params[:type]))
   end
   
-  def migrate
-    handle_render(Jobs.enqueue(:migrate_rating_type, migrate_params.to_h))
-  end
-  
   private
   
   def type_params
     params.permit(:type, :name)
-  end
-  
-  def migrate_params
-    params.permit(:category_id, :current_type, :new_type)
   end
   
   def validate_type

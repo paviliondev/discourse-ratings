@@ -1,7 +1,7 @@
-import { ajax } from 'discourse/lib/ajax';
-import { popupAjaxError } from 'discourse/lib/ajax-error';
 import Category from 'discourse/models/category';
 import Site from "discourse/models/site";
+import { ajax } from 'discourse/lib/ajax';
+import { popupAjaxError } from 'discourse/lib/ajax-error';
 
 const siteSettings = Discourse.SiteSettings;
 
@@ -85,7 +85,15 @@ function typeName(ratingType) {
   return type ? type.name : "";
 }
 
+function request(type, path='', data={}) {
+  return ajax(`/ratings/${path}`, {
+    type,
+    data
+  }).catch(popupAjaxError)
+} 
+
 export {
   ratingListHtml,
-  typeName
+  typeName,
+  request
 };

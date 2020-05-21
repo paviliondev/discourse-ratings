@@ -23,8 +23,9 @@ after_initialize do
     ../lib/ratings/rating_type.rb
     ../lib/ratings/object.rb
     ../config/routes.rb
-    ../jobs/regular/migrate_rating_type.rb
     ../jobs/regular/destroy_rating_type.rb
+    ../jobs/regular/destroy_ratings.rb
+    ../jobs/regular/migrate_ratings.rb
     ../app/serializers/ratings/object.rb
     ../app/serializers/ratings/rating.rb
     ../app/serializers/ratings/rating_type.rb

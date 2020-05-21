@@ -1,0 +1,27 @@
+{{category-chooser
+  value=categoryId
+  onChange=(action (mut categoryId))}}
+  
+{{combo-box
+  value=type
+  content=ratingTypes
+  valueProperty="type"
+  onChange=(action (mut type))
+  options=(hash
+    none="admin.ratings.type.select"
+  )}}
+
+{{d-button
+  action="destroyRatings"
+  label="admin.ratings.destroy.btn"
+  disabled=destroyDisabled}}
+
+{{#if startingDestroy}}
+  {{loading-spinner size="small"}}    
+{{/if}}
+
+{{#if destroyMessage}}
+  <div class="action-message">
+    {{i18n destroyMessage}}
+  </div>
+{{/if}}

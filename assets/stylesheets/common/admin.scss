@@ -39,21 +39,25 @@
     }
   }
   
-  .migration-controls {
-    display: flex;
-    align-items: flex-start;
-    margin-top: 10px;
+  .admin-ratings-action {
+    margin-bottom: 30px;
     
-    > * {
-      margin-right: 10px;
+    .controls {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 10px;
+      
+      > * {
+        margin-right: 10px;
+      }
+      
+      .combo-box {
+        min-width: 130px;
+      }
     }
     
-    .combo-box {
-      min-width: 130px;
+    .action-message {
+      margin-top: 10px;
     }
-  }
-  
-  .migration-message {
-    margin-top: 10px;
   }
 }

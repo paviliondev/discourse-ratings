@@ -1,35 +1,23 @@
 import EmberObject from '@ember/object';
-import { ajax } from "discourse/lib/ajax";
-import { popupAjaxError } from "discourse/lib/ajax-error";
+import { request } from '../lib/rating-utilities';
 
 const RatingType = EmberObject.extend();
 
-function request(type, path='', data={}) {
-  return ajax(`/rating/rating-type/${path}`, {
-    type,
-    data
-  }).catch(popupAjaxError)
-}
-
 RatingType.reopenClass({
   all() {
-    return request("GET");
+    return request("GET", 'rating-type');
   },
 
   add(data) {
-    return request("POST", '', data);
+    return request("POST", 'rating-type', data);
   },
   
   update(type, data) {
-    return request("PUT", type, data);
+    return request("PUT", `rating-type/${type}`, data);
   },
 
   destroy(type) {
-    return request("DELETE", type);
-  },
-  
-  migrate(data) {
-    return request("POST", "migrate", data);
+    return request("DELETE", `rating-type/${type}`);
   }
 });
 

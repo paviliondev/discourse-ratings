@@ -36,14 +36,14 @@ en:
         settings_page: "Ratings"
         type:
           title: "Types"
+          label: "Type"
           none: "No types."
-          type: "Type"
           type_placeholder: "Hidden, dasherized and uneditable."
           name: "Name"
           name_placeholder: "Visible, sentence case and editable."
           none_type: "None"
           select: "Select type"
-          new: "New"
+          new: "New Type"
           add: "Add"
           update: "Save"
           destroy: "Delete"
@@ -64,14 +64,18 @@ en:
         migrate:
           title: "Migrate"
           description: >
-            You can migrate ratings from, or to, type "None" on a per category basis.
-            Topics that already have the target rating type are excluded from the migration.
+            You can migrate ratings to or from type "None" on a per-category basis.
+            Topics that already have the target type are excluded from the migration.
             Ratings with type "None" will not display a type.
-          category: "Category"
-          current_type: "Current Type"
-          new_type: "New Type"
-          btn_label: "Migrate"
-          started: "Migration started. It may take a few minutes to complete."
+          btn: "Migrate"
+          started: "The migration has started. It may take a few minutes to complete."
+        destroy:
+          title: "Destroy"
+          description: >
+            You can irreversibly destroy ratings by type on a per-category basis.
+            Topics and posts associated with ratings will be unaffected.
+          btn: "Destroy"
+          started: "The destruction has started. It may take a few minutes to complete."
         
         error:
           object_already_exists: "Entry for {{objectType}} already exists"

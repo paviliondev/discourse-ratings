@@ -28,17 +28,39 @@ class DiscourseRatings::Rating
     end
   end
   
-  def self.destroy_type(type)
-    name = field_name(type)
+  def self.destroy(args)    
+    if args.keys.exclude?(:type)
+      return nil
+    end
     
-    ActiveRecord::Base.transaction do
-      TopicCustomField.where(name: name).destroy_all
-      PostCustomField.where(name: name).destroy_all
+    name = field_name(args[:type])
+    
+    topics = Topic.all
+    
+    if args[:category_id].present?
+      topics = topics.where(category_id: args[:category_id].to_i)
+    end
+    
+    topic_ids = topics.pluck(:id)
+            
+    if topic_ids.any?
+      post_ids = Post.where(topic_id: topic_ids).pluck(:id)
+      
+      ActiveRecord::Base.transaction do
+        TopicCustomField.where(
+          topic_id: topic_ids,
+          name: name
+        ).destroy_all
+        PostCustomField.where(
+          post_id: post_ids,
+          name: name
+        ).destroy_all
+      end
     end
   end
     
-  def self.migrate_type(args, opts={})
-    if args.keys.exclude?(:current_type) ||
+  def self.migrate(args, opts={})
+    if args.keys.exclude?(:type) ||
        args.keys.exclude?(:new_type) ||
        args.values.exclude?(DiscourseRatings::RatingType::NONE)
       return nil
@@ -46,11 +68,11 @@ class DiscourseRatings::Rating
     
     topics = Topic.all
     
-    if args[:category_id]
-      topics = topics.where(category_id: args[:category_id])
+    if args[:category_id].present?
+      topics = topics.where(category_id: args[:category_id].to_i)
     end
     
-    current_name = field_name(args[:current_type])
+    current_name = field_name(args[:type])
     new_name = field_name(args[:new_type])
     
     topics = topics.where("id in (
