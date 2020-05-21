@@ -28,14 +28,17 @@ let starRatingRaw = function(rating, opts = {}) {
 
 function ratingHtml(rating, opts={}) {
   let html = '';
+  let title = '';
   let link = null;
     
   const name = typeName(rating.type);
   if (name) {
     html += `<span class="rating-type">${name}</span>`;
+    title += `${name} `;
   }
   
   html += starRatingRaw(rating.value);
+  title += rating.value;
   
   if (opts.topic) {
     link = opts.topic.url;
@@ -48,13 +51,14 @@ function ratingHtml(rating, opts={}) {
       let count = rating.count;
       let countLabel = I18n.t('topic.x_rating_count', { count });
       html += `<span class="rating-count">${count} ${countLabel}</span>`;
+      title += ` ${count} ${countLabel}`;
     }
   }
   
   if (opts.linkTo && link) {
-    return `<a href="${link}" class="rating">${html}</a>`;
+    return `<a href="${link}" class="rating" title="${title}">${html}</a>`;
   } else {
-    return `<div class="rating">${html}</div>`;
+    return `<div class="rating" title="${title}">${html}</div>`;
   }
 }
 
