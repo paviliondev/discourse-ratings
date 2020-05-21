@@ -1,5 +1,5 @@
 export default Ember.Component.extend({
-  classNames: 'topic-tip',
+  classNames: 'topic-rating-tip',
 
   didInsertElement() {
     Ember.$(document).on('click', Ember.run.bind(this, this.documentClick));
@@ -12,8 +12,7 @@ export default Ember.Component.extend({
   documentClick(e) {
     let $element = this.$();
     let $target = $(e.target);
-    if ($target.closest($element).length < 1 &&
-        this._state !== 'destroying') {
+    if ($target.closest($element).length < 1 && this._state !== 'destroying') {
       this.set('showDetails', false);
     }
   },

@@ -4,6 +4,7 @@ import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, on, observes } from "discourse-common/utils/decorators";
 import { notEmpty, and } from "@ember/object/computed";
 import { ratingListHtml, typeName } from '../lib/rating-utilities';
+import { scheduleOnce, later } from "@ember/runloop";
 
 export default {
   name: 'initialize-ratings',
@@ -14,9 +15,9 @@ export default {
     withPluginApi('0.10.0', api => {
       const currentUser = api.getCurrentUser();
       
-      api.includePostAttributes('ratings');
+      api.includePostAttributes("ratings");
 
-      api.decorateWidget('poster-name:after', function(helper) {
+      api.decorateWidget("poster-name:after", function(helper) {
         const post = helper.getModel();
                 
         if (post.topic.show_ratings && post.ratings) {
@@ -25,6 +26,20 @@ export default {
           );
         }
       });
+      
+      api.reopenWidget("poster-name", {
+        buildClasses(attrs) {
+          const post = this.findAncestorModel();
+          let classes = [];
+          if (post &&
+              post.topic &&
+              post.topic.show_ratings &&
+              post.ratings) {
+            classes.push('has-ratings');
+          }
+          return classes;
+        }
+      })
 
       api.modifyClass('model:composer', {
         editingPostWithRatings: and('editingPost', 'post.ratings'),
@@ -158,13 +173,24 @@ export default {
       });
 
       api.modifyClass('component:topic-list-item', {
+        hasRatings: and('topic.show_ratings', 'topic.ratings'),
+        
         @on('didReceiveAttrs')
-        injectRatingTypeNames() {
-          if (this.topic.ratings) {
+        setupRatings() {          
+          if (this.hasRatings) {
             this.topic.ratings.forEach((rating) => {
               rating.name = typeName(rating.type)
             });
           }
+        },
+        
+        @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
+        unboundClassNames(topic, lastVisitedTopic, hasRatings) {
+          let classes = this._super(topic, lastVisitedTopic) || "";
+          if (hasRatings) {
+            classes += ' has-ratings';
+          }
+          return classes;
         }
       });
     });

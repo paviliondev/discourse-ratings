@@ -32,7 +32,7 @@ function ratingHtml(rating, opts={}) {
     
   const name = typeName(rating.type);
   if (name) {
-    html += `<span>${name}</span>`;
+    html += `<span class="rating-type">${name}</span>`;
   }
   
   html += starRatingRaw(rating.value);
@@ -41,7 +41,7 @@ function ratingHtml(rating, opts={}) {
     link = opts.topic.url;
     
     if (siteSettings.rating_show_numeric_average) {
-      html += `<span class="exact-rating">(${rating.value})</span>`;
+      html += `<span class="rating-value">(${rating.value})</span>`;
     }
 
     if (siteSettings.rating_show_count) {

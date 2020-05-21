@@ -1,0 +1,5 @@
+{{#if context.site.mobileView}}
+  {{#if context.topic.show_ratings}}
+    {{rating-list context.topic.ratings topic=context.topic linkTo=true}}
+  {{/if}}
+{{/if}}

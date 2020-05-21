@@ -7,6 +7,7 @@
 enabled_site_setting :rating_enabled
 
 register_asset 'stylesheets/common/ratings.scss'
+register_asset 'stylesheets/desktop/ratings.scss', :desktop
 register_asset 'stylesheets/mobile/ratings.scss', :mobile
 
 if respond_to?(:register_svg_icon)
@@ -193,7 +194,7 @@ after_initialize do
   end
   
   add_to_class(:topic, :rating_enabled?) do
-    rating_types.any?
+    SiteSetting.rating_enabled && rating_types.any?
   end
   
   add_to_class(:topic, :user_can_rate) do |user|
@@ -215,7 +216,9 @@ after_initialize do
   end
 
   add_to_serializer(:topic_view, :show_ratings) do
-    object.topic.rating_enabled?
+    SiteSetting.rating_topic_average_enabled &&
+    object.topic.rating_enabled? && 
+    object.topic.ratings.present?
   end
   
   add_to_serializer(:topic_view, :user_can_rate) do
@@ -232,7 +235,9 @@ after_initialize do
     DiscourseRatings::Rating.serialize(object.ratings)
   end
 
-  add_to_serializer(:topic_list_item, :has_ratings) do
+  add_to_serializer(:topic_list_item, :show_ratings) do
+    SiteSetting.rating_topic_list_average_enabled &&
+    object.rating_enabled? && 
     object.ratings.present?
   end
 end
