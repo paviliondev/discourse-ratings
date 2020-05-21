@@ -10,6 +10,7 @@ class DiscourseRatings::RatingType
   end
 
   def self.exists?(type)
+    return true if type == NONE
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key = ?
