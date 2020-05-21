@@ -1,7 +1,7 @@
 class DiscourseRatings::RatingTypeController < ::Admin::AdminController  
   before_action :check_type_exists, only: [:update, :destroy]
   before_action :validate_name, only: [:update, :create]
-  before_action :validate_type, only: [:create]
+  before_action :validate_type, only: [:update, :create]
   
   MIN_TYPE_LENGTH = 2
   MIN_NAME_LENGTH = 2
