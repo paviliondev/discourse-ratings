@@ -20,6 +20,7 @@ add_admin_route "admin.ratings.settings_page", "ratings"
 after_initialize do
   %w[
     ../lib/ratings/engine.rb
+    ../lib/ratings/cache.rb
     ../lib/ratings/rating.rb
     ../lib/ratings/rating_type.rb
     ../lib/ratings/object.rb
@@ -36,6 +37,7 @@ after_initialize do
     ../app/controllers/ratings/rating_type.rb
     ../extensions/post_revisor.rb
     ../extensions/posts_controller.rb
+    ../extensions/topic.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -229,6 +231,7 @@ after_initialize do
     scope.current_user && object.topic.rating_enabled?
   end
   
+  ::Topic.singleton_class.prepend TopicRatingsExtension
   DiscourseRatings::Rating.preload_custom_fields
   
   add_to_serializer(:topic_list_item, :ratings) do

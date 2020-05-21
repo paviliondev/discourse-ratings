@@ -8,6 +8,16 @@ class DiscourseRatings::RatingType
       key LIKE '#{KEY}_%'
     ")
   end
+  
+  def self.list
+    DiscourseRatings::Cache.wrap("#{KEY}_list") do
+      all.map { |row| type_from_key(row.key) }
+    end
+  end
+  
+  def self.clear_cached_list
+    DiscourseRatings::Cache.new("#{KEY}_list").delete
+  end
 
   def self.exists?(type)
     return true if type == NONE
@@ -28,11 +38,12 @@ class DiscourseRatings::RatingType
   
   def self.set(type, name)
     PluginStore.set(DiscourseRatings::PLUGIN_NAME, build_key(type), name)
-    DiscourseRatings::Rating.preload_custom_fields
+    clear_cached_list
   end
   
   def self.destroy(type)
     PluginStore.remove(DiscourseRatings::PLUGIN_NAME, build_key(type))
+    clear_cached_list
   end
     
   def self.build_key(type)
