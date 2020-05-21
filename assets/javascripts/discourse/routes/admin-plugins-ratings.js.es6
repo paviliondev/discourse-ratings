@@ -4,6 +4,8 @@ import { all } from "rsvp";
 import RatingType from '../models/rating-type';
 import RatingObject from '../models/rating-object';
 
+const noneType = 'none';
+
 export default DiscourseRoute.extend({
   model() {
     return RatingType.all();
@@ -17,8 +19,16 @@ export default DiscourseRoute.extend({
   },
   
   setupController(controller, model) {
+    let ratingTypes = model || [];
+    
+    ratingTypes.unshift({
+      type: noneType,
+      name: I18n.t('admin.ratings.type.none_type'),
+      isNone: true
+    });
+    
     controller.setProperties({
-      ratingTypes: A(model.map(t => RatingType.create(t))),
+      ratingTypes: A(ratingTypes.map(t => RatingType.create(t))),
       categoryTypes: A(this.categoryTypes),
       tagTypes: A(this.tagTypes)
     });

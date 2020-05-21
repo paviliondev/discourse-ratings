@@ -22,6 +22,18 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
       DiscourseRatings::Rating.build_and_set(topic, rating)
       topic.save_custom_fields(true)
     end
+    
+    CategoryCustomField.where(name: 'rating_enabled').each do |row|
+      if ActiveModel::Type::Boolean.new.cast(row.value) 
+        if category = Category.find(row.category_id)
+          DiscourseRatings::Object.create(
+            'category',
+            category.full_slug('/'),
+            [DiscourseRatings::RatingType::NONE]
+          )
+        end
+      end
+    end
   end
 
   def down

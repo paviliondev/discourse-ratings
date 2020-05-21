@@ -109,8 +109,6 @@ class DiscourseRatings::Rating
   end
   
   def self.build_model_list(custom_fields, types)
-    types.push(DiscourseRatings::RatingType::NONE)
-    
     build_list(
       types.reduce([]) do |result, type|
         data = custom_fields[field_name(type)]
