@@ -1,15 +1,9 @@
 import discourseComputed from "discourse-common/utils/decorators";
-import { typeName } from '../lib/rating-utilities';
 import Component from "@ember/component";
 
 export default Component.extend({
   tagName: "div",
   classNames: ["rating-container"],
-
-  @discourseComputed('rating.type')
-  typeName(ratingType) {
-    return typeName(ratingType);
-  },
 
   actions: {
     updateRating(){

@@ -3,7 +3,11 @@ class DiscourseRatings::Rating
   
   KEY ||= "rating"
   
-  attr_accessor :type, :value, :weight, :count
+  attr_accessor :type,
+                :type_name,
+                :value,
+                :weight,
+                :count
   
   def initialize(attrs)
     @type = attrs[:type].to_s
@@ -13,8 +17,7 @@ class DiscourseRatings::Rating
   end
   
   def self.build_and_set(model, ratings)
-    ratings = build_list(ratings)
-    set_custom_fields(model, ratings)
+    set_custom_fields(model, build_list(ratings))
   end
   
   def self.set_custom_fields(model, ratings)
@@ -142,18 +145,8 @@ class DiscourseRatings::Rating
   end
   
   def self.serialize(ratings)
-    ActiveModel::ArraySerializer.new(ratings,
-      each_serializer: DiscourseRatings::RatingSerializer
-    )
-  end
-  
-  def self.preload_custom_fields    
-    DiscourseRatings::RatingType.all.each do |row|
-      type = DiscourseRatings::RatingType.type_from_key(row.key)
-      TopicList.preloaded_custom_fields << field_name(type)
-    end
-    
-    TopicList.preloaded_custom_fields << field_name(DiscourseRatings::RatingType::NONE)
+    ratings.each { |r| r.type_name = DiscourseRatings::RatingType.get_name(r.type) }
+    ActiveModel::ArraySerializer.new(ratings, each_serializer: DiscourseRatings::RatingSerializer)
   end
     
   def self.field_name(type)

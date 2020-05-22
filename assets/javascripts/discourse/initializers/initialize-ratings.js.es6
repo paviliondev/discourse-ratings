@@ -3,7 +3,7 @@ import Category from 'discourse/models/category';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, on, observes } from "discourse-common/utils/decorators";
 import { notEmpty, and } from "@ember/object/computed";
-import { ratingListHtml, typeName } from '../lib/rating-utilities';
+import { ratingListHtml } from '../lib/rating-utilities';
 import { scheduleOnce, later } from "@ember/runloop";
 
 export default {
@@ -72,6 +72,8 @@ export default {
         
         @discourseComputed('ratingTypes', 'editingPostWithRatings', 'post.ratings')
         ratings(ratingTypes, editingPostWithRatings, postRatings) {
+          const typeNames = this.site.rating_type_names;
+          
           return ratingTypes.map(type => {
             let value;
                         
@@ -80,38 +82,43 @@ export default {
               value = rating ? rating.value : null;
             }
             
-            return {
+            let rating = {
               type,
               value,
               include: true
+            };
+                        
+            if (typeNames && typeNames[type]) {
+              rating.typeName = typeNames[type];
             }
+            
+            return rating;
           })
         },
         
         @discourseComputed('tags', 'category')
         allowedRatingTypes(tags, category) {
-          const siteRatings = this.site.ratings;
+          const site = this.site;
           let types = [];
-                              
-          if (!siteRatings) {
-            return types;
-          }
           
           if (category) {
-            const categoryTypes = siteRatings.categories[Category.slugFor(category)];
+            const categoryTypes = site.category_rating_types[Category.slugFor(category)];
             if (categoryTypes) {
               types.push(...categoryTypes);
             }
           }
           
           if (tags) {
-            tags.forEach(t => {
-              if (siteRatings.tags[t]) {
-                types.push(...siteRatings.tags[t]);
-              }
-            })
+            const tagTypes = site.tag_rating_types;
+            if (tagTypes) {
+              tags.forEach(t => {
+                if (tagTypes[t]) {
+                  types.push(...tagTypes[t]);
+                }
+              });
+            }
           }
-          
+                    
           return types;
         },
         
@@ -174,15 +181,6 @@ export default {
 
       api.modifyClass('component:topic-list-item', {
         hasRatings: and('topic.show_ratings', 'topic.ratings'),
-        
-        @on('didReceiveAttrs')
-        setupRatings() {          
-          if (this.hasRatings) {
-            this.topic.ratings.forEach((rating) => {
-              rating.name = typeName(rating.type)
-            });
-          }
-        },
         
         @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
         unboundClassNames(topic, lastVisitedTopic, hasRatings) {

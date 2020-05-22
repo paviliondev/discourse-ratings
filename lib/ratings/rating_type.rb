@@ -1,22 +1,37 @@
 class DiscourseRatings::RatingType
+  include ActiveModel::SerializerSupport
+  
   KEY ||= "type"
   NONE ||= "none"
+  
+  attr_accessor :type, :name
+  
+  def initialize(attrs)
+    @type = attrs[:type]
+    @name = attrs[:name]
+  end
   
   def self.all
     PluginStoreRow.where("
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key LIKE '#{KEY}_%'
-    ")
+    ").map do |row|
+      new(type: type_from_key(row.key), name: row.value)
+    end
   end
   
-  def self.list
-    DiscourseRatings::Cache.wrap("#{KEY}_list") do
-      all.map { |row| type_from_key(row.key) }
-    end
+  def self.cached_list
+    DiscourseRatings::Cache.wrap("#{KEY}_list") { all }
   end
   
   def self.clear_cached_list
     DiscourseRatings::Cache.new("#{KEY}_list").delete
+  end
+  
+  def self.get_name(type)
+    if (rating_type = cached_list.select { |rt| rt.type === type }).present?
+      rating_type.first.name
+    end
   end
 
   def self.exists?(type)

@@ -31,7 +31,7 @@ function ratingHtml(rating, opts={}) {
   let title = '';
   let link = null;
     
-  const name = typeName(rating.type);
+  const name = rating.type_name;
   if (name) {
     html += `<span class="rating-type">${name}</span>`;
     title += `${name} `;
@@ -83,12 +83,6 @@ function ratingListHtml(ratings, opts={}) {
   return `<div class="rating-list">${html}</div>`;
 }
 
-function typeName(ratingType) {
-  const ratings = Site.currentProp('ratings');
-  const type = ratings.types.find(t => t.type === ratingType);
-  return type ? type.name : "";
-}
-
 function request(type, path='', data={}) {
   return ajax(`/ratings/${path}`, {
     type,
@@ -98,6 +92,5 @@ function request(type, path='', data={}) {
 
 export {
   ratingListHtml,
-  typeName,
   request
 };

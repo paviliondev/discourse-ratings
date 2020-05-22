@@ -1,3 +1,3 @@
 class DiscourseRatings::RatingSerializer < ::ApplicationSerializer
-  attributes :type, :value
+  attributes :type, :type_name, :value
 end

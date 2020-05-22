@@ -31,7 +31,6 @@ after_initialize do
     ../app/serializers/ratings/object.rb
     ../app/serializers/ratings/rating.rb
     ../app/serializers/ratings/rating_type.rb
-    ../app/serializers/ratings/site.rb
     ../app/controllers/ratings/object.rb
     ../app/controllers/ratings/rating.rb
     ../app/controllers/ratings/rating_type.rb
@@ -44,12 +43,28 @@ after_initialize do
   
   ###### Site ######
   
-  add_to_class(:site, :rating_types) do 
-    DiscourseRatings::RatingType.all
+  add_to_class(:site, :rating_type_names) do 
+    map = {}
+    DiscourseRatings::RatingType.all.each { |t| map[t.type] = t.name }
+    map
   end
   
-  add_to_serializer(:site, :ratings) do
-    DiscourseRatings::SiteSerializer.new(object, root: false)
+  add_to_serializer(:site, :rating_type_names) do
+    object.rating_type_names
+  end
+  
+  add_to_serializer(:site, :category_rating_types) do
+    build_object_list(DiscourseRatings::Object.list('category'))
+  end
+  
+  add_to_serializer(:site, :tag_rating_types) do
+    build_object_list(DiscourseRatings::Object.list('tag'))
+  end
+    
+  add_to_class(:site_serializer, :build_object_list) do |list|
+    result = {}
+    list.each { |obj| result[obj.name] = obj.types }
+    result
   end
   
   ###### Category && Tag ######
@@ -232,7 +247,6 @@ after_initialize do
   end
   
   ::Topic.singleton_class.prepend TopicRatingsExtension
-  DiscourseRatings::Rating.preload_custom_fields
   
   add_to_serializer(:topic_list_item, :ratings) do
     DiscourseRatings::Rating.serialize(object.ratings)
