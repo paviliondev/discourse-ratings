@@ -48,7 +48,7 @@ function ratingHtml(rating, opts={}) {
     }
 
     if (siteSettings.rating_show_count) {
-      let count = rating.count;
+      let count = rating.value;
       let countLabel = I18n.t('topic.x_rating_count', { count });
       html += `<span class="rating-count">${count} ${countLabel}</span>`;
       title += ` ${count} ${countLabel}`;
