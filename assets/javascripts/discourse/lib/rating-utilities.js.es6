@@ -3,7 +3,6 @@ import Site from "discourse/models/site";
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 
-const siteSettings = Discourse.SiteSettings;
 
 let starRatingRaw = function(rating, opts = {}) {
   let content = '';
@@ -42,7 +41,8 @@ function ratingHtml(rating, opts={}) {
   
   if (opts.topic) {
     link = opts.topic.url;
-    
+    const siteSettings = Discourse.SiteSettings;
+
     if (siteSettings.rating_show_numeric_average) {
       html += `<span class="rating-value">(${rating.value})</span>`;
     }
