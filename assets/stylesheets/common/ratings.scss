@@ -1,16 +1,21 @@
 @import "admin";
 
-.rating-list .rating {
-  margin: 2px 0;
-  display: inline-flex;
-  align-items: center;
+.rating-list {
+  display: flex;
+  flex-direction: column;
   
-  span:not(:last-of-type) {
-    margin-right: 6px;
-  }
-  
-  span.star-rating {
-    margin-bottom: 2px;
+  .rating {
+    margin: 2px 0;
+    display: inline-flex;
+    align-items: center;
+    
+    span:not(:last-of-type) {
+      margin-right: 6px;
+    }
+    
+    span.star-rating {
+      margin-bottom: 2px;
+    }
   }
 }
 
