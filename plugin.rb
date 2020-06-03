@@ -207,7 +207,7 @@ after_initialize do
     types = []
     types.push(category.rating_types) if category.present?
     types.push(tags.map { |tag| tag.rating_types }) if tags.present?
-    types.flatten
+    types.flatten.uniq
   end
   
   add_to_class(:topic, :rating_enabled?) do
