@@ -8,7 +8,7 @@ en:
     
     composer:
       your_rating: "Add a rating"
-      select_rating: "Please select a rating, or uncheck 'Add a rating'."
+      select_rating: "All checked ratings must have a rating."
     
     topic:
       hidden_ratings: "Topic has hidden ratings"
