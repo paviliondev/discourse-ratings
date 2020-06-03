@@ -13,7 +13,7 @@ export default Component.extend({
   },
 
   documentClick(e) {
-    let $element = this.$();
+    let $element = $(this.element);
     let $target = $(e.target);
     
     if ($target.closest($element).length < 1 && this._state !== 'destroying') {
