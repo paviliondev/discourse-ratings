@@ -2,9 +2,15 @@
 
 .rating-list .rating {
   margin: 2px 0;
+  display: inline-flex;
+  align-items: center;
   
-  span.rating-type {
-    margin-right: 5px;
+  span:not(:last-of-type) {
+    margin-right: 6px;
+  }
+  
+  span.star-rating {
+    margin-bottom: 2px;
   }
 }
 
@@ -21,8 +27,6 @@
 }
 
 span.star-rating {
-  margin-bottom: 2px;
-  margin-right: 5px;
   vertical-align: middle;
   font-size: 0;
   padding: 0;
@@ -109,8 +113,26 @@ span.star-rating {
     line-height: 16px;
     margin: 0 6px 10px 0;
 
-    input.include-rating, span {
+    input.include-rating, span:not(:last-of-type) {
       margin: 0 6px 0 0;
+    }
+  }
+}
+
+#topic-title.has-ratings {
+  
+  .topic-rating-container {
+    margin-top: 3px;
+  }
+  
+  &.editing .topic-rating-container {
+    display: none;
+  }
+  
+  &:not(.editing) {
+    .topic-category a.badge-wrapper,
+    &.has-extra .topic-category .topic-header-extra {
+      margin-right: 8px;
     }
   }
 }

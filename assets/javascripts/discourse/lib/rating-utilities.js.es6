@@ -3,7 +3,6 @@ import Site from "discourse/models/site";
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 
-
 let starRatingRaw = function(rating, opts = {}) {
   let content = '';
   for (let i = 0; i < 5; i++) {

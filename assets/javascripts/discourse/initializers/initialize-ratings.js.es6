@@ -2,7 +2,7 @@ import Composer from 'discourse/models/composer';
 import Category from 'discourse/models/category';
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, on, observes } from "discourse-common/utils/decorators";
-import { notEmpty, and } from "@ember/object/computed";
+import { notEmpty, and, alias, or } from "@ember/object/computed";
 import { ratingListHtml } from '../lib/rating-utilities';
 import { scheduleOnce, later } from "@ember/runloop";
 
@@ -191,6 +191,23 @@ export default {
           return classes;
         }
       });
+      
+      api.modifyClass('component:topic-title', {
+        hasRatings: alias('model.show_ratings'),
+        editing: alias('topicController.editingTopic'),
+        hasTags: notEmpty('model.tags'),
+        showTags: and('hasTags', 'siteSettings.tagging_enabled'),
+        hasFeaturedLink: notEmpty('model.featured_link'),
+        showFeaturedLink: and('hasFeaturedLink', 'siteSettings.topic_featured_link_enabled'),
+        hasExtra: or('showTags', 'showFeaturedLink'),
+        classNameBindings: ['hasRatings', 'editing', 'hasExtra'],
+        
+        @on('init')
+        setupController() {
+          const topicController = container.lookup('controller:topic');
+          this.set('topicController', topicController);
+        }
+      })
     });
   }
 };
