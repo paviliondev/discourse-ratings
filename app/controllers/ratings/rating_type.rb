@@ -1,5 +1,5 @@
 class DiscourseRatings::RatingTypeController < ::Admin::AdminController  
-  before_action :check_type_exists, only: [:update, :destroy]
+  before_action :validate_existence, only: [:create, :update, :destroy]
   before_action :validate_name, only: [:update, :create]
   before_action :validate_type, only: [:update, :create]
   
@@ -28,11 +28,18 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
     params.permit(:type, :name)
   end
   
+  def validate_existence
+    exists = DiscourseRatings::RatingType.exists?(type_params[:type])
+    
+    if (exists && action_name == "create") ||
+        (!exists && ["update", "destroy"].include?(action_name))
+      raise Discourse::InvalidParameters.new(:type)
+    end
+  end
+  
   def validate_type
     if type_params[:type].length < MIN_TYPE_LENGTH || 
-       type_params[:type] == DiscourseRatings::RatingType::NONE ||
-       DiscourseRatings::RatingType.exists?(type_params[:type])
-      
+        type_params[:type] == DiscourseRatings::RatingType::NONE
       raise Discourse::InvalidParameters.new(:type)
     end
   end
@@ -40,12 +47,6 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   def validate_name
     if type_params[:name].length < MIN_NAME_LENGTH
       raise Discourse::InvalidParameters.new(:name)
-    end
-  end
-  
-  def check_type_exists
-    unless DiscourseRatings::RatingType.exists?(type_params[:type])
-      raise Discourse::InvalidParameters.new(:type) 
     end
   end
 
