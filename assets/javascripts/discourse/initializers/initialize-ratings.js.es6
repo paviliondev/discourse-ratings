@@ -9,6 +9,10 @@ import { scheduleOnce, later } from "@ember/runloop";
 export default {
   name: 'initialize-ratings',
   initialize(container){
+    const siteSettings = container.lookup('site-settings:main');
+    
+    if (!siteSettings.rating_enabled) return;
+    
     Composer.serializeOnCreate('ratings', 'ratingsString');
     Composer.serializeOnUpdate('ratings', 'ratingsString');
 
@@ -42,24 +46,25 @@ export default {
       })
 
       api.modifyClass('model:composer', {
-        editingPostWithRatings: and('editingPost', 'post.ratings'),
-        ratingEnabled: notEmpty('ratingTypes'),
+        editingPostWithRatings: and('editingPost', 'post.ratings.length'),
+        hasRatingTypes: notEmpty('ratingTypes'),
+        showRatings: or('hasRatingTypes', 'editingPostWithRatings'),
         
-        @discourseComputed('editingPostWithRatings', 'post.ratings', 'topicFirstPost', 'allowedRatingTypes.[]', 'topic.user_can_rate.[]')
-        ratingTypes(editingPostWithRatings, postRatings, topicFirstPost, allowedRatingTypes, userCanRate) {
+        @discourseComputed('editingPostWithRatings', 'topicFirstPost', 'post.ratings', 'allowedRatingTypes.[]', 'topic.user_can_rate.[]')
+        ratingTypes(editingPostWithRatings, topicFirstPost, postRatings, allowedRatingTypes, userCanRate) {
           let types = [];
           
           if (editingPostWithRatings) {
             types.push(...postRatings.map(r => r.type));
           }
           
-          if (topicFirstPost) {
+          if (topicFirstPost && allowedRatingTypes.length) {
             allowedRatingTypes.forEach(t => {
               if (types.indexOf(t) === -1) {
                 types.push(t);
               }
             });
-          } else {
+          } else if (userCanRate && userCanRate.length) {
             userCanRate.forEach(t => {
               if (types.indexOf(t) === -1) {
                 types.push(t);
@@ -122,11 +127,6 @@ export default {
           return types;
         },
         
-        @discourseComputed('ratingEnabled', 'editingPostWithRatings')
-        showRating(ratingEnabled, editingPostWithRatings) {
-          return ratingEnabled || editingPostWithRatings;
-        },
-        
         @discourseComputed('ratings')
         ratingsToSave(ratings) {
           return ratings.filter(r => r.include && r.value)
@@ -143,9 +143,9 @@ export default {
         save() {
           const model = this.model;
           const ratings = model.ratings;
-          const showRating = model.showRating;
+          const showRatings = model.showRatings;
           
-          if (showRating && ratings.some(r => r.include && !r.value)) {
+          if (showRatings && ratings.some(r => r.include && !r.value)) {
             return bootbox.alert(I18n.t("composer.select_rating"));
           }
           
@@ -154,8 +154,8 @@ export default {
       });
 
       api.modifyClass('component:composer-body', {
-        @observes('composer.showRating')
-        resizeIfShowRating() {
+        @observes('composer.showRatings')
+        resizeIfShowRatings() {
           if (this.get('composer.viewOpen')) {
             this.resize();
           }

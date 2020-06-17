@@ -1,10 +1,12 @@
-<div itemscope itemtype="http://schema.org/CreativeWork">
-  <span itemprop="name"><%= @topic_view.topic.title %></span>
-  <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
-    <% @topic_view.topic.ratings.each do |rating| %>
-      <span itemprop="ratingType"><%= rating.type %></span>
-      <span itemprop="ratingValue"><%= rating.value %></span>
-      <span itemprop="ratingCount"><%= rating.count %></span>
-    <% end %>
+<% if @topic_view.topic.ratings.present? %>
+  <div itemscope itemtype="http://schema.org/CreativeWork">
+    <span itemprop="name"><%= @topic_view.topic.title %></span>
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+      <% @topic_view.topic.ratings.each do |rating| %>
+        <span itemprop="ratingType"><%= rating.type %></span>
+        <span itemprop="ratingValue"><%= rating.value %></span>
+        <span itemprop="ratingCount"><%= rating.count %></span>
+      <% end %>
+    </div>
   </div>
-</div>
+<% end %>
