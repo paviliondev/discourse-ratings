@@ -35,15 +35,16 @@ function ratingHtml(rating, opts={}) {
     title += `${name} `;
   }
   
-  html += starRatingRaw(rating.value);
-  title += rating.value;
+  let value = Math.round(rating.value * 10) / 10;
+  html += starRatingRaw(value);
+  title += value;
   
   if (opts.topic) {
     link = opts.topic.url;
     const siteSettings = Discourse.SiteSettings;
 
     if (siteSettings.rating_show_numeric_average) {
-      html += `<span class="rating-value">(${rating.value})</span>`;
+      html += `<span class="rating-value">(${value})</span>`;
     }
 
     if (siteSettings.rating_show_count) {
