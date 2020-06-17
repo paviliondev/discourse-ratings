@@ -20,10 +20,3 @@ fr:
       ratings:
         title: "Notes"
         help: "La liste des dernières notes."
-  site_settings:
-    rating_show_numeric_average: "Show the exact numerical average next to a topic average rating."
-    rating_show_count: "Show count of ratings in topic next to average rating."
-    rating_tags: "Tag(s) used to designate a topic as a ratings topic."
-    rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
-    rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."
-    rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
