@@ -65,7 +65,6 @@ en:
           description: >
             You can migrate ratings to or from type "None" on a per-category basis.
             Topics that already have the target type are excluded from the migration.
-            Ratings with type "None" will not display a type.
           btn: "Migrate"
           started: "The migration has started. It may take a few minutes to complete."
         destroy:
