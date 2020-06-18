@@ -109,6 +109,9 @@ span.star-rating {
 #reply-control .composer-controls-rating {
   float: left;
   clear: both;
+  display: flex;
+  flex-flow: wrap;
+  width: 50%;
 
   .rating-container {
     display: inline-flex;
