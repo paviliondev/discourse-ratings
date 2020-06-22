@@ -1,0 +1,46 @@
+<td>
+  {{#if type.isNew}}
+    {{input
+      value=type.type
+      placeholder=(i18n 'admin.ratings.type.type_placeholder')}}
+  {{else}}
+    {{type.type}}
+  {{/if}}
+</td>
+
+<td>
+  {{#if type.isNone}}
+    {{i18n 'admin.ratings.type.none_type_description'}}
+  {{else}}
+    {{input
+      value=type.name
+      placeholder=(i18n 'admin.ratings.type.name_placeholder')}}
+  {{/if}}
+</td>
+
+<td class="type-controls">
+  {{#if showControls}}
+    {{#if type.isNew}}
+      {{d-button
+        class="btn-primary"
+        action=addType
+        actionParam=type
+        label="admin.ratings.type.add"
+        icon="plus"
+        disabled=addDisabled}}
+    {{else}}
+      {{d-button
+        class="btn-primary"
+        action=updateType
+        actionParam=type
+        label="admin.ratings.type.update"
+        icon="save"
+        disabled=updateDisabled}}
+    {{/if}}
+    
+    {{d-button
+      action=destroyType
+      actionParam=type
+      icon="times"}}
+  {{/if}}
+</td>

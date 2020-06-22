@@ -5,19 +5,12 @@ plugins:
   rating_show_topic_tip:
     default: true
     client: true
-  rating_show_exact_average:
+  rating_show_numeric_average:
     default: true
     client: true
   rating_show_count:
     default: false
     client: true
-  rating_tags:
-    client: true
-    type: list
-    default: 'rating'
-  rating_target_id_enabled:
-    client: true
-    default: false
   rating_topic_average_enabled:
     client: true
     default: true

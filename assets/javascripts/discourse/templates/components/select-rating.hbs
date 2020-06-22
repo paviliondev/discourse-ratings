@@ -1,7 +1,14 @@
-{{#if showIncludeRating}}
-  {{input type="checkbox" checked=includeRating}}
-{{/if}}
-<span>{{i18n 'composer.your_rating'}}</span>
-{{#if includeRating}}
-  {{star-rating enabled=includeRating rating=rating}}
-{{/if}}
+{{input type="checkbox" checked=rating.include class="include-rating"}}
+
+<span>
+  {{#if rating.typeName}}
+    {{rating.typeName}}
+  {{else}}
+    {{i18n 'composer.your_rating'}}
+  {{/if}}
+</span>
+
+{{star-rating
+  enabled=rating.include
+  rating=rating.value
+  click=(action 'updateRating')}}

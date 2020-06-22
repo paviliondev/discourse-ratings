@@ -1,8 +1,10 @@
-import { default as computed } from 'ember-addons/ember-computed-decorators';
+import discourseComputed from "discourse-common/utils/decorators";
+import { not } from "@ember/object/computed";
+import Component from "@ember/component";
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: "input",
-  disabled: Ember.computed.not('enabled'),
+  disabled: not('enabled'),
   attributeBindings: [ "value", "checked:checked", "disabled:disabled"],
 
   willInsertElement() {
@@ -18,7 +20,7 @@ export default Ember.Component.extend({
     this.set("rating", this.$().val());
   },
 
-  @computed('rating')
+  @discourseComputed('rating')
   checked(rating) {
     return this.get("value") <= rating;
   }

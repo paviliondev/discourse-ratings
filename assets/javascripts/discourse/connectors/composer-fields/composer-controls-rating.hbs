@@ -1,6 +1,5 @@
-{{#if model.showRating}}
-  {{select-rating rating=model.rating includeRating=model.includeRating}}
-{{/if}}
-{{#if model.showRatingTargetId}}
-  {{input class='rating-target-id' value=model.rating_target_id placeholder=(i18n 'composer.rating_target_id')}}
+{{#if model.showRatings}}
+  {{#each model.ratings as |rating|}}
+    {{select-rating rating=rating updateRating=(action 'updateRating')}}
+  {{/each}}
 {{/if}}

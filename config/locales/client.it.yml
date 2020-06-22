@@ -8,4 +8,4 @@ it:
     topic:
       hidden_ratings: "Argomento con valutazioni nascoste"
   site_settings:
-    rating_show_exact_average: "Mostra l'esatta media numerica accanto alla valutazione media dell'argomento."
+    rating_show_numeric_average: "Mostra l'esatta media numerica accanto alla valutazione media dell'argomento."

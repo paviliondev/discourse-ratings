@@ -1,65 +1,37 @@
-.star-rating {
-  margin-left: 2px;
-}
+@import "admin";
 
-.exact-rating, .rating-count {
-  vertical-align: middle;
-  display: inline-block;
-  color: #777;
-  margin-left: 2px;
-}
-
-.topic-rating {
-  .average-rating {
-    float: left;
-    margin-right: 10px;
-  }
-
-  .topic-tip {
-    float: left;
-    position: relative;
-
-    .btn {
-      float:left;
-      min-height: initial;
+.rating-list {
+  display: flex;
+  flex-direction: column;
+  
+  .rating {
+    margin: 2px 0;
+    display: inline-flex;
+    align-items: center;
+    
+    span:not(:last-of-type) {
+      margin-right: 6px;
     }
-
-    .fa {
-      color: $primary-medium;
-      margin-right: 2px;
-    }
-  }
-
-  .tip-details {
-    background-color: dark-light-diff($primary, $secondary, 95%, -85%);
-    box-shadow: shadow('dropdown');
-    padding: 10px 15px;
-    position: absolute;
-    top: 20px;
-    z-index: 10;
-    width: 300px;
-
-    ul {
-      margin-bottom: 0;
-    }
-
-    li {
-      margin: 2px 0;
+    
+    span.star-rating {
+      margin-bottom: 2px;
     }
   }
 }
 
-.topic-list .exact-rating {
-  font-size: 14px;
-  height: 14px;
+.topic-meta-data .names.has-ratings {
+  align-items: flex-start;
+  
+  .rating {
+    margin: 0 5px 0 0;
+  }
 }
 
-.topic-post .star-rating {
-  vertical-align: top;
+#list-area .rating-list {
+  font-size: .8706em;
 }
 
 span.star-rating {
-  margin-bottom: 2px;
   vertical-align: middle;
   font-size: 0;
   padding: 0;
@@ -134,68 +106,73 @@ span.star-rating {
   }
 }
 
-.topic-list {
-  a {
-    vertical-align: middle;
-  }
-  .topic-rating {
-    display: inline-block;
-
-    a {
-      vertical-align: top;
-    }
-  }
-
-  .topic-rating + .topic-post-badges {
-    vertical-align: middle;
-
-    .badge-notification {
-      top: initial;
-    }
-  }
-}
-
-.mobile-view .topic-list {
-  .topic-rating {
-    float: initial;
-    margin-top: 5px;
-    margin-left: 0;
-  }
-}
-
-.linked-rating {
-  display: inline-block;
-
-  a {
-    cursor: initial;
-  }
-}
-
 #reply-control .composer-controls-rating {
   float: left;
   clear: both;
+  display: flex;
+  flex-flow: wrap;
 
   .rating-container {
-    display: inline-block;
-    background-color: $secondary;
+    display: inline-flex;
+    align-items: center;
     border: 1px solid $primary-medium;
-    padding: 6px 10px;
-    line-height: 17px;
-    margin-bottom: 10px;
+    padding: 6px 6px 6px 10px;
+    line-height: 16px;
+    margin: 0 6px 10px 0;
 
-    input {
-      margin-bottom: 0;
-      margin-top: 2px;
-    }
-
-    input, span {
-      vertical-align: middle;
+    input.include-rating, span:not(:last-of-type) {
+      margin: 0 6px 0 0;
     }
   }
+}
 
-  .rating-target-id {
-    padding: 6px 10px;
-    vertical-align: top;
-    margin-left: 6px;
+#topic-title.has-ratings {
+  
+  .topic-rating-container {
+    margin-top: 3px;
+  }
+  
+  &.editing .topic-rating-container {
+    display: none;
+  }
+  
+  &:not(.editing) {
+    .topic-category a.badge-wrapper,
+    &.has-extra .topic-category .topic-header-extra {
+      margin-right: 8px;
+    }
+  }
+}
+
+.topic-rating-tip {
+  float: left;
+  position: relative;
+
+  .btn {
+    float:left;
+    min-height: initial;
+  }
+
+  .fa {
+    color: $primary-medium;
+    margin-right: 2px;
+  }
+  
+  .tip-details {
+    background-color: dark-light-diff($primary, $secondary, 95%, -85%);
+    box-shadow: shadow('dropdown');
+    padding: 10px 15px;
+    position: absolute;
+    top: 20px;
+    z-index: 10;
+    width: 300px;
+
+    ul {
+      margin-bottom: 0;
+    }
+
+    li {
+      margin: 2px 0;
+    }
   }
 }

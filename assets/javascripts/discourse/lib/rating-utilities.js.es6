@@ -1,44 +1,7 @@
+import Category from 'discourse/models/category';
+import Site from "discourse/models/site";
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
-import Category from 'discourse/models/category';
-
-let ratingEnabled = function(type, tags, categoryId) {
-  let category = Category.findById(categoryId),
-      catEnabled = category && category.rating_enabled,
-      tagEnabled = tags && tags.filter(function(t){
-                      return Discourse.SiteSettings.rating_tags.split('|').indexOf(t) !== -1;
-                   }).length > 0,
-      typeEnabled = type === 'rating';
-
-  return catEnabled || tagEnabled || typeEnabled;
-};
-
-let removeRating = function(postId) {
-  return ajax("/rating/remove", {
-    type: 'POST',
-    data: {
-      post_id: postId,
-    }
-  }).then(function (result, error) {
-    if (error) {
-      popupAjaxError(error);
-    }
-  });
-};
-
-let editRating = function(postId, rating) {
-  return ajax("/rating/rate", {
-    type: 'POST',
-    data: {
-      post_id: postId,
-      rating: rating
-    }
-  }).then(function (result, error) {
-    if (error) {
-      popupAjaxError(error);
-    }
-  });
-};
 
 let starRatingRaw = function(rating, opts = {}) {
   let content = '';
@@ -61,4 +24,73 @@ let starRatingRaw = function(rating, opts = {}) {
   return '<span class="star-rating">' + content + '</span>';
 };
 
-export { ratingEnabled, removeRating, editRating, starRatingRaw };
+function ratingHtml(rating, opts={}) {
+  let html = '';
+  let title = '';
+  let link = null;
+    
+  const name = rating.type_name;
+  if (name) {
+    html += `<span class="rating-type">${name}</span>`;
+    title += `${name} `;
+  }
+  
+  let value = Math.round(rating.value * 10) / 10;
+  html += starRatingRaw(value);
+  title += value;
+  
+  if (opts.topic) {
+    link = opts.topic.url;
+    const siteSettings = Discourse.SiteSettings;
+
+    if (siteSettings.rating_show_numeric_average) {
+      html += `<span class="rating-value">(${value})</span>`;
+    }
+
+    if (siteSettings.rating_show_count) {
+      let count = rating.count;
+      let countLabel = I18n.t('topic.x_rating_count', { count });
+      html += `<span class="rating-count">${count} ${countLabel}</span>`;
+      title += ` ${count} ${countLabel}`;
+    }
+  }
+  
+  if (opts.linkTo && link) {
+    return `<a href="${link}" class="rating" title="${title}">${html}</a>`;
+  } else {
+    return `<div class="rating" title="${title}">${html}</div>`;
+  }
+}
+
+function ratingListHtml(ratings, opts={}) {
+  if (typeof ratings === 'string') {
+    try {
+      ratings = JSON.parse(ratings);
+    } catch(e) {
+      console.log(e);
+      ratings = null;
+    }
+  }
+  
+  if (!ratings) return '';
+  
+  let html = '';
+  
+  ratings.forEach(rating => {
+    html += ratingHtml(rating, opts);
+  });
+  
+  return `<div class="rating-list">${html}</div>`;
+}
+
+function request(type, path='', data={}) {
+  return ajax(`/ratings/${path}`, {
+    type,
+    data
+  }).catch(popupAjaxError)
+} 
+
+export {
+  ratingListHtml,
+  request
+};

@@ -1,0 +1,23 @@
+<div class="admin-ratings-action">
+  <h3>{{i18n 'admin.ratings.migrate.title'}}</h3>
+
+  <div class="description">
+    {{i18n 'admin.ratings.migrate.description'}}
+  </div>
+
+  <div class="controls">
+    {{rating-migrate ratingTypes=ratingTypes}}
+  </div>
+</div>
+
+<div class="admin-ratings-action">
+  <h3>{{i18n 'admin.ratings.destroy.title'}}</h3>
+
+  <div class="description">
+    {{i18n 'admin.ratings.destroy.description'}}
+  </div>
+  
+  <div class="controls">
+    {{rating-destroy ratingTypes=ratingTypes}}
+  </div>
+</div>
