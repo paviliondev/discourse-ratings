@@ -1,5 +1,8 @@
 class AddRatingTypes < ActiveRecord::Migration[6.0]
   def up
+    Post.reset_column_information
+    Topic.reset_column_information
+
     posts = Post.where("id in (SELECT post_id from post_custom_fields where name = 'rating')")
     topics = Topic.where(id: posts.pluck(:topic_id).uniq)
     
