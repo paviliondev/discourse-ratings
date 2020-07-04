@@ -70,7 +70,7 @@ after_initialize do
   ###### Category && Tag ######
   
   add_to_class(:category, :rating_types) do
-    DiscourseRatings::Object.get('category', full_slug("/"))
+    DiscourseRatings::Object.get('category', self.slug)
   end
   
   add_to_class(:tag, :rating_types) do
