@@ -31,7 +31,7 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
         if category = Category.find(row.category_id)
           DiscourseRatings::Object.create(
             'category',
-            category.full_slug('/'),
+            category.rating_key,
             [DiscourseRatings::RatingType::NONE]
           )
         end
