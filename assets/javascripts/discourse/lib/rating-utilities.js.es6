@@ -77,7 +77,9 @@ function ratingListHtml(ratings, opts={}) {
   let html = '';
   
   ratings.forEach(rating => {
-    if (rating.weight > 0) {
+    let showRating = opts.topic ? rating.count > 0 : rating.weight > 0;
+    
+    if (showRating) {
       html += ratingHtml(rating, opts);
     }
   });
