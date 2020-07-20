@@ -166,23 +166,25 @@ after_initialize do
     return if types.blank? || post_ratings.blank?
         
     types.each do |type|
-      type_ratings = post_ratings.select do |r|
-        (r.weight === 1) && (r.type === type.to_s)
-      end
+      type_ratings = post_ratings.select { |r| r.type === type.to_s } 
+      included_type_ratings = type_ratings.select { |r| r.weight > 0 }
                   
-      if type_ratings.any?    
-        sum = type_ratings.map { |r| r.value }.inject(:+)
-        count = type_ratings.length
+      average = 0
+      count = 0
+      
+      if included_type_ratings.any?    
+        sum = included_type_ratings.map { |r| r.value }.inject(:+)
+        count = included_type_ratings.length
         average = (sum / count).to_f
-        
-        topic_rating = {
-          type: type,
-          value: average,
-          count: count
-        }
-        
-        DiscourseRatings::Rating.build_and_set(topic, topic_rating)
       end
+      
+      topic_rating = {
+        type: type,
+        value: average,
+        count: count
+      }
+      
+      DiscourseRatings::Rating.build_and_set(topic, topic_rating)
     end
 
     topic.save_custom_fields(true)
