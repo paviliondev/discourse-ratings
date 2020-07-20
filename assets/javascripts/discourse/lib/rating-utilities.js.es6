@@ -77,7 +77,9 @@ function ratingListHtml(ratings, opts={}) {
   let html = '';
   
   ratings.forEach(rating => {
-    html += ratingHtml(rating, opts);
+    if (rating.weight > 0) {
+      html += ratingHtml(rating, opts);
+    }
   });
   
   return `<div class="rating-list">${html}</div>`;

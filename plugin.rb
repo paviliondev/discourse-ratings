@@ -107,35 +107,31 @@ after_initialize do
   
   ### These monkey patches are necessary as there is currently
   ### no way to add post attributes on update
-   
-  class ::PostRevisor
-    cattr_accessor :ratings
-    prepend PostRevisorRatingsExtension
-  end
 
   ::PostsController.prepend PostsControllerRatingsExtension
-  
+  ::PostRevisor.prepend PostRevisorRatingsExtension
+    
   on(:post_edited) do |post, topic_changed, revisor|
     if revisor.ratings.present?
       topic = post.topic
       user = post.user
-      user_has_rated = topic.user_has_rated(user)
+      user_has_rated = post.rated_types
       user_can_rate = topic.user_can_rate(user)
-
-      ratings = DiscourseRatings::Rating.build_list(revisor.ratings)
-        .select do |r|
-          user_has_rated.include?(r.type) ||
-          user_can_rate.include?(r.type)
-        end
+      
+      ratings = revisor.ratings.select do |r|
+        user_has_rated.include?(r.type) ||
+        user_can_rate.include?(r.type)
+      end
       
       post.update_ratings(ratings)
-      revisor.ratings = nil
     end
+    
+    revisor.clear_ratings_cache!
   end
 
   on(:post_destroyed) do |post, opts, user|
     if (ratings = post.ratings).present?
-      post.update_ratings(ratings, weight: 0)
+      post.update_ratings(ratings)
     end
   end
 
@@ -149,9 +145,11 @@ after_initialize do
     DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
   end
   
-  add_to_class(:post, :update_ratings) do |ratings, weight: 1|
-    ratings.each { |rating| rating.weight = weight }
-    
+  add_to_class(:post, :rated_types) do
+    ratings.select{ |r| r.weight > 0 }.map(&:type)
+  end
+  
+  add_to_class(:post, :update_ratings) do |ratings|
     Post.transaction do
       DiscourseRatings::Rating.set_custom_fields(self, ratings)
       save_custom_fields(true)
@@ -226,9 +224,9 @@ after_initialize do
   
   add_to_class(:topic, :user_has_rated) do |user|
     posts.select do |post|
-      post.user_id === user.id && post.ratings.present?
+      post.user_id === user.id
     end.map do |post|
-      post.ratings.map(&:type)
+      post.rated_types
     end.flatten
   end
   

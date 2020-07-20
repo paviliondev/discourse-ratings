@@ -80,17 +80,19 @@ export default {
           const typeNames = this.site.rating_type_names;
           
           return ratingTypes.map(type => {
+            let currentRating = (postRatings || []).find(r => r.type === type);
             let value;
+            let include;
                         
-            if (editingPostWithRatings) {
-              let rating = postRatings.find(r => r.type === type);
-              value = rating ? rating.value : null;
+            if (editingPostWithRatings && currentRating) {
+              value = currentRating.value;
+              include = (currentRating.weight > 0) ? true : false;
             }
             
             let rating = {
               type,
               value,
-              include: true
+              include: include !== null ? include : true
             };
                         
             if (typeNames && typeNames[type]) {
@@ -129,8 +131,11 @@ export default {
         
         @discourseComputed('ratings')
         ratingsToSave(ratings) {
-          return ratings.filter(r => r.include && r.value)
-            .map(r => ({ type: r.type, value: r.value }));
+          return ratings.map(r => ({
+            type: r.type,
+            value: r.value,
+            weight: r.include ? 1 : 0
+          }));
         },
         
         @discourseComputed('ratingsToSave')

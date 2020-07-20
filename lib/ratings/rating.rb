@@ -12,8 +12,14 @@ class DiscourseRatings::Rating
   def initialize(attrs)
     @type = attrs[:type].to_s
     @value = attrs[:value].to_f
-    @weight = attrs[:weight].to_i if attrs[:weight] != nil
+    @weight = is_int?(attrs[:weight]) ? attrs[:weight].to_i : 1
     @count = attrs[:count].to_i if attrs[:count] != nil
+  end
+  
+  def is_int?(str)
+    !!Integer(str)
+  rescue ArgumentError, TypeError
+    false
   end
   
   def self.build_and_set(model, ratings)
