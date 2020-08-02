@@ -86,3 +86,4 @@ en:
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
     rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."
     rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
+    rating_hide_except_own_entry: "Show only user's own rating entries and topic average"

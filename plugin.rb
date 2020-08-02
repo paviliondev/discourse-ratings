@@ -201,6 +201,17 @@ after_initialize do
     DiscourseRatings::Rating.serialize(object.ratings) 
   end
   
+  add_to_serializer(:post, :include_ratings?) do
+    !SiteSetting.rating_hide_except_own_entry ||
+      (
+        scope.current_user.present? &&
+        (
+          scope.current_user.staff? ||
+          scope.current_user.id === object.user.id
+        )
+      )
+  end
+
   ###### Topic ######
       
   add_to_class(:topic, :ratings) do
