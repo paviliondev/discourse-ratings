@@ -17,3 +17,6 @@ plugins:
   rating_topic_list_average_enabled:
     client: true
     default: true
+  rating_hide_except_own_entry:
+    default: false
+    client: true
