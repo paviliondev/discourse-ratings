@@ -1,11 +1,89 @@
 es:
   js:
     category:
-      enable_rating: "Usa los temas en esta categoría para realizar valoraciones."
+      ratings:
+        heading: "Ratings"
+        enabled: "Habilitar ratings en esta categoría."
+        types: "Tipos de ratings habilitados en esta categoría."
+    
     composer:
-      your_rating: "Tu valoración"
-      select_rating: "Por favor selecciona una valoración, o desmarca 'Tu valoración'"
+      your_rating: "Agregar valoración"
+      select_rating: "Todos los ratings seleccionados deben tener un rating."
+    
     topic:
       hidden_ratings: "El tema tiene valoraciones ocultas"
+      no_ratings: "Aún sin ratings"
+      x_rating_count:
+        one: "rating"
+        other: "ratings"
+      tip:
+        ratings:
+          title: "Rating"
+          details: >
+            Puedes valorar en este tema.
+            Cada rating es adjuntado a un mensaje y tú puedes publicar sin rating.
+  
+    filters:
+      ratings:
+        title: "Ratings"
+        help: "Listar últimos ratings."
+  
+  admin_js:
+    admin:
+      ratings:
+        settings_page: "Ratings"
+        type:
+          title: "Tipos"
+          label: "Tipo"
+          none: "Sin tipos."
+          type_placeholder: "Oculto, desordenado e ineditable."
+          name: "Nombre"
+          name_placeholder: "Visible y editable."
+          none_type: "Ninguno"
+          none_type_description: "Para ratings sin un tipo"
+          select: "Seleccionar tipo"
+          new: "Nuevo"
+          add: "Agregar"
+          update: "Guardar"
+          destroy: "Borrar"
+          confirm_destroy: >
+            ¿Estás seguro que quieres borrar este tipo?
+            Todos los ratings con este tipo serán irreversiblemente destruidos.
+            Si hay ratings con este tipo que quieres mantener, migralos a un
+            nuevo tipo antes de continuar con esta acción.
+        enabled: "Habilitar"
+        category:
+          title: "Categorías"
+          name: "Categoría"
+          none: "Sin categorías de rating"
+        tag:
+          title: "Tags"
+          name: "Tag"
+          none: "Sin etiquetas de rating"
+        migrate:
+          title: "Migrar"
+          description: >
+            Puedes migrar ratings a o desde tipo "Ninguno" hacia una base por-categoías.
+            Temas que tienen un tupo serán excluídos de la migración.
+          btn: "Migrar"
+          started: "La migración ha comenzado. Puede tomar unos minutos para completarse."
+        destroy:
+          title: "Destruir"
+          description: >
+            Puedes destruir ratings irreversiblemente por tipo en una base por categorías.
+            Temas y mensajes asociados a los ratings no serán afectados.
+          btn: "Destruir"
+          started: "La destrucción ha comenzado. Puede tomar unos minutos para completarse."
+        
+        error:
+          object_already_exists: "Entrada para {{objectType}} ya existe"
+          migration_failed_to_start: "La migración ha fallado al comenzar"
+  
   site_settings:
-    rating_show_numeric_average: "Mostrar el promedio numérico exacto al lado del promedio de valoraciones del tema."
+    rating_enabled: "Habilitar Ratings."
+    rating_show_numeric_average: "Mostrar el promedio numérico al lado del rating del tema."
+    rating_show_count: "Mostrar el contador de rating en tema al lado del rating promedio."
+    rating_show_topic_tip: "Mostrar un tip/consejo sobre la mecánica de los temas de calificación bajo los títulos de los temas"
+    rating_topic_average_enabled: "Mostrar el promedio de todos los ratings en un tema debajo del título del tema."
+    rating_topic_list_average_enabled: "Mostrar el promedio de todos los ratings en un tema en el título del tema."
+    rating_hide_except_own_entry: "Mostrar solo las entradas de calificación del usuario y el promedio del tema"
