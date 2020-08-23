@@ -21,6 +21,13 @@ describe PostSerializer do
       expect(rating_data[0][:value]).to eq(3)
     end
 
+    it 'respects plugin enabled setting' do
+      SiteSetting.rating_enabled = false
+      serializer = PostSerializer.new(rating_post, scope: Guardian.new(user1), root: false)
+      rating_data = serializer.as_json[:ratings].as_json
+      expect(rating_data).to eq(nil)
+    end
+
     it 'doesn\'t serialize ratings if the rating is by the another user' do
       serializer = PostSerializer.new(rating_post, scope: Guardian.new(user2), root: false)
       expect(serializer.as_json[:ratings]).to eq(nil)
