@@ -197,12 +197,15 @@ after_initialize do
     )
   end
   
-  add_to_serializer(:post, :ratings) do
+  add_to_serializer(:post, :ratings, false) do
     DiscourseRatings::Rating.serialize(object.ratings) 
   end
   
   add_to_serializer(:post, :include_ratings?) do
-    !SiteSetting.rating_hide_except_own_entry ||
+    # we need to explictly check for plugin enabled when defining custom include method
+    SiteSetting.rating_enabled &&
+    (
+      !SiteSetting.rating_hide_except_own_entry ||
       (
         scope.current_user.present? &&
         (
@@ -210,6 +213,7 @@ after_initialize do
           scope.current_user.id === object.user.id
         )
       )
+    )
   end
 
   ###### Topic ######
