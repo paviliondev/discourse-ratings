@@ -13,7 +13,7 @@ class DiscourseRatings::Rating
     @type = attrs[:type].to_s
     @value = attrs[:value].to_f
     @weight = is_int?(attrs[:weight]) ? attrs[:weight].to_i : 1
-    @count = attrs[:count].to_i if attrs[:count] != nil
+    @count = is_int?(attrs[:count]) ? attrs[:count].to_i : 0
   end
   
   def is_int?(str)
