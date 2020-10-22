@@ -32,4 +32,16 @@ describe DiscourseRatings::Object do
       expect(DiscourseRatings::Object.exists?('category', rating_category.rating_key)).to eq(false)
     end
   end
+
+  context "#remove_type" do
+    it "removes a rating type association from a category/tag" do
+      DiscourseRatings::Object.create('category', rating_category.rating_key, [rating_type])
+      expect(DiscourseRatings::Object.exists?('category', rating_category.rating_key)).to eq(true)
+      expect(rating_category.rating_types).to include(rating_type)
+      DiscourseRatings::Object.remove_type('category', rating_type)
+      rating_category.reload
+      expect(DiscourseRatings::Object.exists?('category', rating_category.rating_key)).to eq(false)
+      expect(rating_category.rating_types).not_to include(rating_type)
+    end
+  end
 end

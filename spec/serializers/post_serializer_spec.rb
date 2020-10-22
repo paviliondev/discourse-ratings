@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 describe PostSerializer do
-  let!(:post_rating) { { type: 'spec', value:3, weight: 1 } }
+  let!(:post_rating) { { type: 'spec', value: 3, weight: 1 } }
   let!(:user1) { Fabricate(:user) }
   let!(:rating_post) { Fabricate(:post, user: user1) }
   let!(:user2) { Fabricate(:user) }
@@ -12,7 +13,7 @@ describe PostSerializer do
       rating_post.stubs(:ratings).returns(DiscourseRatings::Rating.build_list([post_rating]))
       SiteSetting.rating_hide_except_own_entry = true
     end
-    
+
     it 'serializes ratings if the rating is by the author himself' do
       serializer = PostSerializer.new(rating_post, scope: Guardian.new(user1), root: false)
       rating_data = serializer.as_json[:ratings].as_json
