@@ -29,7 +29,6 @@ describe PostsController do
     Category.any_instance.stubs(:rating_types).returns([rating_none_type])
     put "/posts/#{post.id}.json", params: update_params
     expect(response.status).to eq(200)
-    # rating isn't being updated coz rating type settings are not in place
     post.reload
     expect(post.custom_fields['rating_none']).to be_present
   end
