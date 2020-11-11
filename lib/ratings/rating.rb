@@ -113,8 +113,6 @@ class DiscourseRatings::Rating
         ).update_all(name: new_name)
       end
     end
-    
-    preload_custom_fields
   end
   
   def self.build_model_list(custom_fields, types)
