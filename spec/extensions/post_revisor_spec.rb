@@ -16,7 +16,7 @@ describe PostRevisor do
 
   it "detects change in rating" do
     pr = PostRevisor.new(rating_post)
-      ## write rating to cache to simulate what posts_controller patch does
+    ## write rating to cache to simulate what posts_controller patch does
     new_ratings = DiscourseRatings::Rating.build_list([post_rating_update_param])
     DiscourseRatings::Cache.new("update_#{rating_post.id}").write(new_ratings)
     pr.revise!(rating_post.user, ratings: new_ratings)
