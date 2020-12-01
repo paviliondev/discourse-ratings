@@ -122,7 +122,7 @@ after_initialize do
         user_has_rated.include?(r.type) ||
         user_can_rate.include?(r.type)
       end
-      
+
       post.update_ratings(ratings)
     end
     

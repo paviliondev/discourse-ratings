@@ -1,12 +1,14 @@
 # frozen_string_literal: true
-require "rails_helper"
+
+require_relative '../../plugin_helper.rb'
 
 describe DiscourseRatings::Rating do
-  let(:rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]')}
-  let(:multiple_rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}, {"type":"handwriting","value":"3"}]')}
+  let(:rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]') }
+  let(:none_rating_hash) { JSON.parse('[{"type":"none","value":"4", "pavilion": "yes"}]') }
+  let(:multiple_rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}, {"type":"handwriting","value":"3"}]') }
 
   describe "#build_list" do
-    let(:rating) { DiscourseRatings::Rating.build_list(rating_hash)}
+    let(:rating) { DiscourseRatings::Rating.build_list(rating_hash) }
 
     it "builds the model list correctly" do
       expect(rating).to be_present
@@ -47,6 +49,62 @@ describe DiscourseRatings::Rating do
       expect(rating_list.length).to eq(1)
       expect(rating_list[0].class).to eq(DiscourseRatings::Rating)
       expect(rating_list[0].type).to eq("handwriting")
+    end
+  end
+
+  describe "#destroy" do
+    it "destroys the ratings from topics and posts" do
+      #set rating on a few topics and post and destroy should remove all the related custom fields
+
+      topic_1 = Fabricate(:topic)
+      topic_2 = Fabricate(:topic)
+
+      post_1 = Fabricate(:post)
+      post_2 = Fabricate(:post)
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        DiscourseRatings::Rating.build_and_set(item, multiple_rating_hash)
+      end
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        expect(item.custom_fields['rating_pointers']).to be_present
+      end
+
+      DiscourseRatings::Rating.destroy(type: 'pointers')
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        item.reload
+      end
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        expect(item.custom_fields['rating_pointers']).to eq(nil)
+      end
+    end
+  end
+
+  describe "#migrate" do
+    it "migrates the ratings to a new type" do
+      #set rating on a few topics and post and destroy should remove all the related custom fields
+
+      topic_1 = Fabricate(:topic)
+      topic_2 = Fabricate(:topic)
+
+      post_1 = Fabricate(:post, topic: topic_1)
+      post_2 = Fabricate(:post, topic: topic_2)
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        DiscourseRatings::Rating.build_and_set(item, none_rating_hash)
+        item.save_custom_fields(true)
+        expect(item.custom_fields['rating_none']).to be_present
+      end
+
+      DiscourseRatings::Rating.migrate(type: 'none', new_type: 'discipline')
+
+      [topic_1, topic_2, post_1, post_2].each do |item|
+        item.reload
+        expect(item.custom_fields['rating_none']).to eq(nil)
+        expect(item.custom_fields['rating_discipline']).to be_present
+      end
     end
   end
 end
