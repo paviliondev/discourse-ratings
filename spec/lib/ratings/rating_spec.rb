@@ -88,8 +88,8 @@ describe DiscourseRatings::Rating do
       topic_1 = Fabricate(:topic)
       topic_2 = Fabricate(:topic)
 
-      post_1 = Fabricate(:post)
-      post_2 = Fabricate(:post)
+      post_1 = Fabricate(:post, topic: topic_1)
+      post_2 = Fabricate(:post, topic: topic_2)
 
       [topic_1, topic_2, post_1, post_2].each do |item|
         DiscourseRatings::Rating.build_and_set(item, none_rating_hash)
