@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "rails_helper"
+
+require_relative '../../plugin_helper.rb'
 
 describe DiscourseRatings::RatingType do
   let!(:type_param) { 'coolness' }

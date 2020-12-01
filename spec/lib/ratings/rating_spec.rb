@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "rails_helper"
+
+require_relative '../../plugin_helper.rb'
 
 describe DiscourseRatings::Rating do
   let(:rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]') }

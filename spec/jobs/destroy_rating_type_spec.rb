@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+require_relative '../plugin_helper.rb'
+
 describe Jobs::DestroyRatingType do
   let!(:rating_category) { Fabricate(:category) }
     let!(:rating_topic) { Fabricate(:topic, category: rating_category) }

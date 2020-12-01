@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+require_relative '../../plugin_helper.rb'
+
 describe DiscourseRatings::RatingTypeController do
   let!(:create_params) do
     { type: 'comfort', name: 'Comfort' }
