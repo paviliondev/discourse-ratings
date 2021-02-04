@@ -17,6 +17,56 @@ end
 
 add_admin_route "admin.ratings.settings_page", "ratings"
 
+on(:post_created) do |post, opts, user|
+  if opts[:ratings].present?
+    begin
+      ratings = JSON.parse(opts[:ratings])
+    rescue JSON::ParserError
+      ratings = []
+    end
+
+    topic = post.topic
+    user_can_rate = topic.user_can_rate(user)
+
+    ratings = DiscourseRatings::Rating.build_list(ratings)
+      .select { |r| user_can_rate.include?(r.type) }
+
+    if ratings.any?
+      post.update_ratings(ratings)
+    end
+  end
+end
+
+on(:post_edited) do |post, topic_changed, revisor|
+  if revisor.ratings.present?
+    topic = post.topic
+    user = post.user
+    user_has_rated = post.rated_types
+    user_can_rate = topic.user_can_rate(user)
+
+    ratings = revisor.ratings.select do |r|
+      user_has_rated.include?(r.type) ||
+      user_can_rate.include?(r.type)
+    end
+
+    post.update_ratings(ratings)
+  end
+
+  revisor.clear_ratings_cache!
+end
+
+on(:post_destroyed) do |post, opts, user|
+  if (ratings = post.ratings).present?
+    post.update_ratings(ratings)
+  end
+end
+
+on(:post_recovered) do |post, opts, user|
+  if (ratings = post.ratings).present?
+    post.update_ratings(ratings)
+  end
+end
+
 after_initialize do
   %w[
     ../lib/ratings/engine.rb
@@ -40,9 +90,9 @@ after_initialize do
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
-  
+
   ###### Site ######
-  
+
   add_to_class(:site, :rating_type_names) do 
     map = {}
     DiscourseRatings::RatingType.all.each { |t| map[t.type] = t.name }
@@ -85,62 +135,12 @@ after_initialize do
   
   add_permitted_post_create_param("ratings")
   
-  on(:post_created) do |post, opts, user|
-    if opts[:ratings].present?
-      begin
-        ratings = JSON.parse(opts[:ratings])
-      rescue JSON::ParserError
-        ratings = []
-      end
-      
-      topic = post.topic
-      user_can_rate = topic.user_can_rate(user)
-      
-      ratings = DiscourseRatings::Rating.build_list(ratings)
-        .select { |r| user_can_rate.include?(r.type) }
-                  
-      if ratings.any?
-        post.update_ratings(ratings)
-      end
-    end
-  end
-  
   ### These monkey patches are necessary as there is currently
   ### no way to add post attributes on update
 
   ::PostsController.prepend PostsControllerRatingsExtension
   ::PostRevisor.prepend PostRevisorRatingsExtension
-    
-  on(:post_edited) do |post, topic_changed, revisor|
-    if revisor.ratings.present?
-      topic = post.topic
-      user = post.user
-      user_has_rated = post.rated_types
-      user_can_rate = topic.user_can_rate(user)
-      
-      ratings = revisor.ratings.select do |r|
-        user_has_rated.include?(r.type) ||
-        user_can_rate.include?(r.type)
-      end
 
-      post.update_ratings(ratings)
-    end
-    
-    revisor.clear_ratings_cache!
-  end
-
-  on(:post_destroyed) do |post, opts, user|
-    if (ratings = post.ratings).present?
-      post.update_ratings(ratings)
-    end
-  end
-
-  on(:post_recovered) do |post, opts, user|
-    if (ratings = post.ratings).present?
-      post.update_ratings(ratings)
-    end
-  end
-  
   add_to_class(:post, :ratings) do
     DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
   end

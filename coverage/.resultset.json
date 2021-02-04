@@ -1,7 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/lib/ratings/engine.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/engine.rb": {
         "lines": [
           1,
           1,
@@ -12,7 +12,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/lib/ratings/cache.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/cache.rb": {
         "lines": [
           1,
           1,
@@ -24,7 +24,7 @@
           null,
           null,
           1,
-          10,
+          14,
           null,
           null,
           1,
@@ -32,28 +32,28 @@
           null,
           null,
           1,
-          62,
+          66,
           null,
           null,
           1,
-          41,
+          43,
           null,
           null,
           1,
           7,
           null,
           7,
-          4,
+          2,
           null,
-          3,
-          3,
-          3,
+          5,
+          5,
+          5,
           null,
           null,
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/lib/ratings/rating.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/rating.rb": {
         "lines": [
           1,
           1,
@@ -216,7 +216,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/lib/ratings/rating_type.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/rating_type.rb": {
         "lines": [
           1,
           1,
@@ -232,7 +232,7 @@
           null,
           null,
           1,
-          10,
+          11,
           null,
           null,
           null,
@@ -241,7 +241,7 @@
           null,
           null,
           1,
-          9,
+          10,
           null,
           null,
           1,
@@ -294,7 +294,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/lib/ratings/object.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/object.rb": {
         "lines": [
           1,
           1,
@@ -388,7 +388,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/config/routes.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/config/routes.rb": {
         "lines": [
           1,
           1,
@@ -405,7 +405,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/jobs/regular/destroy_rating_type.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/jobs/regular/destroy_rating_type.rb": {
         "lines": [
           null,
           null,
@@ -425,7 +425,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/jobs/regular/destroy_ratings.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/jobs/regular/destroy_ratings.rb": {
         "lines": [
           null,
           null,
@@ -438,7 +438,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/jobs/regular/migrate_ratings.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/jobs/regular/migrate_ratings.rb": {
         "lines": [
           null,
           null,
@@ -451,28 +451,28 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/serializers/ratings/object.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/object.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/serializers/ratings/rating.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/rating.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/serializers/ratings/rating_type.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/rating_type.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/controllers/ratings/object.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/object.rb": {
         "lines": [
           1,
           1,
@@ -508,57 +508,6 @@
           null,
           1,
           0,
-          0,
-          null,
-          null,
-          null,
-          1,
-          0,
-          0,
-          null,
-          0,
-          null,
-          null,
-          null
-        ]
-      },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/controllers/ratings/rating.rb": {
-        "lines": [
-          1,
-          1,
-          null,
-          1,
-          0,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          1,
-          0,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          1,
-          null,
-          1,
-          0,
-          null,
-          null,
-          1,
-          0,
-          0,
-          null,
-          null,
-          0,
-          null,
           0,
           null,
           null,
@@ -573,7 +522,58 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/app/controllers/ratings/rating_type.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/rating.rb": {
+        "lines": [
+          1,
+          1,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          null,
+          1,
+          0,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          0,
+          null,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          null
+        ]
+      },
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/rating_type.rb": {
         "lines": [
           1,
           1,
@@ -637,7 +637,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/extensions/post_revisor.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/post_revisor.rb": {
         "lines": [
           1,
           1,
@@ -673,7 +673,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/extensions/posts_controller.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/posts_controller.rb": {
         "lines": [
           1,
           1,
@@ -698,7 +698,7 @@
           null
         ]
       },
-      "/Users/angusmcleod/discourse/discourse/plugins/discourse-ratings/extensions/topic.rb": {
+      "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/topic.rb": {
         "lines": [
           1,
           1,
@@ -717,6 +717,6 @@
         ]
       }
     },
-    "timestamp": 1606818919
+    "timestamp": 1612435247
   }
 }
