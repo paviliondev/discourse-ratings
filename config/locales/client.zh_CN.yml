@@ -1,0 +1,88 @@
+en:
+  js:
+    category:
+      ratings:
+        heading: "评分"
+        enabled: "在这个分类中启用评分"
+        types: "这个分类中启用的评分类型"
+    
+    composer:
+      your_rating: "添加评分"
+      select_rating: "所有选中的评分类型都需要分数"
+    
+    topic:
+      hidden_ratings: "主题有隐藏评分类型"
+      no_ratings: "没有评分"
+      x_rating_count:
+        one: "评分"
+        other: "评分"
+      tip:
+        ratings:
+          title: "评分"
+          details: >
+            你可以在这个主题中评分。
+            每个评分都附属于一个回帖，所以你可以不评分直接回帖。
+  
+    filters:
+      ratings:
+        title: "评分"
+        help: "列出最新评分"
+  
+  admin_js:
+    admin:
+      ratings:
+        settings_page: "评分"
+        type:
+          title: "类型"
+          label: "类型"
+          none: "没有类型"
+          type_placeholder: "隐藏、短横线连接、不可修改"
+          name: "名称"
+          name_placeholder: "可见、句子形式、可以修改"
+          none_type: "无"
+          none_type_description: "对于没有类型的评分"
+          select: "选择评分"
+          new: "新建"
+          add: "添加"
+          update: "保存"
+          destroy: "删除"
+          confirm_destroy: >
+            确定删除这个类型吗？
+            所有这个类型的评分都会被彻底删除。
+            如果这个类型有你想保留的评分，请在此操作前将它们迁移到新的类型。
+        enabled: "已启用"
+        category:
+          title: "分类"
+          name: "分类"
+          none: "没有评分分类"
+        tag:
+          title: "标签"
+          name: "标签"
+          none: "没有评分标签"
+        migrate:
+          title: "迁移"
+          description: >
+            你可以从类型“空”迁移，或者迁移到类型“空”。可以对每个分类单独设置。
+            已经有目标类型的主题会被排除迁移。
+          btn: "迁移"
+          started: "迁移开始。可能等待几分钟时间。"
+        destroy:
+          title: "清除"
+          description: >
+            你可以不可恢复地清除评分。可以对每个分类单独设置。
+            评分关联的主题和回复不会受影响。
+          btn: "清除"
+          started: "清除开始。可能等待几分钟时间。"
+        
+        error:
+          object_already_exists: "项 {{objectType}} 已经存在"
+          migration_failed_to_start: "迁移开始失败"
+  
+  site_settings:
+    rating_enabled: "启用评分插件"
+    rating_show_numeric_average: "在主题评分旁边显示平均分"
+    rating_show_count: "在主题评分旁边显示评分次数"
+    rating_show_topic_tip: "在评分主题标题下方显示评分关于运转机制的提示语"
+    rating_topic_average_enabled: "在主题标题下方显示每项评分的平均分"
+    rating_topic_list_average_enabled: "在主题列表的主题项中显示主题的每项评分的平均分"
+    rating_hide_except_own_entry: "只显示用户自己的评分项和主题平均分"
