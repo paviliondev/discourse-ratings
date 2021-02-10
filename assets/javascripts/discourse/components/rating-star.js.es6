@@ -4,11 +4,11 @@ import Component from "@ember/component";
 
 export default Component.extend({
   tagName: "input",
-  disabled: not('enabled'),
-  attributeBindings: [ "value", "checked:checked", "disabled:disabled"],
+  disabled: not("enabled"),
+  attributeBindings: ["value", "checked:checked", "disabled:disabled"],
 
   willInsertElement() {
-    this.$().prop('type', 'radio');
+    this.$().prop("type", "radio");
   },
 
   didRender() {
@@ -20,8 +20,8 @@ export default Component.extend({
     this.set("rating", this.$().val());
   },
 
-  @discourseComputed('rating')
+  @discourseComputed("rating")
   checked(rating) {
     return this.get("value") <= rating;
-  }
+  },
 });

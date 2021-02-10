@@ -1,36 +1,35 @@
 .admin-contents.ratings {
-  
   .admin-ratings-list {
     margin-bottom: 30px;
-    
+
     input {
       margin-bottom: 0;
     }
   }
-  
+
   .rating-type input {
     width: 300px;
   }
-  
+
   .type-controls {
     text-align: right;
   }
-  
+
   .admin-ratings-list-controls {
     margin-top: 10px;
   }
-  
+
   .admin-ratings-list-object {
     position: relative;
-    
+
     td:first-of-type {
       width: 350px;
     }
-    
+
     &.has-error {
       border: 2px solid $danger;
       min-height: 70px;
-      
+
       .error {
         position: absolute;
         bottom: 0;
@@ -38,24 +37,24 @@
       }
     }
   }
-  
+
   .admin-ratings-action {
     margin-bottom: 30px;
-    
+
     .controls {
       display: flex;
       align-items: flex-start;
       margin-top: 10px;
-      
+
       > * {
         margin-right: 10px;
       }
-      
+
       .combo-box {
         min-width: 130px;
       }
     }
-    
+
     .action-message {
       margin-top: 10px;
     }
