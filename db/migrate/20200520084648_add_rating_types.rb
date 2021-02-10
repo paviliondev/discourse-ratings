@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddRatingTypes < ActiveRecord::Migration[6.0]
   def up
     Post.reset_column_information
@@ -5,7 +6,7 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
 
     posts = Post.where("id in (SELECT post_id from post_custom_fields where name = 'rating')")
     topics = Topic.where(id: posts.pluck(:topic_id).uniq)
-    
+
     posts.each do |post|
       rating = {
         type: DiscourseRatings::RatingType::NONE,
@@ -15,7 +16,7 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
       DiscourseRatings::Rating.build_and_set(post, rating)
       post.save_custom_fields(true)
     end
-    
+
     topics.each do |topic|
       rating = {
         type: DiscourseRatings::RatingType::NONE,
@@ -25,9 +26,9 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
       DiscourseRatings::Rating.build_and_set(topic, rating)
       topic.save_custom_fields(true)
     end
-    
+
     CategoryCustomField.where(name: 'rating_enabled').each do |row|
-      if ActiveModel::Type::Boolean.new.cast(row.value) 
+      if ActiveModel::Type::Boolean.new.cast(row.value)
         if category = Category.find(row.category_id)
           DiscourseRatings::Object.create(
             'category',
