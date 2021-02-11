@@ -1,17 +1,17 @@
 .topic-list-item.has-ratings .link-top-line {
   display: flex;
   flex-flow: wrap;
-  
+
   .raw-topic-link {
     order: 1;
     padding: 0;
     display: inline-block;
   }
-  
+
   .topic-post-badges {
     order: 2;
   }
-  
+
   .rating-list {
     order: 3;
     width: 100%;

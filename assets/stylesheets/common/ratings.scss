@@ -3,16 +3,16 @@
 .rating-list {
   display: flex;
   flex-direction: column;
-  
+
   .rating {
     margin: 2px 0;
     display: inline-flex;
     align-items: center;
-    
+
     span:not(:last-of-type) {
       margin-right: 6px;
     }
-    
+
     span.star-rating {
       margin-bottom: 2px;
     }
@@ -21,14 +21,14 @@
 
 .topic-meta-data .names.has-ratings {
   align-items: flex-start;
-  
+
   .rating {
     margin: 0 5px 0 0;
   }
 }
 
 #list-area .rating-list {
-  font-size: .8706em;
+  font-size: 0.8706em;
 }
 
 span.star-rating {
@@ -41,7 +41,7 @@ span.star-rating {
   height: 14px;
   overflow: hidden;
   position: relative;
-  background: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDIwIDIwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cG9seWdvbiBmaWxsPSIjREREREREIiBwb2ludHM9IjEwLDAgMTMuMDksNi41ODMgMjAsNy42MzkgMTUsMTIuNzY0IDE2LjE4LDIwIDEwLDE2LjU4MyAzLjgyLDIwIDUsMTIuNzY0IDAsNy42MzkgNi45MSw2LjU4MyAiLz48L3N2Zz4=');
+  background: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDIwIDIwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cG9seWdvbiBmaWxsPSIjREREREREIiBwb2ludHM9IjEwLDAgMTMuMDksNi41ODMgMjAsNy42MzkgMTUsMTIuNzY0IDE2LjE4LDIwIDEwLDE2LjU4MyAzLjgyLDIwIDUsMTIuNzY0IDAsNy42MzkgNi45MSw2LjU4MyAiLz48L3N2Zz4=");
   background-size: contain;
 
   i {
@@ -52,16 +52,17 @@ span.star-rating {
     height: 100%;
     width: 20%;
     z-index: 1;
-    background: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDIwIDIwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cG9seWdvbiBmaWxsPSIjRkZERjg4IiBwb2ludHM9IjEwLDAgMTMuMDksNi41ODMgMjAsNy42MzkgMTUsMTIuNzY0IDE2LjE4LDIwIDEwLDE2LjU4MyAzLjgyLDIwIDUsMTIuNzY0IDAsNy42MzkgNi45MSw2LjU4MyAiLz48L3N2Zz4=');
+    background: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDIwIDIwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cG9seWdvbiBmaWxsPSIjRkZERjg4IiBwb2ludHM9IjEwLDAgMTMuMDksNi41ODMgMjAsNy42MzkgMTUsMTIuNzY0IDE2LjE4LDIwIDEwLDE2LjU4MyAzLjgyLDIwIDUsMTIuNzY0IDAsNy42MzkgNi45MSw2LjU4MyAiLz48L3N2Zz4=");
     background-size: contain;
   }
 
-  input[type="radio"], span {
+  input[type="radio"],
+  span {
     -moz-appearance: none;
     -webkit-appearance: none;
     opacity: 0;
     cursor: pointer;
-    display:inline-block;
+    display: inline-block;
     width: 20%;
     height: 100%;
     margin: 0;
@@ -81,19 +82,19 @@ span.star-rating {
     }
   }
 
-  i ~ i{
+  i ~ i {
     width: 40%;
   }
 
-  i ~ i ~ i{
+  i ~ i ~ i {
     width: 60%;
   }
 
-  i ~ i ~ i ~ i{
+  i ~ i ~ i ~ i {
     width: 80%;
   }
 
-  i ~ i ~ i ~ i ~ i{
+  i ~ i ~ i ~ i ~ i {
     width: 100%;
   }
 
@@ -120,22 +121,22 @@ span.star-rating {
     line-height: 16px;
     margin: 0 6px 10px 0;
 
-    input.include-rating, span:not(:last-of-type) {
+    input.include-rating,
+    span:not(:last-of-type) {
       margin: 0 6px 0 0;
     }
   }
 }
 
 #topic-title.has-ratings {
-  
   .topic-rating-container {
     margin-top: 3px;
   }
-  
+
   &.editing .topic-rating-container {
     display: none;
   }
-  
+
   &:not(.editing) {
     .topic-category a.badge-wrapper,
     &.has-extra .topic-category .topic-header-extra {
@@ -149,7 +150,7 @@ span.star-rating {
   position: relative;
 
   .btn {
-    float:left;
+    float: left;
     min-height: initial;
   }
 
@@ -157,10 +158,10 @@ span.star-rating {
     color: $primary-medium;
     margin-right: 2px;
   }
-  
+
   .tip-details {
     background-color: dark-light-diff($primary, $secondary, 95%, -85%);
-    box-shadow: shadow('dropdown');
+    box-shadow: shadow("dropdown");
     padding: 10px 15px;
     position: absolute;
     top: 20px;

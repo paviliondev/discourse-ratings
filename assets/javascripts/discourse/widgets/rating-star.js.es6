@@ -1,12 +1,12 @@
-import { createWidget } from 'discourse/widgets/widget';
+import { createWidget } from "discourse/widgets/widget";
 
-export default createWidget('rating-star', {
-  tagName: 'input',
+export default createWidget("rating-star", {
+  tagName: "input",
 
   buildAttributes(attrs) {
     let result = {
-      type: 'radio',
-      value: attrs.value
+      type: "radio",
+      value: attrs.value,
     };
     if (attrs.checked) {
       result["checked"] = true;
@@ -19,5 +19,5 @@ export default createWidget('rating-star', {
 
   html() {
     return;
-  }
+  },
 });

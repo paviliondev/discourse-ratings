@@ -6,17 +6,17 @@ export default Component.extend({
   tagName: "div",
   classNames: ["rating-container"],
 
-  @observes('rating.include')
-  removeOnUncheck(){
-    if(!this.rating.include) {
-      this.set('rating.value', 0);
+  @observes("rating.include")
+  removeOnUncheck() {
+    if (!this.rating.include) {
+      this.set("rating.value", 0);
       this.updateRating(this.rating);
     }
   },
 
   actions: {
-    updateRating(){
+    updateRating() {
       this.updateRating(this.rating);
-    }
-  }
+    },
+  },
 });
