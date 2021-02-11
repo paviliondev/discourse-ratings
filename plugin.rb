@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # name: discourse-ratings
 # about: A Discourse plugin that lets you use topics to rate things
 # version: 0.2
@@ -93,48 +94,48 @@ after_initialize do
 
   ###### Site ######
 
-  add_to_class(:site, :rating_type_names) do 
+  add_to_class(:site, :rating_type_names) do
     map = {}
     DiscourseRatings::RatingType.all.each { |t| map[t.type] = t.name }
     map
   end
-  
+
   add_to_serializer(:site, :rating_type_names) do
     object.rating_type_names
   end
-  
+
   add_to_serializer(:site, :category_rating_types) do
     build_object_list(DiscourseRatings::Object.list('category'))
   end
-  
+
   add_to_serializer(:site, :tag_rating_types) do
     build_object_list(DiscourseRatings::Object.list('tag'))
   end
-    
+
   add_to_class(:site_serializer, :build_object_list) do |list|
     result = {}
     list.each { |obj| result[obj.name] = obj.types }
     result
   end
-  
+
   ###### Category && Tag ######
-  
+
   add_to_class(:category, :rating_types) do
     DiscourseRatings::Object.get('category', rating_key)
   end
-  
+
   add_to_class(:category, :rating_key) do
     slug_path.join("/")
   end
-  
+
   add_to_class(:tag, :rating_types) do
     DiscourseRatings::Object.get('tag', name)
   end
 
   ###### Post ######
-  
+
   add_permitted_post_create_param("ratings")
-  
+
   ### These monkey patches are necessary as there is currently
   ### no way to add post attributes on update
 
@@ -144,63 +145,63 @@ after_initialize do
   add_to_class(:post, :ratings) do
     DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
   end
-  
+
   add_to_class(:post, :rated_types) do
-    ratings.select{ |r| r.weight > 0 }.map(&:type)
+    ratings.select { |r| r.weight > 0 }.map(&:type)
   end
-  
+
   add_to_class(:post, :update_ratings) do |ratings|
     Post.transaction do
       DiscourseRatings::Rating.set_custom_fields(self, ratings)
       save_custom_fields(true)
       update_topic_ratings
     end
-    
+
     push_ratings_to_clients
   end
-  
+
   add_to_class(:post, :update_topic_ratings) do
     types = topic.rating_types
     post_ratings = topic.reload.posts.map { |p| p.ratings }.flatten
-        
+
     return if types.blank? || post_ratings.blank?
-        
+
     types.each do |type|
-      type_ratings = post_ratings.select { |r| r.type === type.to_s } 
+      type_ratings = post_ratings.select { |r| r.type === type.to_s }
       included_type_ratings = type_ratings.select { |r| r.weight > 0 }
-                  
+
       average = 0
       count = 0
-      
-      if included_type_ratings.any?    
+
+      if included_type_ratings.any?
         sum = included_type_ratings.map { |r| r.value }.inject(:+)
         count = included_type_ratings.length
         average = (sum / count).to_f
       end
-      
+
       topic_rating = {
         type: type,
         value: average,
         count: count
       }
-      
+
       DiscourseRatings::Rating.build_and_set(topic, topic_rating)
     end
 
     topic.save_custom_fields(true)
   end
-  
+
   add_to_class(:post, :push_ratings_to_clients) do
     publish_change_to_clients!("ratings",
       ratings: topic.ratings.as_json,
       user_can_rate: topic.user_can_rate(user)
     )
   end
-  
+
   add_to_serializer(:post, :ratings, false) do
-    DiscourseRatings::Rating.serialize(object.ratings) 
+    DiscourseRatings::Rating.serialize(object.ratings)
   end
-  
+
   add_to_serializer(:post, :include_ratings?) do
     # we need to explictly check for plugin enabled when defining custom include method
     SiteSetting.rating_enabled &&
@@ -217,28 +218,28 @@ after_initialize do
   end
 
   ###### Topic ######
-      
+
   add_to_class(:topic, :ratings) do
     DiscourseRatings::Rating.build_model_list(custom_fields, rating_types)
   end
-  
+
   add_to_class(:topic, :rating_types) do
     types = []
     types.push(category.rating_types) if category.present?
     types.push(tags.map { |tag| tag.rating_types }) if tags.present?
     types.flatten.uniq
   end
-  
+
   add_to_class(:topic, :rating_enabled?) do
     SiteSetting.rating_enabled && rating_types.any?
   end
-  
+
   add_to_class(:topic, :user_can_rate) do |user|
     rating_types.select do |type|
       user_has_rated(user).exclude?(type)
-    end  
+    end
   end
-  
+
   add_to_class(:topic, :user_has_rated) do |user|
     posts.select do |post|
       post.user_id === user.id
@@ -246,34 +247,34 @@ after_initialize do
       post.rated_types
     end.flatten
   end
-  
+
   add_to_serializer(:topic_view, :ratings) do
     DiscourseRatings::Rating.serialize(object.topic.ratings)
   end
 
   add_to_serializer(:topic_view, :show_ratings) do
     SiteSetting.rating_topic_average_enabled &&
-    object.topic.rating_enabled? && 
+    object.topic.rating_enabled? &&
     object.topic.ratings.present?
   end
-  
+
   add_to_serializer(:topic_view, :user_can_rate) do
     object.topic.user_can_rate(scope.current_user)
   end
-  
+
   add_to_serializer(:topic_view, :include_user_can_rate?) do
     scope.current_user && object.topic.rating_enabled?
   end
-  
+
   ::Topic.singleton_class.prepend TopicRatingsExtension
-  
+
   add_to_serializer(:topic_list_item, :ratings) do
     DiscourseRatings::Rating.serialize(object.ratings)
   end
 
   add_to_serializer(:topic_list_item, :show_ratings) do
     SiteSetting.rating_topic_list_average_enabled &&
-    object.rating_enabled? && 
+    object.rating_enabled? &&
     object.ratings.present?
   end
 end

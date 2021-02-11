@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module PostsControllerRatingsExtension
   def update
     params.require(:post)
