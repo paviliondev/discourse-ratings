@@ -78,7 +78,9 @@ function ratingListHtml(ratings, opts = {}) {
     }
   }
 
-  if (!ratings) {return "";}
+  if (!ratings) {
+    return "";
+  }
 
   let html = "";
 

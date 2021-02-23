@@ -16,7 +16,9 @@ export default {
   initialize(container) {
     const siteSettings = container.lookup("site-settings:main");
 
-    if (!siteSettings.rating_enabled) {return;}
+    if (!siteSettings.rating_enabled) {
+      return;
+    }
 
     Composer.serializeOnCreate("ratings", "ratingsString");
     Composer.serializeOnUpdate("ratings", "ratingsString");
