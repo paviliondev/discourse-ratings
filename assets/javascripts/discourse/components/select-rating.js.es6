@@ -1,4 +1,3 @@
-import discourseComputed from "discourse-common/utils/decorators";
 import Component from "@ember/component";
 import { observes } from "discourse-common/utils/decorators";
 

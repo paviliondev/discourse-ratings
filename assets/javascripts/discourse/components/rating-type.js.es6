@@ -1,6 +1,5 @@
 import Component from "@ember/component";
-import { lt, or, not, equal } from "@ember/object/computed";
-import { computed } from "@ember/object";
+import { equal, lt, not, or } from "@ember/object/computed";
 import discourseComputed from "discourse-common/utils/decorators";
 
 const minTypeLength = 2;

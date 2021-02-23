@@ -1,7 +1,6 @@
-import Category from "discourse/models/category";
-import Site from "discourse/models/site";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import I18n from "I18n";
 
 let starRatingRaw = function (rating, opts = {}) {
   let content = "";
@@ -75,12 +74,11 @@ function ratingListHtml(ratings, opts = {}) {
     try {
       ratings = JSON.parse(ratings);
     } catch (e) {
-      console.log(e);
       ratings = null;
     }
   }
 
-  if (!ratings) return "";
+  if (!ratings) {return "";}
 
   let html = "";
 

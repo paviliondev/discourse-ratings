@@ -3,19 +3,20 @@ import Category from "discourse/models/category";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import {
   default as discourseComputed,
-  on,
   observes,
+  on,
 } from "discourse-common/utils/decorators";
-import { notEmpty, and, alias, or } from "@ember/object/computed";
+import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { ratingListHtml } from "../lib/rating-utilities";
-import { scheduleOnce, later } from "@ember/runloop";
+import I18n from "I18n";
+import Handlebars from "handlebars";
 
 export default {
   name: "initialize-ratings",
   initialize(container) {
     const siteSettings = container.lookup("site-settings:main");
 
-    if (!siteSettings.rating_enabled) return;
+    if (!siteSettings.rating_enabled) {return;}
 
     Composer.serializeOnCreate("ratings", "ratingsString");
     Composer.serializeOnUpdate("ratings", "ratingsString");
@@ -36,7 +37,7 @@ export default {
       });
 
       api.reopenWidget("poster-name", {
-        buildClasses(attrs) {
+        buildClasses() {
           const post = this.findAncestorModel();
           let classes = [];
           if (post && post.topic && post.topic.show_ratings && post.ratings) {
