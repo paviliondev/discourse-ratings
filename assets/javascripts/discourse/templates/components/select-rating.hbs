@@ -4,11 +4,11 @@
   {{#if rating.typeName}}
     {{rating.typeName}}
   {{else}}
-    {{i18n 'composer.your_rating'}}
+    {{i18n "composer.your_rating"}}
   {{/if}}
 </span>
 
 {{star-rating
   enabled=rating.include
   rating=rating.value
-  click=(action 'updateRating')}}
+  click=(action "updateRating")}}
