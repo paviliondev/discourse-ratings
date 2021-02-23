@@ -3,6 +3,7 @@ import { A } from "@ember/array";
 import { all } from "rsvp";
 import RatingType from "../models/rating-type";
 import RatingObject from "../models/rating-object";
+import I18n from "I18n";
 
 const noneType = "none";
 
@@ -11,7 +12,7 @@ export default DiscourseRoute.extend({
     return RatingType.all();
   },
 
-  afterModel(model) {
+  afterModel() {
     return all([this._typesFor("category"), this._typesFor("tag")]);
   },
 
@@ -31,7 +32,7 @@ export default DiscourseRoute.extend({
     });
   },
 
-  _typesFor(object, model) {
+  _typesFor(object) {
     return RatingObject.all(object).then((result) => {
       this.set(`${object}Types`, result);
     });

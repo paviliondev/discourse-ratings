@@ -28,7 +28,7 @@ export default Controller.extend({
         if (result.success) {
           this.send("refresh");
         } else {
-          type.set("hasError", true);
+          typeObj.set("hasError", true);
           this.set("loading", false);
         }
       });
@@ -61,8 +61,8 @@ export default Controller.extend({
           (result) => {
             if (result) {
               this.set("loading", true);
-              RatingType.destroy(typeObj.type).then((result) => {
-                if (result.success) {
+              RatingType.destroy(typeObj.type).then((response) => {
+                if (response.success) {
                   this.send("refresh");
                 } else {
                   typeObj.set("hasError", true);
