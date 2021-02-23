@@ -1,7 +1,7 @@
 {{category-chooser
   value=categoryId
   onChange=(action (mut categoryId))}}
-  
+
 {{combo-box
   value=fromType
   content=ratingTypes
@@ -26,7 +26,7 @@
   disabled=migrateDisabled}}
 
 {{#if startingMigration}}
-  {{loading-spinner size="small"}}    
+  {{loading-spinner size="small"}}
 {{/if}}
 
 {{#if migrationMessage}}

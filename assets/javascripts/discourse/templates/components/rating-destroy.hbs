@@ -1,7 +1,7 @@
 {{category-chooser
   value=categoryId
   onChange=(action (mut categoryId))}}
-  
+
 {{combo-box
   value=type
   content=ratingTypes
@@ -17,7 +17,7 @@
   disabled=destroyDisabled}}
 
 {{#if startingDestroy}}
-  {{loading-spinner size="small"}}    
+  {{loading-spinner size="small"}}
 {{/if}}
 
 {{#if destroyMessage}}
