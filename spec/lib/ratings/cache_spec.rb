@@ -4,8 +4,8 @@ require_relative '../../plugin_helper.rb'
 
 describe DiscourseRatings::Cache do
   it "writes and reads values to the cache" do
-    DiscourseRatings::Cache.new('list').write([1,2,3])
-    expect(DiscourseRatings::Cache.new('list').read).to eq([1,2,3])
+    DiscourseRatings::Cache.new('list').write([1, 2, 3])
+    expect(DiscourseRatings::Cache.new('list').read).to eq([1, 2, 3])
   end
 
   it "deletes values from the cache" do
