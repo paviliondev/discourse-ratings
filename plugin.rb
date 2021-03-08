@@ -4,6 +4,7 @@
 # version: 0.2
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-ratings
+# contact emails: fzngagan@gmail.com
 
 enabled_site_setting :rating_enabled
 
