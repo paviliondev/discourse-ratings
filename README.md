@@ -1,4 +1,6 @@
-# discourse-ratings ![image](https://travis-ci.org/angusmcleod/discourse-ratings.svg?branch=master)
+# discourse-ratings
+
+![image](https://github.com/paviliondev/discourse-ratings/actions/workflows/plugin-tests.yml/badge.svg) ![image](https://github.com/paviliondev/discourse-ratings/actions/workflows/plugin-linting.yml/badge.svg)
 
 A Discourse plugin that lets you use topics to rate things. [Read more about this plugin on Discourse Meta](https://meta.discourse.org/t/topic-star-ratings/39578).
 
