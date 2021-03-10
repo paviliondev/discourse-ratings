@@ -125,7 +125,7 @@ jobs:
 
       - name: Plugin RSpec
         if: matrix.build_type == 'backend' && steps.check_spec.outputs.files_exists == 'true'
-        run: COVERAGE=1 bin/rake plugin:spec[${{ github.event.repository.name }}]
+        run: bin/rake plugin:spec[${{ github.event.repository.name }}]
 
       - name: Plugin QUnit
         if: matrix.build_type == 'frontend' && steps.check_qunit.outputs.files_exists == 'true'
@@ -134,8 +134,4 @@ jobs:
 
       - name: Simplecov Report
         if: matrix.build_type == 'backend'
-        uses: aki77/simplecov-report-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          failedThreshold: 80
-          resultPath: plugins/discourse-ratings/coverage/.last_run.json
+        run: COVERAGE=1 bin/rake plugin:spec[${{ github.event.repository.name }}]
