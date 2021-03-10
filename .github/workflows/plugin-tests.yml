@@ -137,3 +137,4 @@ jobs:
         uses: aki77/simplecov-report-action@v1
         with:
           failedThreshold: 80
+          resultPath: plugins/discourse-ratings/coverage/.last_run.json
