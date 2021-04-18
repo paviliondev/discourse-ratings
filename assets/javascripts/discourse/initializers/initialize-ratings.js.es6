@@ -244,19 +244,18 @@ export default {
       });
 
       api.modifyClass("component:composer-body", {
-        @on('didRender')
-        addContainerClass(){
+        @on("didRender")
+        addContainerClass() {
           if (!this.element || this.isDestroying || this.isDestroyed) {
             return;
           }
 
           if (this.composer && this.composer.showRatings) {
-            if (!this.element.classList.contains('reply-control-ratings')) {
-              this.element.classList.add('reply-control-ratings');
-              console.log(this.element.classList)
+            if (!this.element.classList.contains("reply-control-ratings")) {
+              this.element.classList.add("reply-control-ratings");
             }
           }
-        }
+        },
       });
     });
   },
