@@ -2,7 +2,7 @@
   {{#if type.isNew}}
     {{input
       value=type.type
-      placeholder=(i18n 'admin.ratings.type.type_placeholder')}}
+      placeholder=(i18n "admin.ratings.type.type_placeholder")}}
   {{else}}
     {{type.type}}
   {{/if}}
@@ -10,11 +10,11 @@
 
 <td>
   {{#if type.isNone}}
-    {{i18n 'admin.ratings.type.none_type_description'}}
+    {{i18n "admin.ratings.type.none_type_description"}}
   {{else}}
     {{input
       value=type.name
-      placeholder=(i18n 'admin.ratings.type.name_placeholder')}}
+      placeholder=(i18n "admin.ratings.type.name_placeholder")}}
   {{/if}}
 </td>
 
@@ -37,7 +37,7 @@
         icon="save"
         disabled=updateDisabled}}
     {{/if}}
-    
+
     {{d-button
       action=destroyType
       actionParam=type

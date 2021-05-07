@@ -6,12 +6,12 @@
 .topic-list-item.has-ratings .main-link {
   display: inline-flex;
   flex-direction: column;
-  
+
   .raw-topic-link {
     order: 1;
     padding: 0;
   }
-  
+
   .rating-list {
     order: 2;
     margin: 3px 0 0 0;
@@ -20,8 +20,12 @@
 
 .topic-meta-data .names.has-ratings .rating-list {
   order: 2;
-  
+
   .rating {
     margin: 0 0 2px 0;
   }
+}
+
+.reply-control-ratings.open {
+  height: 100% !important;
 }

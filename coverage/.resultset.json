@@ -3,6 +3,7 @@
     "coverage": {
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/engine.rb": {
         "lines": [
+          null,
           1,
           1,
           1,
@@ -14,40 +15,41 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/cache.rb": {
         "lines": [
+          null,
           1,
           1,
-          38,
+          46,
+          null,
+          null,
+          1,
+          17,
+          null,
+          null,
+          1,
+          24,
+          null,
+          null,
+          1,
+          56,
+          null,
+          null,
+          1,
+          80,
+          null,
+          null,
+          1,
+          57,
           null,
           null,
           1,
           10,
           null,
-          null,
+          10,
           1,
-          14,
           null,
-          null,
-          1,
-          52,
-          null,
-          null,
-          1,
-          66,
-          null,
-          null,
-          1,
-          43,
-          null,
-          null,
-          1,
-          7,
-          null,
-          7,
-          2,
-          null,
-          5,
-          5,
-          5,
+          9,
+          9,
+          9,
           null,
           null,
           null
@@ -55,6 +57,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/rating.rb": {
         "lines": [
+          null,
           1,
           1,
           null,
@@ -218,6 +221,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/rating_type.rb": {
         "lines": [
+          null,
           1,
           1,
           null,
@@ -232,7 +236,7 @@
           null,
           null,
           1,
-          11,
+          13,
           null,
           null,
           null,
@@ -241,7 +245,7 @@
           null,
           null,
           1,
-          10,
+          12,
           null,
           null,
           1,
@@ -296,6 +300,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/lib/ratings/object.rb": {
         "lines": [
+          null,
           1,
           1,
           null,
@@ -390,6 +395,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/config/routes.rb": {
         "lines": [
+          null,
           1,
           1,
           1,
@@ -453,6 +459,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/object.rb": {
         "lines": [
+          null,
           1,
           1,
           null
@@ -460,6 +467,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/rating.rb": {
         "lines": [
+          null,
           1,
           1,
           null
@@ -467,6 +475,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/serializers/ratings/rating_type.rb": {
         "lines": [
+          null,
           1,
           1,
           null
@@ -474,6 +483,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/object.rb": {
         "lines": [
+          null,
           1,
           1,
           1,
@@ -524,6 +534,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/rating.rb": {
         "lines": [
+          null,
           1,
           1,
           null,
@@ -575,6 +586,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/app/controllers/ratings/rating_type.rb": {
         "lines": [
+          null,
           1,
           1,
           1,
@@ -639,6 +651,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/post_revisor.rb": {
         "lines": [
+          null,
           1,
           1,
           4,
@@ -675,6 +688,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/posts_controller.rb": {
         "lines": [
+          null,
           1,
           1,
           1,
@@ -700,6 +714,7 @@
       },
       "/Users/faiz/discenv/discourse/plugins/discourse-ratings/extensions/topic.rb": {
         "lines": [
+          null,
           1,
           1,
           null,
@@ -717,6 +732,6 @@
         ]
       }
     },
-    "timestamp": 1612435247
+    "timestamp": 1614582456
   }
 }

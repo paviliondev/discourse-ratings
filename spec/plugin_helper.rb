@@ -6,6 +6,7 @@ SimpleCov.start do
   root "plugins/discourse-ratings"
   track_files "plugins/discourse-ratings/**/*.rb"
   add_filter { |src| src.filename =~ /(\/spec\/|\/db\/|plugin\.rb)/ }
+  SimpleCov.minimum_coverage 80
 end
 
 require 'rails_helper'
