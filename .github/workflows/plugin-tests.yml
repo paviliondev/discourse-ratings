@@ -7,8 +7,6 @@ on:
       - main
   pull_request:
   schedule:
-    - run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-      shell: bash
     - cron: '*/2 * * * *'  # every 5th minute for testing
 
 jobs:
@@ -24,6 +22,8 @@ jobs:
       PGHOST: localhost
       PGUSER: discourse
       PGPASSWORD: discourse
+      - run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
+        shell: bash
 
     strategy:
       fail-fast: false
