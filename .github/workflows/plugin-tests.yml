@@ -24,8 +24,6 @@ jobs:
       PGHOST: localhost
       PGUSER: discourse
       PGPASSWORD: discourse
-      - run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-  shell: bash
 
     strategy:
       fail-fast: false
