@@ -122,6 +122,7 @@ jobs:
 
       - name: Migrate database
         run: |
+          ls plugins/
           bin/rake db:create
           bin/rake db:migrate
 
