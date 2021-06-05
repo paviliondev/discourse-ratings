@@ -6,8 +6,6 @@ on:
       - master
       - main
   pull_request:
-  schedule:
-    - cron: '*/2 * * * *'  # every 5th minute for testing
 
 jobs:
   build:
@@ -53,10 +51,6 @@ jobs:
           repository: discourse/discourse
           fetch-depth: 1
 
-      - name: Set Env Vars
-        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-        shell: bash
-
       - name: Install plugin
         uses: actions/checkout@v2
         with:
@@ -86,12 +80,12 @@ jobs:
           sudo apt-get -yqq install postgresql-client libpq-dev gifsicle jpegoptim optipng jhead
           wget -qO- https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-pngquant | sudo sh
 
-      # - name: Update imagemagick
-      #   if: matrix.build_type == 'backend'
-      #   run: |
-      #     wget https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-imagemagick
-      #     chmod +x install-imagemagick
-      #     sudo ./install-imagemagick
+      - name: Update imagemagick
+        if: matrix.build_type == 'backend'
+        run: |
+          wget https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-imagemagick
+          chmod +x install-imagemagick
+          sudo ./install-imagemagick
 
       - name: Setup redis
         uses: shogo82148/actions-setup-redis@v1
@@ -104,40 +98,40 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      # - name: Lint English locale
-      #   if: matrix.build_type == 'backend'
-      #   run: bundle exec ruby script/i18n_lint.rb "plugins/${{ github.event.repository.name }}/locales/{client,server}.en.yml"
+      - name: Lint English locale
+        if: matrix.build_type == 'backend'
+        run: bundle exec ruby script/i18n_lint.rb "plugins/${{ github.event.repository.name }}/locales/{client,server}.en.yml"
 
-      # - name: Get yarn cache directory
-      #   id: yarn-cache-dir
-      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      # - name: Yarn cache
-      #   uses: actions/cache@v2
-      #   id: yarn-cache
-      #   with:
-      #     path: ${{ steps.yarn-cache-dir.outputs.dir }}
-      #     key: ${{ runner.os }}-${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.os }}-yarn-
+      - name: Yarn cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.os }}-yarn-
 
-      # - name: Yarn install
-      #   run: yarn install --dev
+      - name: Yarn install
+        run: yarn install --dev
 
       - name: Migrate database
         run: |
           bin/rake db:create
           bin/rake db:migrate
 
-      # - name: Plugin RSpec
-      #   if: matrix.build_type == 'backend' && steps.check_spec.outputs.files_exists == 'true'
-      #   run: bin/rake plugin:spec[${{ github.event.repository.name }}]
+      - name: Plugin RSpec
+        if: matrix.build_type == 'backend' && steps.check_spec.outputs.files_exists == 'true'
+        run: bin/rake plugin:spec[${{ github.event.repository.name }}]
 
-      # - name: Plugin QUnit
-      #   if: matrix.build_type == 'frontend' && steps.check_qunit.outputs.files_exists == 'true'
-      #   run: bundle exec rake plugin:qunit['${{ github.event.repository.name }}','1200000']
-      #   timeout-minutes: 30
+      - name: Plugin QUnit
+        if: matrix.build_type == 'frontend' && steps.check_qunit.outputs.files_exists == 'true'
+        run: bundle exec rake plugin:qunit['${{ github.event.repository.name }}','1200000']
+        timeout-minutes: 30
 
-      # - name: Simplecov Report
-      #   if: matrix.build_type == 'backend'
-      #   run: COVERAGE=1 bin/rake plugin:spec[${{ github.event.repository.name }}]
+      - name: Simplecov Report
+        if: matrix.build_type == 'backend'
+        run: COVERAGE=1 bin/rake plugin:spec[${{ github.event.repository.name }}]
