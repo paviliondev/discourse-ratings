@@ -52,8 +52,9 @@ jobs:
         with:
           repository: discourse/discourse
           fetch-depth: 1
-        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-        shell: bash
+
+      - run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
+      shell: bash
 
       - name: Install plugin
         uses: actions/checkout@v2
