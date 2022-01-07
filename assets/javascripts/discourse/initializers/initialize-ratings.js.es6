@@ -31,7 +31,7 @@ export default {
       api.decorateWidget("poster-name:after", function (helper) {
         const post = helper.getModel();
 
-        if (post && post.topic.show_ratings && post.ratings) {
+        if (post && post.topic && post.topic.show_ratings && post.ratings) {
           return helper.rawHtml(
             `${new Handlebars.SafeString(ratingListHtml(post.ratings))}`
           );
