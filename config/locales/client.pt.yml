@@ -2,21 +2,21 @@ pt:
   js:
     category:
       ratings:
-        heading: "Ratings"
-        enabled: "Enable ratings in this category."
-        types: "Rating types enabled in this category."
+        heading: "Classificações"
+        enabled: "Habilitar classificações nesta categoria."
+        types: "Tipos de classificação são habilitados nesta categoria."
     composer:
-      your_rating: "Add a rating"
-      select_rating: "All checked ratings must have a rating."
+      your_rating: "Adicionar uma classificação"
+      select_rating: "Todas as avaliações verificadas devem ter uma classificação."
     topic:
-      hidden_ratings: "Topic has hidden ratings"
-      no_ratings: "No ratings yet"
+      hidden_ratings: "O tópico tem classificações ocultas"
+      no_ratings: "Ainda não há avaliações"
       x_rating_count:
-        one: "rating"
-        other: "ratings"
+        one: "classificação"
+        other: "classificações"
       tip:
         ratings:
-          title: "Rating"
+          title: "Classificação"
           details: >
             You can rate in this topic. Each rating is attached to a post and you can post without rating.
     filters:
@@ -37,17 +37,17 @@ pt:
           none_type: "None"
           none_type_description: "For ratings without a type"
           select: "Select type"
-          new: "New"
-          add: "Add"
-          update: "Save"
-          destroy: "Delete"
+          new: "Novo"
+          add: "Adicionar"
+          update: "Salvar"
+          destroy: "Deletar"
           confirm_destroy: >
             Are you sure you want to delete this type? All ratings with this type will be irreversibly destroyed. If there are ratings with this type you wish to keep, migrate them to a new type before taking this action.
-        enabled: "Enabled"
+        enabled: "Ativado"
         category:
-          title: "Categories"
-          name: "Category"
-          none: "No rating categories"
+          title: "Categorias"
+          name: "Categoria"
+          none: "Sem categorias de classificação"
         tag:
           title: "Tags"
           name: "Tag"
@@ -56,19 +56,19 @@ pt:
           title: "Migrate"
           description: >
             You can migrate ratings to or from type "None" on a per-category basis. Topics that already have the target type are excluded from the migration.
-          btn: "Migrate"
+          btn: "Migrar"
           started: "The migration has started. It may take a few minutes to complete."
         destroy:
-          title: "Destroy"
+          title: "Destruir"
           description: >
             You can irreversibly destroy ratings by type on a per-category basis. Topics and posts associated with ratings will be unaffected.
-          btn: "Destroy"
-          started: "The destruction has started. It may take a few minutes to complete."
+          btn: "Destruir"
+          started: "A destruição começou. Pode levar alguns minutos para ser concluída."
         error:
-          object_already_exists: "Entry for {{objectType}} already exists"
-          migration_failed_to_start: "Migration failed to start"
+          object_already_exists: "A entrada para {{objectType}} já existe"
+          migration_failed_to_start: "Falha ao iniciar a migração"
   site_settings:
-    rating_enabled: "Enable ratings."
+    rating_enabled: "Habilitar classificações."
     rating_show_numeric_average: "Show the numerical average next to topic rating inputs."
     rating_show_count: "Show rating counts in topic next to average rating."
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
