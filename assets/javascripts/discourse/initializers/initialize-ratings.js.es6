@@ -11,6 +11,8 @@ import { ratingListHtml } from "../lib/rating-utilities";
 import I18n from "I18n";
 import Handlebars from "handlebars";
 
+const PLUGIN_ID = 'discourse-ratings';
+
 export default {
   name: "initialize-ratings",
   initialize(container) {
@@ -50,6 +52,7 @@ export default {
       });
 
       api.modifyClass("model:composer", {
+        pluginId: PLUGIN_ID,
         editingPostWithRatings: and("editingPost", "post.ratings.length"),
         hasRatingTypes: notEmpty("ratingTypes"),
         showRatings: or("hasRatingTypes", "editingPostWithRatings"),
@@ -168,6 +171,8 @@ export default {
       });
 
       api.modifyClass("controller:composer", {
+        pluginId: PLUGIN_ID,
+
         save() {
           const model = this.model;
           const ratings = model.ratings;
@@ -182,6 +187,8 @@ export default {
       });
 
       api.modifyClass("component:composer-body", {
+        pluginId: PLUGIN_ID,
+
         @observes("composer.showRatings")
         resizeIfShowRatings() {
           if (this.get("composer.viewOpen")) {
@@ -211,6 +218,7 @@ export default {
       });
 
       api.modifyClass("component:topic-list-item", {
+        pluginId: PLUGIN_ID,
         hasRatings: and("topic.show_ratings", "topic.ratings"),
 
         @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
@@ -224,6 +232,7 @@ export default {
       });
 
       api.modifyClass("component:topic-title", {
+        pluginId: PLUGIN_ID,
         hasRatings: alias("model.show_ratings"),
         editing: alias("topicController.editingTopic"),
         hasTags: notEmpty("model.tags"),
@@ -244,6 +253,8 @@ export default {
       });
 
       api.modifyClass("component:composer-body", {
+        pluginId: PLUGIN_ID,
+
         @on("didRender")
         addContainerClass() {
           if (!this.element || this.isDestroying || this.isDestroyed) {
