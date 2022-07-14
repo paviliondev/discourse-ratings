@@ -186,17 +186,6 @@ export default {
         },
       });
 
-      api.modifyClass("component:composer-body", {
-        pluginId: PLUGIN_ID,
-
-        @observes("composer.showRatings")
-        resizeIfShowRatings() {
-          if (this.get("composer.viewOpen")) {
-            this._triggerComposerResized();
-          }
-        },
-      });
-
       api.registerCustomPostMessageCallback("ratings", (controller, data) => {
         const model = controller.get("model");
 
@@ -254,6 +243,13 @@ export default {
 
       api.modifyClass("component:composer-body", {
         pluginId: PLUGIN_ID,
+
+        @observes("composer.showRatings")
+        resizeIfShowRatings() {
+          if (this.get("composer.viewOpen")) {
+            this._triggerComposerResized();
+          }
+        },
 
         @on("didRender")
         addContainerClass() {
