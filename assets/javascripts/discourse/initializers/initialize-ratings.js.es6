@@ -185,7 +185,7 @@ export default {
         @observes("composer.showRatings")
         resizeIfShowRatings() {
           if (this.get("composer.viewOpen")) {
-            this.resize();
+            this._triggerComposerResized();
           }
         },
       });
