@@ -10,6 +10,8 @@ import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { ratingListHtml } from "../lib/rating-utilities";
 import I18n from "I18n";
 import Handlebars from "handlebars";
+import { computed } from "@ember/object";
+
 
 const PLUGIN_ID = 'discourse-ratings';
 
@@ -94,39 +96,41 @@ export default {
           return types;
         },
 
-        @discourseComputed(
-          "ratingTypes",
-          "editingPostWithRatings",
-          "post.ratings"
-        )
-        ratings(ratingTypes, editingPostWithRatings, postRatings) {
-          const typeNames = this.site.rating_type_names;
+        ratings: computed('ratingTypes', 'editingPostWithRatings', 'post.ratings', {
+          get() {
+            const typeNames = this.site.rating_type_names;
 
-          return ratingTypes.map((type) => {
-            let currentRating = (postRatings || []).find(
-              (r) => r.type === type
-            );
-            let value;
-            let include;
+            return this.ratingTypes.map((type) => {
+              let currentRating = (this.post.ratings || []).find(
+                (r) => r.type === type
+              );
 
-            if (editingPostWithRatings && currentRating) {
-              value = currentRating.value;
-              include = currentRating.weight > 0 ? true : false;
-            }
+              let value;
+              let include;
 
-            let rating = {
-              type,
-              value,
-              include: include !== null ? include : true,
-            };
+              if (this.editingPostWithRatings && currentRating) {
+                value = currentRating.value;
+                include = currentRating.weight > 0 ? true : false;
+              }
 
-            if (typeNames && typeNames[type]) {
-              rating.typeName = typeNames[type];
-            }
+              let rating = {
+                type,
+                value,
+                include: include !== null ? include : true,
+              };
 
-            return rating;
-          });
-        },
+              if (typeNames && typeNames[type]) {
+                rating.typeName = typeNames[type];
+              }
+
+              return rating;
+            });
+          },
+
+          set(key, value) {
+            return value;
+          }
+        }),
 
         @discourseComputed("tags", "category")
         allowedRatingTypes(tags, category) {
