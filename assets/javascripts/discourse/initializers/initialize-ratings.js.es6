@@ -180,6 +180,7 @@ export default {
         save() {
           const model = this.model;
           const ratings = model.ratings;
+
           const showRatings = model.showRatings;
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
@@ -192,6 +193,13 @@ export default {
 
       api.registerCustomPostMessageCallback("ratings", (controller, data) => {
         const model = controller.get("model");
+        const typeNames = controller.site.rating_type_names;
+
+        data.ratings.forEach((r) => {
+          if (typeNames && typeNames[r.type]) {
+            r.type_name = typeNames[r.type];
+           }
+        });
 
         model.set("ratings", data.ratings);
         model
