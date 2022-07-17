@@ -101,7 +101,7 @@ export default {
             const typeNames = this.site.rating_type_names;
 
             return this.ratingTypes.map((type) => {
-              let currentRating = (this.post.ratings || []).find(
+              let currentRating = (this.post && this.post.ratings || []).find(
                 (r) => r.type === type
               );
 
