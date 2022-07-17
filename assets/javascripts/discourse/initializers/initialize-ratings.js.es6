@@ -177,7 +177,7 @@ export default {
       api.modifyClass("controller:composer", {
         pluginId: PLUGIN_ID,
 
-        save() {
+        save(force, options = {}) {
           const model = this.model;
           const ratings = model.ratings;
 
@@ -187,7 +187,7 @@ export default {
             return bootbox.alert(I18n.t("composer.select_rating"));
           }
 
-          return this._super();
+          return this._super(force, options = {});
         },
       });
 
