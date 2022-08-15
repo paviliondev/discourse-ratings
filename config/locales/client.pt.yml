@@ -2,76 +2,76 @@ pt:
   js:
     category:
       ratings:
-        heading: "Ratings"
-        enabled: "Enable ratings in this category."
-        types: "Rating types enabled in this category."
+        heading: "Classificações"
+        enabled: "Habilitar classificações nesta categoria."
+        types: "Tipos de classificação são habilitados nesta categoria."
     composer:
-      your_rating: "Add a rating"
-      select_rating: "All checked ratings must have a rating."
+      your_rating: "Adicionar uma classificação"
+      select_rating: "Todas as avaliações verificadas devem ter uma classificação."
     topic:
-      hidden_ratings: "Topic has hidden ratings"
-      no_ratings: "No ratings yet"
+      hidden_ratings: "O tópico tem classificações ocultas"
+      no_ratings: "Ainda não há avaliações"
       x_rating_count:
-        one: "rating"
-        other: "ratings"
+        one: "classificação"
+        other: "classificações"
       tip:
         ratings:
-          title: "Rating"
+          title: "Classificação"
           details: >
-            You can rate in this topic. Each rating is attached to a post and you can post without rating.
+            Você pode avaliar neste tópico. Cada classificação é anexada a uma publicação e você pode publicar sem classificação.
     filters:
       ratings:
-        title: "Ratings"
-        help: "List latest ratings."
+        title: "Classificações"
+        help: "Listar avaliações mais recentes."
   admin_js:
     admin:
       ratings:
-        settings_page: "Ratings"
+        settings_page: "Classificações"
         type:
-          title: "Types"
-          label: "Type"
-          none: "No types."
-          type_placeholder: "Hidden, dasherized and uneditable."
-          name: "Name"
-          name_placeholder: "Visible, sentence case and editable."
-          none_type: "None"
-          none_type_description: "For ratings without a type"
-          select: "Select type"
-          new: "New"
-          add: "Add"
-          update: "Save"
-          destroy: "Delete"
+          title: "Tipos"
+          label: "Tipo"
+          none: "Sem tipos."
+          type_placeholder: "Oculto, riscado e não editável."
+          name: "Nome"
+          name_placeholder: "Visível, sentença e editável."
+          none_type: "Nenhuma"
+          none_type_description: "Para avaliações sem um tipo"
+          select: "Selecionar tipo"
+          new: "Novo"
+          add: "Adicionar"
+          update: "Salvar"
+          destroy: "Deletar"
           confirm_destroy: >
-            Are you sure you want to delete this type? All ratings with this type will be irreversibly destroyed. If there are ratings with this type you wish to keep, migrate them to a new type before taking this action.
-        enabled: "Enabled"
+            Tem certeza que deseja excluir este tipo? Todas as classificações com este tipo serão destruídas irreversivelmente. Se houver classificações com esse tipo que você deseja manter, migre-as para um novo tipo antes de tomar essa ação.
+        enabled: "Ativado"
         category:
-          title: "Categories"
-          name: "Category"
-          none: "No rating categories"
+          title: "Categorias"
+          name: "Categoria"
+          none: "Sem categorias de classificação"
         tag:
           title: "Tags"
           name: "Tag"
-          none: "No rating tags"
+          none: "Sem tags de avaliação"
         migrate:
-          title: "Migrate"
+          title: "Migrar"
           description: >
-            You can migrate ratings to or from type "None" on a per-category basis. Topics that already have the target type are excluded from the migration.
-          btn: "Migrate"
-          started: "The migration has started. It may take a few minutes to complete."
+            Você pode migrar as classificações para ou do tipo "Nenhum" por categoria. Tópicos que já possuem o tipo de destino são excluídos da migração.
+          btn: "Migrar"
+          started: "A destruição começou. Pode levar alguns minutos para ser concluída."
         destroy:
-          title: "Destroy"
+          title: "Destruir"
           description: >
-            You can irreversibly destroy ratings by type on a per-category basis. Topics and posts associated with ratings will be unaffected.
-          btn: "Destroy"
-          started: "The destruction has started. It may take a few minutes to complete."
+            Você pode destruir classificações irreversivelmente por tipo em uma base de categoria. Tópicos e postagens associados com classificações não serão afetados.
+          btn: "Destruir"
+          started: "A destruição começou. Pode levar alguns minutos para ser concluída."
         error:
-          object_already_exists: "Entry for {{objectType}} already exists"
-          migration_failed_to_start: "Migration failed to start"
+          object_already_exists: "A entrada para {{objectType}} já existe"
+          migration_failed_to_start: "Falha ao iniciar a migração"
   site_settings:
-    rating_enabled: "Enable ratings."
-    rating_show_numeric_average: "Show the numerical average next to topic rating inputs."
-    rating_show_count: "Show rating counts in topic next to average rating."
-    rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
-    rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."
-    rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
-    rating_hide_except_own_entry: "Show only user's own rating entries and topic average"
+    rating_enabled: "Habilitar classificações."
+    rating_show_numeric_average: "Mostrar a média numérica ao lado das entradas de classificação dos tópicos."
+    rating_show_count: "Mostrar contagens de classificação no tópico ao lado da média de classificação."
+    rating_show_topic_tip: "Mostrar uma dica sobre a mecânica dos tópicos classificados nos títulos dos tópicos de avaliação"
+    rating_topic_average_enabled: "Mostrar a média de todas as avaliações em um tópico sob o título do tópico."
+    rating_topic_list_average_enabled: "Mostrar a média de todas as avaliações em um tópico sob o título do tópico."
+    rating_hide_except_own_entry: "Mostrar apenas entradas de classificação e tópicos do usuário"
