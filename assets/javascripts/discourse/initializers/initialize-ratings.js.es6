@@ -1,5 +1,6 @@
 import Composer from "discourse/models/composer";
 import Category from "discourse/models/category";
+import Draft from "discourse/models/draft";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import {
   default as discourseComputed,
@@ -11,6 +12,8 @@ import { ratingListHtml } from "../lib/rating-utilities";
 import I18n from "I18n";
 import Handlebars from "handlebars";
 import { computed } from "@ember/object";
+import { isTesting } from "discourse-common/config/environment";
+import discourseDebounce from "discourse-common/lib/debounce";
 
 
 const PLUGIN_ID = 'discourse-ratings';
@@ -26,6 +29,7 @@ export default {
 
     Composer.serializeOnCreate("ratings", "ratingsString");
     Composer.serializeOnUpdate("ratings", "ratingsString");
+    Composer.serializeToDraft("ratings", "ratingsString");
 
     withPluginApi("0.10.0", (api) => {
       const currentUser = api.getCurrentUser();
@@ -64,15 +68,17 @@ export default {
           "topicFirstPost",
           "post.ratings",
           "allowedRatingTypes.[]",
-          "topic.user_can_rate.[]"
         )
         ratingTypes(
           editingPostWithRatings,
           topicFirstPost,
           postRatings,
           allowedRatingTypes,
-          userCanRate
         ) {
+          let userCanRate;
+          if (this.topic) {
+            userCanRate = this.topic.user_can_rate
+          }
           let types = [];
 
           if (editingPostWithRatings) {
@@ -100,7 +106,8 @@ export default {
           get() {
             const typeNames = this.site.rating_type_names;
 
-            return this.ratingTypes.map((type) => {
+            let result =  this.ratingTypes.map((type) => {
+
               let currentRating = (this.post && this.post.ratings || []).find(
                 (r) => r.type === type
               );
@@ -125,10 +132,38 @@ export default {
 
               return rating;
             });
+            return result;
           },
 
           set(key, value) {
-            return value;
+            const typeNames = this.site.rating_type_names;
+
+            let result =  this.ratingTypes.map((type) => {
+              let currentRating = (value || []).find(
+                (r) => r.type === type
+              );
+
+              let score;
+              let include;
+
+              if (this.hasRatingTypes && currentRating) {
+                score = currentRating.value;
+                include = currentRating.value > 0 ? true : false;
+              }
+
+              let rating = {
+                type,
+                value: score,
+                include: include !== null ? include : true,
+              };
+
+              if (typeNames && typeNames[type]) {
+                rating.typeName = typeNames[type];
+              }
+
+              return rating;
+            });
+            return result;
           }
         }),
 
@@ -159,7 +194,32 @@ export default {
           return types;
         },
 
-        @discourseComputed("ratings")
+        ratingsString: computed ('ratingsToSave.@each.{value}', {
+          get(){
+            return JSON.stringify(this.ratingsToSave);
+          },
+
+          set(key, value) {
+            if (value) {
+              const typeNames = this.site.rating_type_names;
+
+              const draftRatings = JSON.parse(value).map((r) => {
+                return {
+                  type: r.type,
+                  value: r.value,
+                  typeName: typeNames[r.type],
+                  include: true,
+                }
+              });
+              debugger;
+              this.set("ratings", draftRatings);
+            }
+            let result = value || JSON.stringify(this.ratingsToSave);
+            return result;
+          }
+        }),
+
+        @discourseComputed("ratings.@each.{value}")
         ratingsToSave(ratings) {
           return ratings.map((r) => ({
             type: r.type,
@@ -167,27 +227,42 @@ export default {
             weight: r.include ? 1 : 0,
           }));
         },
-
-        @discourseComputed("ratingsToSave")
-        ratingsString(ratingsToSave) {
-          return JSON.stringify(ratingsToSave);
-        },
       });
 
       api.modifyClass("controller:composer", {
         pluginId: PLUGIN_ID,
 
-        save(force, options = {}) {
+        save(ignore, event) {
           const model = this.model;
           const ratings = model.ratings;
-
           const showRatings = model.showRatings;
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
             return bootbox.alert(I18n.t("composer.select_rating"));
           }
 
-          return this._super(force, options = {});
+          return this._super(ignore, event);
+        },
+
+        @observes("model.reply", "model.title", "model.ratings.@each.{value}")
+        _shouldSaveDraft() {
+          if (
+            this.model &&
+            !this.model.loading &&
+            !this.skipAutoSave &&
+            !this.model.disableDrafts
+          ) {
+            if (!this._lastDraftSaved) {
+              // pretend so we get a save unconditionally in 15 secs
+              this._lastDraftSaved = Date.now();
+            }
+            if (Date.now() - this._lastDraftSaved > 15000) {
+              this._saveDraft();
+            } else {
+              let method = isTesting() ? run : discourseDebounce;
+              this._saveDraftDebounce = method(this, this._saveDraft, 2000);
+            }
+          }
         },
       });
 
