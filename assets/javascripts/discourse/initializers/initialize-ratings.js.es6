@@ -16,8 +16,7 @@ import discourseDebounce from "discourse-common/lib/debounce";
 import bootbox from "bootbox";
 import { run } from "@ember/runloop";
 
-
-const PLUGIN_ID = 'discourse-ratings';
+const PLUGIN_ID = "discourse-ratings";
 
 export default {
   name: "initialize-ratings",
@@ -68,13 +67,13 @@ export default {
           "editingPostWithRatings",
           "topicFirstPost",
           "post.ratings",
-          "allowedRatingTypes.[]",
+          "allowedRatingTypes.[]"
         )
         ratingTypes(
           editingPostWithRatings,
           topicFirstPost,
           postRatings,
-          allowedRatingTypes,
+          allowedRatingTypes
         ) {
           let userCanRate;
           if (this.topic) {
@@ -103,70 +102,73 @@ export default {
           return types;
         },
 
-        ratings: computed("ratingTypes", "editingPostWithRatings", "post.ratings", {
-          get() {
-            const typeNames = this.site.rating_type_names;
+        ratings: computed(
+          "ratingTypes",
+          "editingPostWithRatings",
+          "post.ratings",
+          {
+            get() {
+              const typeNames = this.site.rating_type_names;
 
-            let result =  this.ratingTypes.map((type) => {
+              let result = this.ratingTypes.map((type) => {
+                let currentRating = (
+                  (this.post && this.post.ratings) ||
+                  []
+                ).find((r) => r.type === type);
 
-              let currentRating = (this.post && this.post.ratings || []).find(
-                (r) => r.type === type
-              );
+                let value;
+                let include;
 
-              let value;
-              let include;
+                if (this.editingPostWithRatings && currentRating) {
+                  value = currentRating.value;
+                  include = currentRating.weight > 0 ? true : false;
+                }
 
-              if (this.editingPostWithRatings && currentRating) {
-                value = currentRating.value;
-                include = currentRating.weight > 0 ? true : false;
-              }
+                let rating = {
+                  type,
+                  value,
+                  include: include !== null ? include : true,
+                };
 
-              let rating = {
-                type,
-                value,
-                include: include !== null ? include : true,
-              };
+                if (typeNames && typeNames[type]) {
+                  rating.typeName = typeNames[type];
+                }
 
-              if (typeNames && typeNames[type]) {
-                rating.typeName = typeNames[type];
-              }
+                return rating;
+              });
+              return result;
+            },
 
-              return rating;
-            });
-            return result;
-          },
+            set(key, value) {
+              const typeNames = this.site.rating_type_names;
 
-          set(key, value) {
-            const typeNames = this.site.rating_type_names;
+              let result = this.ratingTypes.map((type) => {
+                let currentRating = (value || []).find((r) => r.type === type);
 
-            let result =  this.ratingTypes.map((type) => {
-              let currentRating = (value || []).find(
-                (r) => r.type === type
-              );
+                let score;
+                let include;
 
-              let score;
-              let include;
+                if (this.hasRatingTypes && currentRating) {
+                  score = currentRating.value;
+                  include = currentRating.value > 0 ? true : false;
+                }
 
-              if (this.hasRatingTypes && currentRating) {
-                score = currentRating.value;
-                include = currentRating.value > 0 ? true : false;
-              }
+                let rating = {
+                  type,
+                  value: score,
+                  include: include !== null ? include : true,
+                };
 
-              let rating = {
-                type,
-                value: score,
-                include: include !== null ? include : true,
-              };
+                if (typeNames && typeNames[type]) {
+                  rating.typeName = typeNames[type];
+                }
 
-              if (typeNames && typeNames[type]) {
-                rating.typeName = typeNames[type];
-              }
-
-              return rating;
-            });
-            return result;
+                return rating;
+              });
+              return result;
+            },
           }
-        }),
+        ),
 
         @discourseComputed("tags", "category")
         allowedRatingTypes(tags, category) {
@@ -195,8 +197,8 @@ export default {
           return types;
         },
 
-        ratingsString: computed ("ratingsToSave.@each.{value}", {
-          get(){
+        ratingsString: computed("ratingsToSave.@each.{value}", {
+          get() {
             return JSON.stringify(this.ratingsToSave);
           },
 
@@ -216,7 +218,7 @@ export default {
             }
             let result = value || JSON.stringify(this.ratingsToSave);
             return result;
-          }
+          },
         }),
 
         @discourseComputed("ratings.@each.{value}")
@@ -273,7 +275,7 @@ export default {
         data.ratings.forEach((r) => {
           if (typeNames && typeNames[r.type]) {
             r.type_name = typeNames[r.type];
-           }
+          }
         });
 
         model.set("ratings", data.ratings);
