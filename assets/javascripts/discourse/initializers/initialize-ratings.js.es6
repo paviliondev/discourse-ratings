@@ -1,6 +1,5 @@
 import Composer from "discourse/models/composer";
 import Category from "discourse/models/category";
-import Draft from "discourse/models/draft";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import {
   default as discourseComputed,
@@ -14,6 +13,8 @@ import Handlebars from "handlebars";
 import { computed } from "@ember/object";
 import { isTesting } from "discourse-common/config/environment";
 import discourseDebounce from "discourse-common/lib/debounce";
+import bootbox from "bootbox";
+import { run } from "@ember/runloop";
 
 
 const PLUGIN_ID = 'discourse-ratings';
@@ -77,7 +78,7 @@ export default {
         ) {
           let userCanRate;
           if (this.topic) {
-            userCanRate = this.topic.user_can_rate
+            userCanRate = this.topic.user_can_rate;
           }
           let types = [];
 
@@ -102,7 +103,7 @@ export default {
           return types;
         },
 
-        ratings: computed('ratingTypes', 'editingPostWithRatings', 'post.ratings', {
+        ratings: computed("ratingTypes", "editingPostWithRatings", "post.ratings", {
           get() {
             const typeNames = this.site.rating_type_names;
 
@@ -194,7 +195,7 @@ export default {
           return types;
         },
 
-        ratingsString: computed ('ratingsToSave.@each.{value}', {
+        ratingsString: computed ("ratingsToSave.@each.{value}", {
           get(){
             return JSON.stringify(this.ratingsToSave);
           },
@@ -209,9 +210,8 @@ export default {
                   value: r.value,
                   typeName: typeNames[r.type],
                   include: true,
-                }
+                };
               });
-              debugger;
               this.set("ratings", draftRatings);
             }
             let result = value || JSON.stringify(this.ratingsToSave);
