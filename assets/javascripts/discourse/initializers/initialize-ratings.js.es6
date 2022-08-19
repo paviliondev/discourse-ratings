@@ -197,6 +197,15 @@ export default {
           return types;
         },
 
+        @discourseComputed("ratings.@each.{value}")
+        ratingsToSave(ratings) {
+          return ratings.map((r) => ({
+            type: r.type,
+            value: r.value,
+            weight: r.include ? 1 : 0,
+          }));
+        },
+
         ratingsString: computed("ratingsToSave.@each.{value}", {
           get() {
             return JSON.stringify(this.ratingsToSave);
@@ -220,15 +229,6 @@ export default {
             return result;
           },
         }),
-
-        @discourseComputed("ratings.@each.{value}")
-        ratingsToSave(ratings) {
-          return ratings.map((r) => ({
-            type: r.type,
-            value: r.value,
-            weight: r.include ? 1 : 0,
-          }));
-        },
       });
 
       api.modifyClass("controller:composer", {
