@@ -2,6 +2,7 @@ import Controller from "@ember/controller";
 import RatingType from "../models/rating-type";
 import { notEmpty } from "@ember/object/computed";
 import I18n from "I18n";
+import bootbox from "bootbox";
 
 export default Controller.extend({
   hasTypes: notEmpty("ratingTypes"),
