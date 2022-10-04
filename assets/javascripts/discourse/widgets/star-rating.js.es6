@@ -13,7 +13,7 @@ export default createWidget("star-rating", {
       contents.push(
         this.attach("rating-star", {
           value: s,
-          checked: checked,
+          checked,
           disabled: attrs.disabled,
         }),
         h("i")
