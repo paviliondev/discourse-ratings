@@ -8,7 +8,7 @@ export default Component.extend({
   attributeBindings: ["value", "checked:checked", "disabled:disabled"],
 
   willInsertElement() {
-    this.$().prop("type", "radio");
+    this.element.type = "radio";
   },
 
   didRender() {
@@ -17,7 +17,7 @@ export default Component.extend({
   },
 
   click() {
-    this.set("rating", this.$().val());
+    this.set("rating", this.element.value);
   },
 
   @discourseComputed("rating")

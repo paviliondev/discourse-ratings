@@ -1,4 +1,4 @@
-it:
+km:
   js:
     category:
       ratings:
@@ -6,13 +6,12 @@ it:
         enabled: "Enable ratings in this category."
         types: "Rating types enabled in this category."
     composer:
-      your_rating: "Aggiungi una valutazione"
-      select_rating: "Per favore seleziona una valutazione, o disabilita 'Aggiungi una valutazione'."
+      your_rating: "Add a rating"
+      select_rating: "All checked ratings must have a rating."
     topic:
-      hidden_ratings: "Argomento con valutazioni nascoste"
+      hidden_ratings: "Topic has hidden ratings"
       no_ratings: "No ratings yet"
       x_rating_count:
-        one: "rating"
         other: "ratings"
       tip:
         ratings:
@@ -69,7 +68,7 @@ it:
           migration_failed_to_start: "Migration failed to start"
   site_settings:
     rating_enabled: "Enable ratings."
-    rating_show_numeric_average: "Mostra l'esatta media numerica accanto alla valutazione media dell'argomento."
+    rating_show_numeric_average: "Show the numerical average next to topic rating inputs."
     rating_show_count: "Show rating counts in topic next to average rating."
     rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
     rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."

@@ -1,0 +1,77 @@
+pt:
+  js:
+    category:
+      ratings:
+        heading: "Classificações"
+        enabled: "Habilitar classificações nesta categoria."
+        types: "Tipos de classificação são habilitados nesta categoria."
+    composer:
+      your_rating: "Adicionar uma classificação"
+      select_rating: "Todas as avaliações verificadas devem ter uma classificação."
+    topic:
+      hidden_ratings: "O tópico tem classificações ocultas"
+      no_ratings: "Ainda não há avaliações"
+      x_rating_count:
+        one: "classificação"
+        other: "classificações"
+      tip:
+        ratings:
+          title: "Classificação"
+          details: >
+            Você pode avaliar neste tópico. Cada classificação é anexada a uma publicação e você pode publicar sem classificação.
+    filters:
+      ratings:
+        title: "Classificações"
+        help: "Listar avaliações mais recentes."
+  admin_js:
+    admin:
+      ratings:
+        settings_page: "Classificações"
+        type:
+          title: "Tipos"
+          label: "Tipo"
+          none: "Sem tipos."
+          type_placeholder: "Oculto, riscado e não editável."
+          name: "Nome"
+          name_placeholder: "Visível, sentença e editável."
+          none_type: "Nenhuma"
+          none_type_description: "Para avaliações sem um tipo"
+          select: "Selecionar tipo"
+          new: "Novo"
+          add: "Adicionar"
+          update: "Salvar"
+          destroy: "Deletar"
+          confirm_destroy: >
+            Tem certeza que deseja excluir este tipo? Todas as classificações com este tipo serão destruídas irreversivelmente. Se houver classificações com esse tipo que você deseja manter, migre-as para um novo tipo antes de tomar essa ação.
+        enabled: "Ativado"
+        category:
+          title: "Categorias"
+          name: "Categoria"
+          none: "Sem categorias de classificação"
+        tag:
+          title: "Tags"
+          name: "Tag"
+          none: "Sem tags de avaliação"
+        migrate:
+          title: "Migrar"
+          description: >
+            Você pode migrar as classificações para ou do tipo "Nenhum" por categoria. Tópicos que já possuem o tipo de destino são excluídos da migração.
+          btn: "Migrar"
+          started: "A destruição começou. Pode levar alguns minutos para ser concluída."
+        destroy:
+          title: "Destruir"
+          description: >
+            Você pode destruir classificações irreversivelmente por tipo em uma base de categoria. Tópicos e postagens associados com classificações não serão afetados.
+          btn: "Destruir"
+          started: "A destruição começou. Pode levar alguns minutos para ser concluída."
+        error:
+          object_already_exists: "A entrada para {{objectType}} já existe"
+          migration_failed_to_start: "Falha ao iniciar a migração"
+  site_settings:
+    rating_enabled: "Habilitar classificações."
+    rating_show_numeric_average: "Mostrar a média numérica ao lado das entradas de classificação dos tópicos."
+    rating_show_count: "Mostrar contagens de classificação no tópico ao lado da média de classificação."
+    rating_show_topic_tip: "Mostrar uma dica sobre a mecânica dos tópicos classificados nos títulos dos tópicos de avaliação"
+    rating_topic_average_enabled: "Mostrar a média de todas as avaliações em um tópico sob o título do tópico."
+    rating_topic_list_average_enabled: "Mostrar a média de todas as avaliações em um tópico sob o título do tópico."
+    rating_hide_except_own_entry: "Mostrar apenas entradas de classificação e tópicos do usuário"
