@@ -1,0 +1,76 @@
+zh-TW:
+  js:
+    category:
+      ratings:
+        heading: "Ratings"
+        enabled: "Enable ratings in this category."
+        types: "Rating types enabled in this category."
+    composer:
+      your_rating: "Add a rating"
+      select_rating: "All checked ratings must have a rating."
+    topic:
+      hidden_ratings: "Topic has hidden ratings"
+      no_ratings: "No ratings yet"
+      x_rating_count:
+        other: "ratings"
+      tip:
+        ratings:
+          title: "Rating"
+          details: >
+            You can rate in this topic. Each rating is attached to a post and you can post without rating.
+    filters:
+      ratings:
+        title: "Ratings"
+        help: "List latest ratings."
+  admin_js:
+    admin:
+      ratings:
+        settings_page: "Ratings"
+        type:
+          title: "Types"
+          label: "Type"
+          none: "No types."
+          type_placeholder: "Hidden, dasherized and uneditable."
+          name: "Name"
+          name_placeholder: "Visible, sentence case and editable."
+          none_type: "None"
+          none_type_description: "For ratings without a type"
+          select: "Select type"
+          new: "New"
+          add: "Add"
+          update: "Save"
+          destroy: "Delete"
+          confirm_destroy: >
+            Are you sure you want to delete this type? All ratings with this type will be irreversibly destroyed. If there are ratings with this type you wish to keep, migrate them to a new type before taking this action.
+        enabled: "Enabled"
+        category:
+          title: "Categories"
+          name: "Category"
+          none: "No rating categories"
+        tag:
+          title: "Tags"
+          name: "Tag"
+          none: "No rating tags"
+        migrate:
+          title: "Migrate"
+          description: >
+            You can migrate ratings to or from type "None" on a per-category basis. Topics that already have the target type are excluded from the migration.
+          btn: "Migrate"
+          started: "The migration has started. It may take a few minutes to complete."
+        destroy:
+          title: "Destroy"
+          description: >
+            You can irreversibly destroy ratings by type on a per-category basis. Topics and posts associated with ratings will be unaffected.
+          btn: "Destroy"
+          started: "The destruction has started. It may take a few minutes to complete."
+        error:
+          object_already_exists: "Entry for {{objectType}} already exists"
+          migration_failed_to_start: "Migration failed to start"
+  site_settings:
+    rating_enabled: "Enable ratings."
+    rating_show_numeric_average: "Show the numerical average next to topic rating inputs."
+    rating_show_count: "Show rating counts in topic next to average rating."
+    rating_show_topic_tip: "Show a tip about the mechanics of rating topics under the titles of rating topics"
+    rating_topic_average_enabled: "Show the average of all ratings in a topic under the topic title."
+    rating_topic_list_average_enabled: "Show the average of all ratings in a topic in the topic list item."
+    rating_hide_except_own_entry: "Show only user's own rating entries and topic average"
