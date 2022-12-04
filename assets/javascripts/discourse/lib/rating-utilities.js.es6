@@ -1,5 +1,6 @@
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import { getOwner } from "discourse-common/lib/get-owner";
 import I18n from "I18n";
 
 let starRatingRaw = function (rating, opts = {}) {
@@ -48,7 +49,7 @@ function ratingHtml(rating, opts = {}) {
 
   if (opts.topic) {
     link = opts.topic.url;
-    const siteSettings = Discourse.SiteSettings;
+    const siteSettings = getOwner(this).lookup("site-settings:main");
 
     if (siteSettings.rating_show_numeric_average) {
       html += `<span class="rating-value">(${value})</span>`;

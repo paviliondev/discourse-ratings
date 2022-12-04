@@ -5,11 +5,9 @@ es:
         heading: "Ratings"
         enabled: "Habilitar ratings en esta categoría."
         types: "Tipos de ratings habilitados en esta categoría."
-    
     composer:
       your_rating: "Agregar valoración"
       select_rating: "Todos los ratings seleccionados deben tener un rating."
-    
     topic:
       hidden_ratings: "El tema tiene valoraciones ocultas"
       no_ratings: "Aún sin ratings"
@@ -20,14 +18,11 @@ es:
         ratings:
           title: "Rating"
           details: >
-            Puedes valorar en este tema.
-            Cada rating es adjuntado a un mensaje y tú puedes publicar sin rating.
-  
+            Puedes valorar en este tema. Cada rating es adjuntado a un mensaje y tú puedes publicar sin rating.
     filters:
       ratings:
         title: "Ratings"
         help: "Listar últimos ratings."
-  
   admin_js:
     admin:
       ratings:
@@ -47,10 +42,7 @@ es:
           update: "Guardar"
           destroy: "Borrar"
           confirm_destroy: >
-            ¿Estás seguro que quieres borrar este tipo?
-            Todos los ratings con este tipo serán irreversiblemente destruidos.
-            Si hay ratings con este tipo que quieres mantener, migralos a un
-            nuevo tipo antes de continuar con esta acción.
+            ¿Estás seguro que quieres borrar este tipo? Todos los ratings con este tipo serán irreversiblemente destruidos. Si hay ratings con este tipo que quieres mantener, migralos a un nuevo tipo antes de continuar con esta acción.
         enabled: "Habilitar"
         category:
           title: "Categorías"
@@ -63,22 +55,18 @@ es:
         migrate:
           title: "Migrar"
           description: >
-            Puedes migrar ratings a o desde tipo "Ninguno" hacia una base por-categoías.
-            Temas que tienen un tupo serán excluídos de la migración.
+            Puedes migrar ratings a o desde tipo "Ninguno" hacia una base por-categoías. Temas que tienen un tupo serán excluídos de la migración.
           btn: "Migrar"
           started: "La migración ha comenzado. Puede tomar unos minutos para completarse."
         destroy:
           title: "Destruir"
           description: >
-            Puedes destruir ratings irreversiblemente por tipo en una base por categorías.
-            Temas y mensajes asociados a los ratings no serán afectados.
+            Puedes destruir ratings irreversiblemente por tipo en una base por categorías. Temas y mensajes asociados a los ratings no serán afectados.
           btn: "Destruir"
           started: "La destrucción ha comenzado. Puede tomar unos minutos para completarse."
-        
         error:
           object_already_exists: "Entrada para {{objectType}} ya existe"
           migration_failed_to_start: "La migración ha fallado al comenzar"
-  
   site_settings:
     rating_enabled: "Habilitar Ratings."
     rating_show_numeric_average: "Mostrar el promedio numérico al lado del rating del tema."

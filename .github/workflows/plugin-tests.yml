@@ -129,15 +129,17 @@ jobs:
           bin/rake db:create
           bin/rake db:migrate
 
-      - name: Plugin RSpec
-        if: matrix.build_type == 'backend' && steps.check_spec.outputs.files_exists == 'true'
-        run: bin/rake plugin:spec[${{ steps.repo-name.outputs.value }}]
+      - name: RSpec with Coverage
+        if: matrix.build_type == 'backend'
+        run: |
+          if [ -e plugins/${{ github.event.repository.name }}/.simplecov ]
+          then
+            cp plugins/${{ github.event.repository.name }}/.simplecov .simplecov
+            export COVERAGE=1
+          fi
+          bin/rake plugin:spec[${{ github.event.repository.name }}]
 
       - name: Plugin QUnit
         if: matrix.build_type == 'frontend' && steps.check_qunit.outputs.files_exists == 'true'
         run: bundle exec rake plugin:qunit['${{ steps.repo-name.outputs.value }}','1200000']
         timeout-minutes: 30
-
-      - name: Simplecov Report
-        if: matrix.build_type == 'backend'
-        run: COVERAGE=1 bin/rake plugin:spec[${{ steps.repo-name.outputs.value }}]
