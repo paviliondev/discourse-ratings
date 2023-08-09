@@ -44,8 +44,9 @@ export default Component.extend({
         if (result.success) {
           this.refresh();
         } else {
-          this.set("loading", false);
+          obj.set("hasError", true);
         }
+        this.set("loading", false);
       });
     },
 
@@ -59,8 +60,9 @@ export default Component.extend({
         if (result.success) {
           this.refresh();
         } else {
-          this.set("loading", false);
+          obj.set("hasError", true);
         }
+        this.set("loading", false);
       });
     },
 
@@ -77,8 +79,9 @@ export default Component.extend({
           if (result.success) {
             this.refresh();
           } else {
-            this.set("loading", false);
+            obj.set("hasError", true);
           }
+          this.set("loading", false);
         });
       }
     },
