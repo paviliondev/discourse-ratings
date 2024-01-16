@@ -24,9 +24,7 @@ module PostRevisorRatingsExtension
 
     ratings.any? do |r|
       @post.ratings.any? do |pr|
-        pr.type === r.type && (
-          pr.value != r.value || pr.weight != r.weight
-        )
+        pr.type === r.type && (pr.value != r.value || pr.weight != r.weight)
       end
     end
   end

@@ -8,9 +8,9 @@
 
 enabled_site_setting :rating_enabled
 
-register_asset 'stylesheets/common/ratings.scss'
-register_asset 'stylesheets/desktop/ratings.scss', :desktop
-register_asset 'stylesheets/mobile/ratings.scss', :mobile
+register_asset "stylesheets/common/ratings.scss"
+register_asset "stylesheets/desktop/ratings.scss", :desktop
+register_asset "stylesheets/mobile/ratings.scss", :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "info"
@@ -30,12 +30,10 @@ on(:post_created) do |post, opts, user|
     topic = post.topic
     user_can_rate = topic.user_can_rate(user)
 
-    ratings = DiscourseRatings::Rating.build_list(ratings)
-      .select { |r| user_can_rate.include?(r.type) }
+    ratings =
+      DiscourseRatings::Rating.build_list(ratings).select { |r| user_can_rate.include?(r.type) }
 
-    if ratings.any?
-      post.update_ratings(ratings)
-    end
+    post.update_ratings(ratings) if ratings.any?
   end
 end
 
@@ -46,10 +44,10 @@ on(:post_edited) do |post, topic_changed, revisor|
     user_has_rated = post.rated_types
     user_can_rate = topic.user_can_rate(user)
 
-    ratings = revisor.ratings.select do |r|
-      user_has_rated.include?(r.type) ||
-      user_can_rate.include?(r.type)
-    end
+    ratings =
+      revisor.ratings.select do |r|
+        user_has_rated.include?(r.type) || user_can_rate.include?(r.type)
+      end
 
     post.update_ratings(ratings)
   end
@@ -89,9 +87,7 @@ after_initialize do
     ../extensions/post_revisor.rb
     ../extensions/posts_controller.rb
     ../extensions/topic.rb
-  ].each do |path|
-    load File.expand_path(path, __FILE__)
-  end
+  ].each { |path| load File.expand_path(path, __FILE__) }
 
   ###### Site ######
 
@@ -101,16 +97,14 @@ after_initialize do
     map
   end
 
-  add_to_serializer(:site, :rating_type_names) do
-    object.rating_type_names
-  end
+  add_to_serializer(:site, :rating_type_names) { object.rating_type_names }
 
   add_to_serializer(:site, :category_rating_types) do
-    build_object_list(DiscourseRatings::Object.list('category'))
+    build_object_list(DiscourseRatings::Object.list("category"))
   end
 
   add_to_serializer(:site, :tag_rating_types) do
-    build_object_list(DiscourseRatings::Object.list('tag'))
+    build_object_list(DiscourseRatings::Object.list("tag"))
   end
 
   add_to_class(:site_serializer, :build_object_list) do |list|
@@ -121,17 +115,11 @@ after_initialize do
 
   ###### Category && Tag ######
 
-  add_to_class(:category, :rating_types) do
-    DiscourseRatings::Object.get('category', rating_key)
-  end
+  add_to_class(:category, :rating_types) { DiscourseRatings::Object.get("category", rating_key) }
 
-  add_to_class(:category, :rating_key) do
-    slug_path.join("/")
-  end
+  add_to_class(:category, :rating_key) { slug_path.join("/") }
 
-  add_to_class(:tag, :rating_types) do
-    DiscourseRatings::Object.get('tag', name)
-  end
+  add_to_class(:tag, :rating_types) { DiscourseRatings::Object.get("tag", name) }
 
   ###### Post ######
 
@@ -147,9 +135,7 @@ after_initialize do
     DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
   end
 
-  add_to_class(:post, :rated_types) do
-    ratings.select { |r| r.weight > 0 }.map(&:type)
-  end
+  add_to_class(:post, :rated_types) { ratings.select { |r| r.weight > 0 }.map(&:type) }
 
   add_to_class(:post, :update_ratings) do |ratings|
     Post.transaction do
@@ -180,11 +166,7 @@ after_initialize do
         average = (sum / count).to_f
       end
 
-      topic_rating = {
-        type: type,
-        value: average,
-        count: count
-      }
+      topic_rating = { type: type, value: average, count: count }
 
       DiscourseRatings::Rating.build_and_set(topic, topic_rating)
     end
@@ -193,9 +175,10 @@ after_initialize do
   end
 
   add_to_class(:post, :push_ratings_to_clients) do
-    publish_change_to_clients!("ratings",
+    publish_change_to_clients!(
+      "ratings",
       ratings: topic.ratings.as_json,
-      user_can_rate: topic.user_can_rate(user)
+      user_can_rate: topic.user_can_rate(user),
     )
   end
 
@@ -206,16 +189,13 @@ after_initialize do
   add_to_serializer(:post, :include_ratings?) do
     # we need to explictly check for plugin enabled when defining custom include method
     SiteSetting.rating_enabled &&
-    (
-      !SiteSetting.rating_hide_except_own_entry ||
       (
-        scope.current_user.present? &&
-        (
-          scope.current_user.staff? ||
-          scope.current_user.id === object.user.id
-        )
+        !SiteSetting.rating_hide_except_own_entry ||
+          (
+            scope.current_user.present? &&
+              (scope.current_user.staff? || scope.current_user.id === object.user.id)
+          )
       )
-    )
   end
 
   ###### Topic ######
@@ -231,22 +211,14 @@ after_initialize do
     types.flatten.uniq
   end
 
-  add_to_class(:topic, :rating_enabled?) do
-    SiteSetting.rating_enabled && rating_types.any?
-  end
+  add_to_class(:topic, :rating_enabled?) { SiteSetting.rating_enabled && rating_types.any? }
 
   add_to_class(:topic, :user_can_rate) do |user|
-    rating_types.select do |type|
-      user_has_rated(user).exclude?(type)
-    end
+    rating_types.select { |type| user_has_rated(user).exclude?(type) }
   end
 
   add_to_class(:topic, :user_has_rated) do |user|
-    posts.select do |post|
-      post.user_id === user.id
-    end.map do |post|
-      post.rated_types
-    end.flatten
+    posts.select { |post| post.user_id === user.id }.map { |post| post.rated_types }.flatten
   end
 
   add_to_serializer(:topic_view, :ratings) do
@@ -254,14 +226,11 @@ after_initialize do
   end
 
   add_to_serializer(:topic_view, :show_ratings) do
-    SiteSetting.rating_topic_average_enabled &&
-    object.topic.rating_enabled? &&
-    object.topic.ratings.present?
+    SiteSetting.rating_topic_average_enabled && object.topic.rating_enabled? &&
+      object.topic.ratings.present?
   end
 
-  add_to_serializer(:topic_view, :user_can_rate) do
-    object.topic.user_can_rate(scope.current_user)
-  end
+  add_to_serializer(:topic_view, :user_can_rate) { object.topic.user_can_rate(scope.current_user) }
 
   add_to_serializer(:topic_view, :include_user_can_rate?) do
     scope.current_user && object.topic.rating_enabled?
@@ -274,8 +243,7 @@ after_initialize do
   end
 
   add_to_serializer(:topic_list_item, :show_ratings) do
-    SiteSetting.rating_topic_list_average_enabled &&
-    object.rating_enabled? &&
-    object.ratings.present?
+    SiteSetting.rating_topic_list_average_enabled && object.rating_enabled? &&
+      object.ratings.present?
   end
 end

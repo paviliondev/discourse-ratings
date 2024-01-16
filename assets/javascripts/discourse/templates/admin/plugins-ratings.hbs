@@ -15,7 +15,8 @@
             addType=(action "addType")
             updateType=(action "updateType")
             destroyType=(action "destroyType")
-            type=type}}
+            type=type
+          }}
         {{/each}}
       </tbody>
     </table>
@@ -27,7 +28,8 @@
     {{d-button
       action=(action "newType")
       label="admin.ratings.type.new"
-      icon="plus"}}
+      icon="plus"
+    }}
   </div>
 </div>
 
@@ -35,12 +37,14 @@
   objectType="category"
   objects=categoryTypes
   ratingTypes=ratingTypes
-  refresh=(route-action "refresh")}}
+  refresh=(route-action "refresh")
+}}
 
 {{rating-object-list
   objectType="tag"
   objects=tagTypes
   ratingTypes=ratingTypes
-  refresh=(route-action "refresh")}}
+  refresh=(route-action "refresh")
+}}
 
 {{rating-actions ratingTypes=ratingTypes}}

@@ -1,6 +1,6 @@
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import { getOwner } from "discourse-common/lib/get-owner";
+import { getOwnerWithFallback } from "discourse-common/lib/get-owner";
 import I18n from "I18n";
 
 let starRatingRaw = function (rating, opts = {}) {
@@ -49,7 +49,9 @@ function ratingHtml(rating, opts = {}) {
 
   if (opts.topic) {
     link = opts.topic.url;
-    const siteSettings = getOwner(this).lookup("site-settings:main");
+    const siteSettings = getOwnerWithFallback(this).lookup(
+      "service:site-settings"
+    );
 
     if (siteSettings.rating_show_numeric_average) {
       html += `<span class="rating-value">(${value})</span>`;

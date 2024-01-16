@@ -3,9 +3,7 @@
 require_relative "../plugin_helper.rb"
 
 describe PostsController do
-  let(:rating_hash) do
-    JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]')
-  end
+  let(:rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]') }
   let(:rating_none_type) { "none" }
   let(:rating_none_name) { "None" }
   fab!(:rating_category) { Fabricate(:category) }
@@ -15,20 +13,13 @@ describe PostsController do
   let(:none_rating_json) { '[{"type":"none","value":"4", "pavilion": "yes"}]' }
   let(:multiple_rating_hash) do
     JSON.parse(
-      '[{"type":"pointers","value":"4", "pavilion": "yes"}, {"type":"handwriting","value":"3"}]'
+      '[{"type":"pointers","value":"4", "pavilion": "yes"}, {"type":"handwriting","value":"3"}]',
     )
   end
   let(:create_params) do
-    {
-      raw: "new body",
-      ratings: none_rating_json,
-      topic_id: rating_topic.id,
-      user_id: user.id
-    }
+    { raw: "new body", ratings: none_rating_json, topic_id: rating_topic.id, user_id: user.id }
   end
-  let(:update_params) do
-    { post: { raw: "edited body", ratings: none_rating_json } }
-  end
+  let(:update_params) { { post: { raw: "edited body", ratings: none_rating_json } } }
   it "adds the the rating correctly" do
     SiteSetting.rating_enabled = true
 

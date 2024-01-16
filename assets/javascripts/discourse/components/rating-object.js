@@ -1,7 +1,7 @@
 import Component from "@ember/component";
-import discourseComputed from "discourse-common/utils/decorators";
 import { equal } from "@ember/object/computed";
 import Category from "discourse/models/category";
+import discourseComputed from "discourse-common/utils/decorators";
 import I18n from "I18n";
 
 export default Component.extend({
@@ -16,6 +16,7 @@ export default Component.extend({
   error: null,
 
   didReceiveAttrs() {
+    this._super();
     const object = this.object;
 
     this.setProperties({

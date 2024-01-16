@@ -16,6 +16,7 @@ export default Component.extend({
   showControls: not("noneType"),
 
   didReceiveAttrs() {
+    this._super();
     this.set("currentName", this.type.name);
   },
 

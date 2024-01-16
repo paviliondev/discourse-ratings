@@ -1,9 +1,7 @@
 <td>
   {{#if object.isNew}}
     {{#if isCategory}}
-      {{category-chooser
-        value=category.id
-        onChange=(action "updateCategory")}}
+      {{category-chooser value=category.id onChange=(action "updateCategory")}}
     {{/if}}
     {{#if isTag}}
       {{tag-chooser
@@ -12,9 +10,8 @@
         excludeSynonyms=true
         maximum=1
         onChange=(action "updateTag")
-        options=(hash
-          none="select_kit.default_header_text"
-        )}}
+        options=(hash none="select_kit.default_header_text")
+      }}
     {{/if}}
   {{else}}
     {{#if isCategory}}
@@ -31,7 +28,8 @@
     value=object.types
     content=ratingTypes
     valueProperty="type"
-    onChange=(action (mut object.types))}}
+    onChange=(action (mut object.types))
+  }}
 </td>
 
 <td class="type-controls">
@@ -42,7 +40,8 @@
       actionParam=object
       label="admin.ratings.type.add"
       icon="plus"
-      disabled=saveDisabled}}
+      disabled=saveDisabled
+    }}
   {{else}}
     {{d-button
       class="btn-primary"
@@ -50,13 +49,11 @@
       actionParam=object
       label="admin.ratings.type.update"
       icon="save"
-      disabled=saveDisabled}}
+      disabled=saveDisabled
+    }}
   {{/if}}
 
-  {{d-button
-    action=destroyObject
-    actionParam=object
-    icon="times"}}
+  {{d-button action=destroyObject actionParam=object icon="times"}}
 </td>
 
 {{#if error}}

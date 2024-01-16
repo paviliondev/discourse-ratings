@@ -1,6 +1,6 @@
+import Component from "@ember/component";
 import discourseComputed from "discourse-common/utils/decorators";
 import Rating from "../models/rating";
-import Component from "@ember/component";
 
 const noneType = "none";
 

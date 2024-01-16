@@ -1,8 +1,8 @@
-import discourseComputed from "discourse-common/utils/decorators";
-import RatingObject from "../models/rating-object";
 import Component from "@ember/component";
 import { notEmpty } from "@ember/object/computed";
+import discourseComputed from "discourse-common/utils/decorators";
 import I18n from "I18n";
+import RatingObject from "../models/rating-object";
 
 export default Component.extend({
   classNameBindings: [":object-types", ":admin-ratings-list", "objectType"],

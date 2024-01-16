@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 class DiscourseRatings::RatingTypeController < ::Admin::AdminController
-  before_action :validate_existence, only: [:create, :update, :destroy]
-  before_action :validate_name, only: [:update, :create]
-  before_action :validate_type, only: [:update, :create]
+  before_action :validate_existence, only: %i[create update destroy]
+  before_action :validate_name, only: %i[update create]
+  before_action :validate_type, only: %i[update create]
 
   MIN_TYPE_LENGTH = 2
   MIN_NAME_LENGTH = 2
@@ -32,23 +32,20 @@ class DiscourseRatings::RatingTypeController < ::Admin::AdminController
   def validate_existence
     exists = DiscourseRatings::RatingType.exists?(type_params[:type])
 
-    if (exists && action_name == "create") ||
-        (!exists && ["update", "destroy"].include?(action_name))
+    if (exists && action_name == "create") || (!exists && %w[update destroy].include?(action_name))
       raise Discourse::InvalidParameters.new(:type)
     end
   end
 
   def validate_type
     if type_params[:type].length < MIN_TYPE_LENGTH ||
-        type_params[:type] == DiscourseRatings::RatingType::NONE
+         type_params[:type] == DiscourseRatings::RatingType::NONE
       raise Discourse::InvalidParameters.new(:type)
     end
   end
 
   def validate_name
-    if type_params[:name].length < MIN_NAME_LENGTH
-      raise Discourse::InvalidParameters.new(:name)
-    end
+    raise Discourse::InvalidParameters.new(:name) if type_params[:name].length < MIN_NAME_LENGTH
   end
 
   def handle_render(success)

@@ -1,9 +1,9 @@
-import DiscourseRoute from "discourse/routes/discourse";
 import { A } from "@ember/array";
 import { all } from "rsvp";
-import RatingType from "../models/rating-type";
-import RatingObject from "../models/rating-object";
+import DiscourseRoute from "discourse/routes/discourse";
 import I18n from "I18n";
+import RatingObject from "../models/rating-object";
+import RatingType from "../models/rating-type";
 
 const noneType = "none";
 

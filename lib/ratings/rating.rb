@@ -4,11 +4,7 @@ class DiscourseRatings::Rating
 
   KEY ||= "rating"
 
-  attr_accessor :type,
-                :type_name,
-                :value,
-                :weight,
-                :count
+  attr_accessor :type, :type_name, :value, :weight, :count
 
   def initialize(attrs)
     @type = attrs[:type].to_s
@@ -29,9 +25,7 @@ class DiscourseRatings::Rating
 
   def self.set_custom_fields(model, ratings)
     [*ratings].each do |rating|
-      data = {
-        value: rating.value
-      }
+      data = { value: rating.value }
       data[:weight] = rating.weight if rating.weight.present?
       data[:count] = rating.count if rating.count.present?
       model.custom_fields[field_name(rating.type)] = data.to_json
@@ -39,17 +33,13 @@ class DiscourseRatings::Rating
   end
 
   def self.destroy(args)
-    if args.keys.exclude?(:type)
-      return nil
-    end
+    return nil if args.keys.exclude?(:type)
 
     name = field_name(args[:type])
 
     topics = Topic.all
 
-    if args[:category_id].present?
-      topics = topics.where(category_id: args[:category_id].to_i)
-    end
+    topics = topics.where(category_id: args[:category_id].to_i) if args[:category_id].present?
 
     topic_ids = topics.pluck(:id)
 
@@ -57,44 +47,41 @@ class DiscourseRatings::Rating
       post_ids = Post.where(topic_id: topic_ids).pluck(:id)
 
       ActiveRecord::Base.transaction do
-        TopicCustomField.where(
-          topic_id: topic_ids,
-          name: name
-        ).destroy_all
-        PostCustomField.where(
-          post_id: post_ids,
-          name: name
-        ).destroy_all
+        TopicCustomField.where(topic_id: topic_ids, name: name).destroy_all
+        PostCustomField.where(post_id: post_ids, name: name).destroy_all
       end
     end
   end
 
   def self.migrate(args, opts = {})
-    if args.keys.exclude?(:type) ||
-       args.keys.exclude?(:new_type) ||
-       args.values.exclude?(DiscourseRatings::RatingType::NONE)
+    if args.keys.exclude?(:type) || args.keys.exclude?(:new_type) ||
+         args.values.exclude?(DiscourseRatings::RatingType::NONE)
       return nil
     end
 
     topics = Topic.all
 
-    if args[:category_id].present?
-      topics = topics.where(category_id: args[:category_id].to_i)
-    end
+    topics = topics.where(category_id: args[:category_id].to_i) if args[:category_id].present?
 
     current_name = field_name(args[:type])
     new_name = field_name(args[:new_type])
 
-    topics = topics.where("id in (
+    topics =
+      topics.where(
+        "id in (
       SELECT topic_id FROM topic_custom_fields
       WHERE name = '#{current_name}'
-    )")
+    )",
+      )
 
     unless opts[:ignore_duplicates]
-      topics = topics.where("id not in (
+      topics =
+        topics.where(
+          "id not in (
         SELECT topic_id FROM topic_custom_fields
         WHERE name = '#{new_name}'
-      )")
+      )",
+        )
     end
 
     topic_ids = topics.pluck(:id)
@@ -103,15 +90,9 @@ class DiscourseRatings::Rating
       post_ids = Post.where(topic_id: topic_ids).pluck(:id)
 
       ActiveRecord::Base.transaction do
-        TopicCustomField.where(
-          topic_id: topic_ids,
-          name: current_name
-        ).update_all(name: new_name)
+        TopicCustomField.where(topic_id: topic_ids, name: current_name).update_all(name: new_name)
 
-        PostCustomField.where(
-          post_id: post_ids,
-          name: current_name
-        ).update_all(name: new_name)
+        PostCustomField.where(post_id: post_ids, name: current_name).update_all(name: new_name)
       end
     end
   end
@@ -135,15 +116,13 @@ class DiscourseRatings::Rating
         end
 
         result
-      end
+      end,
     )
   end
 
   def self.build_list(raw)
     if raw.present?
-      (raw.is_a?(Array) ? raw : [raw]).map do |rating|
-        self.new(rating.with_indifferent_access)
-      end
+      (raw.is_a?(Array) ? raw : [raw]).map { |rating| self.new(rating.with_indifferent_access) }
     else
       []
     end

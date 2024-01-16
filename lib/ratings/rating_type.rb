@@ -13,12 +13,14 @@ class DiscourseRatings::RatingType
   end
 
   def self.all
-    PluginStoreRow.where("
+    PluginStoreRow
+      .where(
+        "
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key LIKE '#{KEY}_%'
-    ").map do |row|
-      new(type: type_from_key(row.key), name: row.value)
-    end
+    ",
+      )
+      .map { |row| new(type: type_from_key(row.key), name: row.value) }
   end
 
   def self.cached_list
@@ -37,16 +39,19 @@ class DiscourseRatings::RatingType
 
   def self.exists?(type)
     return true if type == NONE
-    PluginStoreRow.where("
+    PluginStoreRow.where(
+      "
       plugin_name = '#{DiscourseRatings::PLUGIN_NAME}' AND
       key = ?
-    ", build_key(type)).exists?
+    ",
+      build_key(type),
+    ).exists?
   end
 
   def self.create(type, name)
     ## none type can only be set via bulk operation
     ## 'count' is a legacy type from 0.2. Remove 'count' exception in early 2021
-    return false if [NONE, 'count'].include?(type)
+    return false if [NONE, "count"].include?(type)
 
     self.set(type, name)
   end
@@ -70,6 +75,6 @@ class DiscourseRatings::RatingType
   end
 
   def self.type_from_key(key)
-    key.split('_', 2).last
+    key.split("_", 2).last
   end
 end

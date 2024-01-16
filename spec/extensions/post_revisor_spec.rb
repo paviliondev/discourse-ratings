@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../plugin_helper.rb'
-require 'post_revisor'
+require_relative "../plugin_helper.rb"
+require "post_revisor"
 
 describe PostRevisor do
   let!(:post_rating_param) { { type: "awesomeness", value: 4, weight: 1 } }
@@ -10,7 +10,7 @@ describe PostRevisor do
   let!(:rating_topic) { Fabricate(:topic, category: rating_category) }
   let!(:rating_post) { Fabricate(:post, topic: rating_topic) }
   before do
-    Category.any_instance.stubs(:rating_types).returns(['awesomeness'])
+    Category.any_instance.stubs(:rating_types).returns(["awesomeness"])
     DiscourseRatings::Rating.build_and_set(rating_post, post_rating_param)
     rating_post.save_custom_fields(true)
   end

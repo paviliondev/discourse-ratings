@@ -1,6 +1,6 @@
+import Component from "@ember/component";
 import discourseComputed from "discourse-common/utils/decorators";
 import Rating from "../models/rating";
-import Component from "@ember/component";
 
 export default Component.extend({
   classNames: ["admin-ratings-destroy", "rating-action"],

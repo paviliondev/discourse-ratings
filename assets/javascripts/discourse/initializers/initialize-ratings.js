@@ -1,28 +1,28 @@
-import Composer from "discourse/models/composer";
-import Category from "discourse/models/category";
+import { getOwner } from "@ember/application";
+import { computed } from "@ember/object";
+import { alias, and, notEmpty, or } from "@ember/object/computed";
+import { run } from "@ember/runloop";
+import bootbox from "bootbox";
+import Handlebars from "handlebars";
 import { withPluginApi } from "discourse/lib/plugin-api";
+import Category from "discourse/models/category";
+import Composer from "discourse/models/composer";
+import { isTesting } from "discourse-common/config/environment";
+import discourseDebounce from "discourse-common/lib/debounce";
 import {
   default as discourseComputed,
   observes,
   on,
 } from "discourse-common/utils/decorators";
-import { alias, and, notEmpty, or } from "@ember/object/computed";
-import { ratingListHtml } from "../lib/rating-utilities";
 import I18n from "I18n";
-import Handlebars from "handlebars";
-import { getOwner } from "@ember/application";
-import { computed } from "@ember/object";
-import { isTesting } from "discourse-common/config/environment";
-import discourseDebounce from "discourse-common/lib/debounce";
-import bootbox from "bootbox";
-import { run } from "@ember/runloop";
+import { ratingListHtml } from "../lib/rating-utilities";
 
 const PLUGIN_ID = "discourse-ratings";
 
 export default {
   name: "initialize-ratings",
   initialize(container) {
-    const siteSettings = container.lookup("site-settings:main");
+    const siteSettings = container.lookup("service:site-settings");
 
     if (!siteSettings.rating_enabled) {
       return;

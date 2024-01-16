@@ -11,7 +11,7 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
       rating = {
         type: DiscourseRatings::RatingType::NONE,
         value: post.custom_fields["rating"],
-        weight: post.custom_fields["rating_weight"]
+        weight: post.custom_fields["rating_weight"],
       }
       DiscourseRatings::Rating.build_and_set(post, rating)
       post.save_custom_fields(true)
@@ -20,24 +20,26 @@ class AddRatingTypes < ActiveRecord::Migration[6.0]
     topics.each do |topic|
       rating = {
         type: DiscourseRatings::RatingType::NONE,
-        value: topic.custom_fields['average_rating'],
-        count: topic.custom_fields['rating_count']
+        value: topic.custom_fields["average_rating"],
+        count: topic.custom_fields["rating_count"],
       }
       DiscourseRatings::Rating.build_and_set(topic, rating)
       topic.save_custom_fields(true)
     end
 
-    CategoryCustomField.where(name: 'rating_enabled').each do |row|
-      if ActiveModel::Type::Boolean.new.cast(row.value)
-        if category = Category.find(row.category_id)
-          DiscourseRatings::Object.create(
-            'category',
-            category.rating_key,
-            [DiscourseRatings::RatingType::NONE]
-          )
+    CategoryCustomField
+      .where(name: "rating_enabled")
+      .each do |row|
+        if ActiveModel::Type::Boolean.new.cast(row.value)
+          if category = Category.find(row.category_id)
+            DiscourseRatings::Object.create(
+              "category",
+              category.rating_key,
+              [DiscourseRatings::RatingType::NONE],
+            )
+          end
         end
       end
-    end
   end
 
   def down
