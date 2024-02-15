@@ -199,7 +199,7 @@ after_initialize do
     )
   end
 
-  add_to_serializer(:post, :ratings, false) do
+  add_to_serializer(:post, :ratings, respect_plugin_enabled: false) do
     DiscourseRatings::Rating.serialize(object.ratings)
   end
 

@@ -10,6 +10,7 @@ import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { ratingListHtml } from "../lib/rating-utilities";
 import I18n from "I18n";
 import Handlebars from "handlebars";
+import { getOwner } from "@ember/application";
 import { computed } from "@ember/object";
 import { isTesting } from "discourse-common/config/environment";
 import discourseDebounce from "discourse-common/lib/debounce";
@@ -325,7 +326,7 @@ export default {
 
         @on("init")
         setupController() {
-          const topicController = container.lookup("controller:topic");
+          const topicController = getOwner(this).lookup("controller:topic");
           this.set("topicController", topicController);
         },
       });
