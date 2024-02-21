@@ -2,7 +2,6 @@ import { getOwner } from "@ember/application";
 import { computed } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { run } from "@ember/runloop";
-import bootbox from "bootbox";
 import Handlebars from "handlebars";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import Category from "discourse/models/category";
@@ -241,7 +240,8 @@ export default {
           const showRatings = model.showRatings;
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
-            return bootbox.alert(I18n.t("composer.select_rating"));
+            const dialog = api.container.lookup("service:dialog");
+            return dialog.alert(I18n.t("composer.select_rating"));
           }
 
           return this._super(ignore, event);

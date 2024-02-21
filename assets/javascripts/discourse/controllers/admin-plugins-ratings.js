@@ -1,10 +1,11 @@
 import Controller from "@ember/controller";
 import { notEmpty } from "@ember/object/computed";
-import bootbox from "bootbox";
+import { inject as service } from "@ember/service";
 import I18n from "I18n";
 import RatingType from "../models/rating-type";
 
 export default Controller.extend({
+  dialog: service(),
   hasTypes: notEmpty("ratingTypes"),
 
   actions: {
@@ -55,24 +56,20 @@ export default Controller.extend({
       if (typeObj.isNew) {
         this.get("ratingTypes").removeObject(typeObj);
       } else {
-        bootbox.confirm(
-          I18n.t("admin.ratings.type.confirm_destroy"),
-          I18n.t("no_value"),
-          I18n.t("yes_value"),
-          (result) => {
-            if (result) {
-              this.set("loading", true);
-              RatingType.destroy(typeObj.type).then((response) => {
-                if (response.success) {
-                  this.send("refresh");
-                } else {
-                  typeObj.set("hasError", true);
-                  this.set("loading", false);
-                }
-              });
-            }
-          }
-        );
+        this.dialog.yesNoConfirm({
+          message: I18n.t("admin.ratings.type.confirm_destroy"),
+          didConfirm: () => {
+            this.set("loading", true);
+            RatingType.destroy(typeObj.type).then((response) => {
+              if (response.success) {
+                this.send("refresh");
+              } else {
+                typeObj.set("hasError", true);
+                this.set("loading", false);
+              }
+            });
+          },
+        });
       }
     },
   },
