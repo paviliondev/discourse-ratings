@@ -1,5 +1,5 @@
 <% if @topic_view.topic.ratings.present? %>
-  <div itemscope itemtype="http://schema.org/CreativeWork">
+  <div itemscope itemtype="http://schema.org/CreativeWorkSeries">
     <span itemprop="name"><%= @topic_view.topic.title %></span>
     <% if @topic_view.topic.image_url.present? %>
       <span itemprop="image"><%= @topic_view.topic.image_url %></span>
