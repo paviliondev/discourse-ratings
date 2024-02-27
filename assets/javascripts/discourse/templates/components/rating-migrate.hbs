@@ -20,10 +20,10 @@
     none="admin.ratings.type.select"
   )}}
 
-{{d-button
-  action=(action "migrate")
-  label="admin.ratings.migrate.btn"
-  disabled=migrateDisabled}}
+<DButton
+  @action={{this.migrate}}
+  @label="admin.ratings.migrate.btn"
+  @disabled={{this.migrateDisabled}} />
 
 {{#if startingMigration}}
   {{loading-spinner size="small"}}
