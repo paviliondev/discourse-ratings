@@ -11,10 +11,11 @@
     none="admin.ratings.type.select"
   )}}
 
-{{d-button
-  action="destroyRatings"
-  label="admin.ratings.destroy.btn"
-  disabled=destroyDisabled}}
+<DButton
+  @action={{action "destroyRatings"}}
+  @label="admin.ratings.destroy.btn"
+  @disabled={{this.destroyDisabled}}
+/>
 
 {{#if startingDestroy}}
   {{loading-spinner size="small"}}

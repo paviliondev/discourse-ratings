@@ -14,12 +14,13 @@ import { getOwner } from "@ember/application";
 import { computed } from "@ember/object";
 import { isTesting } from "discourse-common/config/environment";
 import discourseDebounce from "discourse-common/lib/debounce";
-import bootbox from "bootbox";
+import { inject as service } from "@ember/service";
 import { run } from "@ember/runloop";
 
 const PLUGIN_ID = "discourse-ratings";
 
 export default {
+  dialog: service(),
   name: "initialize-ratings",
   initialize(container) {
     const siteSettings = container.lookup("site-settings:main");
@@ -241,7 +242,7 @@ export default {
           const showRatings = model.showRatings;
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
-            return bootbox.alert(I18n.t("composer.select_rating"));
+            return this.dialog.alert(I18n.t("composer.select_rating"));
           }
 
           return this._super(ignore, event);
