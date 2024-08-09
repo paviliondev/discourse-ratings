@@ -1,4 +1,5 @@
 import Component from "@ember/component";
+import { action } from "@ember/object";
 import discourseComputed from "discourse-common/utils/decorators";
 import Rating from "../models/rating";
 
@@ -15,28 +16,27 @@ export default Component.extend({
     );
   },
 
-  actions: {
-    migrate() {
-      let data = {
-        category_id: this.categoryId,
-        type: this.fromType,
-        new_type: this.toType,
-      };
+  @action
+  migrate() {
+    let data = {
+      category_id: this.categoryId,
+      type: this.fromType,
+      new_type: this.toType,
+    };
 
-      this.set("startingMigration", true);
+    this.set("startingMigration", true);
 
-      Rating.migrate(data)
-        .then((result) => {
-          if (result.success) {
-            this.set("migrationMessage", "admin.ratings.migrate.started");
-          } else {
-            this.set(
-              "migrationMessage",
-              "admin.ratings.error.migration_failed_to_start"
-            );
-          }
-        })
-        .finally(() => this.set("startingMigration", false));
-    },
+    Rating.migrate(data)
+      .then((result) => {
+        if (result.success) {
+          this.set("migrationMessage", "admin.ratings.migrate.started");
+        } else {
+          this.set(
+            "migrationMessage",
+            "admin.ratings.error.migration_failed_to_start"
+          );
+        }
+      })
+      .finally(() => this.set("startingMigration", false));
   },
 });
