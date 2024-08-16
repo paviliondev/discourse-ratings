@@ -25,4 +25,11 @@ describe PostRevisor do
 
     expect(rating_post.ratings[0].value).to eq(3.0)
   end
+
+  it "does not error out if post's topic has been deleted first" do
+    rating_post.topic.destroy
+    rating_post.reload
+
+    expect { rating_post.ratings }.not_to raise_error
+  end
 end

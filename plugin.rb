@@ -132,7 +132,7 @@ after_initialize do
   ::PostRevisor.prepend PostRevisorRatingsExtension
 
   add_to_class(:post, :ratings) do
-    DiscourseRatings::Rating.build_model_list(custom_fields, topic.rating_types)
+    DiscourseRatings::Rating.build_model_list(custom_fields, topic&.rating_types || [])
   end
 
   add_to_class(:post, :rated_types) { ratings.select { |r| r.weight > 0 }.map(&:type) }
