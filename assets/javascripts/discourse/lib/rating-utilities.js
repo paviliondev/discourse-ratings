@@ -76,7 +76,7 @@ function ratingListHtml(ratings, opts = {}) {
   if (typeof ratings === "string") {
     try {
       ratings = JSON.parse(ratings);
-    } catch (e) {
+    } catch {
       ratings = null;
     }
   }

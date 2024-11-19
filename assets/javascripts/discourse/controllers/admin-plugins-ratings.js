@@ -1,6 +1,6 @@
 import Controller from "@ember/controller";
 import { notEmpty } from "@ember/object/computed";
-import { inject as service } from "@ember/service";
+import { service } from "@ember/service";
 import I18n from "I18n";
 import RatingType from "../models/rating-type";
 

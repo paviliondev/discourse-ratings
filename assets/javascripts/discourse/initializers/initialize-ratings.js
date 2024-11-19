@@ -206,7 +206,7 @@ export default {
           }));
         },
 
-        ratingsString: computed("ratingsToSave.@each.{value}", {
+        ratingsString: computed("ratingsToSave.@each.value", {
           get() {
             return JSON.stringify(this.ratingsToSave);
           },
