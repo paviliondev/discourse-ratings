@@ -231,7 +231,7 @@ export default {
         }),
       });
 
-      api.modifyClass("controller:composer", {
+      api.modifyClass("service:composer", {
         pluginId: PLUGIN_ID,
 
         save(ignore, event) {

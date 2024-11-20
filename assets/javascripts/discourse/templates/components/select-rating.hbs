@@ -1,15 +1,15 @@
-{{input type="checkbox" checked=rating.include class="include-rating"}}
+{{input type="checkbox" checked=this.rating.include class="include-rating"}}
 
 <span>
-  {{#if rating.typeName}}
-    {{rating.typeName}}
+  {{#if this.rating.typeName}}
+    {{this.rating.typeName}}
   {{else}}
     {{i18n "composer.your_rating"}}
   {{/if}}
 </span>
 
 {{star-rating
-  enabled=rating.include
-  rating=rating.value
+  enabled=this.rating.include
+  rating=this.rating.value
   click=(action "updateRating")
 }}

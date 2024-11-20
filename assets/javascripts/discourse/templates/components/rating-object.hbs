@@ -1,11 +1,14 @@
 <td>
-  {{#if object.isNew}}
-    {{#if isCategory}}
-      {{category-chooser value=category.id onChange=(action "updateCategory")}}
+  {{#if this.object.isNew}}
+    {{#if this.isCategory}}
+      {{category-chooser
+        value=this.category.id
+        onChange=(action "updateCategory")
+      }}
     {{/if}}
-    {{#if isTag}}
+    {{#if this.isTag}}
       {{tag-chooser
-        tags=tag
+        tags=this.tag
         everyTag=true
         excludeSynonyms=true
         maximum=1
@@ -14,48 +17,48 @@
       }}
     {{/if}}
   {{else}}
-    {{#if isCategory}}
-      {{category-badge category}}
+    {{#if this.isCategory}}
+      {{category-badge this.category}}
     {{/if}}
-    {{#if isTag}}
-      {{discourse-tag tag}}
+    {{#if this.isTag}}
+      {{discourse-tag this.tag}}
     {{/if}}
   {{/if}}
 </td>
 
 <td>
   {{multi-select
-    value=object.types
-    content=ratingTypes
+    value=this.object.types
+    content=this.ratingTypes
     valueProperty="type"
-    onChange=(action (mut object.types))
+    onChange=(action (mut this.object.types))
   }}
 </td>
 
 <td class="type-controls">
-  {{#if object.isNew}}
+  {{#if this.object.isNew}}
     {{d-button
       class="btn-primary"
-      action=addObject
-      actionParam=object
+      action=this.addObject
+      actionParam=this.object
       label="admin.ratings.type.add"
       icon="plus"
-      disabled=saveDisabled
+      disabled=this.saveDisabled
     }}
   {{else}}
     {{d-button
       class="btn-primary"
-      action=updateObject
-      actionParam=object
+      action=this.updateObject
+      actionParam=this.object
       label="admin.ratings.type.update"
       icon="save"
-      disabled=saveDisabled
+      disabled=this.saveDisabled
     }}
   {{/if}}
 
-  {{d-button action=destroyObject actionParam=object icon="times"}}
+  {{d-button action=this.destroyObject actionParam=this.object icon="times"}}
 </td>
 
-{{#if error}}
-  <span class="error">{{error}}</span>
+{{#if this.error}}
+  <span class="error">{{this.error}}</span>
 {{/if}}

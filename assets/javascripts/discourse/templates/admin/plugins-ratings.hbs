@@ -1,7 +1,7 @@
 <div class="types admin-ratings-list">
   <h3>{{i18n "admin.ratings.type.title"}}</h3>
 
-  {{#if hasTypes}}
+  {{#if this.hasTypes}}
     <table>
       <thead>
         <tr>
@@ -10,7 +10,7 @@
         </tr>
       </thead>
       <tbody>
-        {{#each ratingTypes as |type|}}
+        {{#each this.ratingTypes as |type|}}
           {{rating-type
             addType=(action "addType")
             updateType=(action "updateType")
@@ -35,16 +35,16 @@
 
 {{rating-object-list
   objectType="category"
-  objects=categoryTypes
-  ratingTypes=ratingTypes
+  objects=this.categoryTypes
+  ratingTypes=this.ratingTypes
   refresh=(route-action "refresh")
 }}
 
 {{rating-object-list
   objectType="tag"
-  objects=tagTypes
-  ratingTypes=ratingTypes
+  objects=this.tagTypes
+  ratingTypes=this.ratingTypes
   refresh=(route-action "refresh")
 }}
 
-{{rating-actions ratingTypes=ratingTypes}}
+{{rating-actions ratingTypes=this.ratingTypes}}

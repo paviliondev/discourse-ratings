@@ -1,3 +1,7 @@
-{{#if context.topic.show_ratings}}
-  {{rating-list context.topic.ratings topic=context.topic linkTo=true}}
+{{#if this.context.topic.show_ratings}}
+  {{rating-list
+    this.context.topic.ratings
+    topic=this.context.topic
+    linkTo=true
+  }}
 {{/if}}

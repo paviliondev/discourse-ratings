@@ -1,33 +1,36 @@
-{{category-chooser value=categoryId onChange=(action (mut categoryId))}}
+{{category-chooser
+  value=this.categoryId
+  onChange=(action (mut this.categoryId))
+}}
 
 {{combo-box
-  value=fromType
-  content=ratingTypes
+  value=this.fromType
+  content=this.ratingTypes
   valueProperty="type"
-  onChange=(action (mut fromType))
+  onChange=(action (mut this.fromType))
   options=(hash none="admin.ratings.type.select")
 }}
 
 {{combo-box
-  value=toType
-  content=ratingTypes
+  value=this.toType
+  content=this.ratingTypes
   valueProperty="type"
-  onChange=(action (mut toType))
+  onChange=(action (mut this.toType))
   options=(hash none="admin.ratings.type.select")
 }}
 
 {{d-button
   action=(action this.migrate)
   label="admin.ratings.migrate.btn"
-  disabled=migrateDisabled
+  disabled=this.migrateDisabled
 }}
 
-{{#if startingMigration}}
+{{#if this.startingMigration}}
   {{loading-spinner size="small"}}
 {{/if}}
 
-{{#if migrationMessage}}
+{{#if this.migrationMessage}}
   <div class="action-message">
-    {{i18n migrationMessage}}
+    {{i18n this.migrationMessage}}
   </div>
 {{/if}}
