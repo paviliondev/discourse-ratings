@@ -1,4 +1,6 @@
 import { A } from "@ember/array";
+import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { all } from "rsvp";
 import DiscourseRoute from "discourse/routes/discourse";
 import I18n from "I18n";
@@ -7,14 +9,16 @@ import RatingType from "../models/rating-type";
 
 const noneType = "none";
 
-export default DiscourseRoute.extend({
+export default class AdminPluginsRatings extends DiscourseRoute {
+  @service router;
+
   model() {
     return RatingType.all();
-  },
+  }
 
   afterModel() {
     return all([this._typesFor("category"), this._typesFor("tag")]);
-  },
+  }
 
   setupController(controller, model) {
     let ratingTypes = model || [];
@@ -30,17 +34,16 @@ export default DiscourseRoute.extend({
       categoryTypes: A(this.categoryTypes),
       tagTypes: A(this.tagTypes),
     });
-  },
+  }
 
   _typesFor(object) {
     return RatingObject.all(object).then((result) => {
       this.set(`${object}Types`, result);
     });
-  },
+  }
 
-  actions: {
-    refresh() {
-      this.refresh();
-    },
-  },
-});
+  @action
+  refresh() {
+    this.router.refresh();
+  }
+}

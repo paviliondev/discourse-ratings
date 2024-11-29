@@ -1,20 +1,20 @@
 import Component from "@ember/component";
 import { action } from "@ember/object";
+import { classNames } from "@ember-decorators/component";
 import discourseComputed from "discourse-common/utils/decorators";
 import Rating from "../models/rating";
 
 const noneType = "none";
 
-export default Component.extend({
-  classNames: ["rating-action-controls"],
-
+@classNames("rating-action-controls")
+export default class RatingMigrate extends Component {
   @discourseComputed("categoryId", "toType", "fromType")
   migrateDisabled(categoryId, toType, fromType) {
     return (
       [categoryId, toType, fromType].any((i) => !i) ||
       (toType !== noneType && fromType !== noneType)
     );
-  },
+  }
 
   @action
   migrate() {
@@ -38,5 +38,5 @@ export default Component.extend({
         }
       })
       .finally(() => this.set("startingMigration", false));
-  },
-});
+  }
+}
