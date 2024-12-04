@@ -14,7 +14,7 @@ register_asset "stylesheets/mobile/ratings.scss", :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "info"
-  register_svg_icon "save"
+  register_svg_icon "floppy-disk"
 end
 
 add_admin_route "admin.ratings.settings_page", "ratings"
