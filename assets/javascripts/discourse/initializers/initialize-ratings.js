@@ -8,6 +8,7 @@ import Category from "discourse/models/category";
 import Composer from "discourse/models/composer";
 import { isTesting } from "discourse-common/config/environment";
 import discourseDebounce from "discourse-common/lib/debounce";
+import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
 import {
   default as discourseComputed,
   observes,
@@ -296,18 +297,31 @@ export default {
         controller.appEvents.trigger("header:update-topic", model);
       });
 
-      api.modifyClass("component:topic-list-item", {
-        pluginId: PLUGIN_ID,
-        hasRatings: and("topic.show_ratings", "topic.ratings"),
-
-        @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
-        unboundClassNames(topic, lastVisitedTopic, hasRatings) {
-          let classes = this._super(topic, lastVisitedTopic) || "";
-          if (hasRatings) {
-            classes += " has-ratings";
+      api.registerValueTransformer(
+        "topic-list-item-class",
+        ({ value: classNames, context }) => {
+          const topic = context.topic;
+          if (topic.show_ratings && topic.ratings) {
+            classNames.push("has-ratings");
           }
-          return classes;
-        },
+          return classNames;
+        }
+      );
+
+      withSilencedDeprecations("discourse.hbr-topic-list-overrides", () => {
+        api.modifyClass("component:topic-list-item", {
+          pluginId: PLUGIN_ID,
+          hasRatings: and("topic.show_ratings", "topic.ratings"),
+
+          @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
+          unboundClassNames(topic, lastVisitedTopic, hasRatings) {
+            let classes = this._super(topic, lastVisitedTopic) || "";
+            if (hasRatings) {
+              classes += " has-ratings";
+            }
+            return classes;
+          },
+        });
       });
 
       api.modifyClass("component:topic-title", {
