@@ -2,7 +2,7 @@ import Controller from "@ember/controller";
 import { action } from "@ember/object";
 import { notEmpty } from "@ember/object/computed";
 import { service } from "@ember/service";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 import RatingType from "../models/rating-type";
 
 export default class AdminPluginsRatingsController extends Controller {
@@ -62,7 +62,7 @@ export default class AdminPluginsRatingsController extends Controller {
       this.get("ratingTypes").removeObject(typeObj);
     } else {
       this.dialog.yesNoConfirm({
-        message: I18n.t("admin.ratings.type.confirm_destroy"),
+        message: i18n("admin.ratings.type.confirm_destroy"),
         didConfirm: () => {
           this.set("loading", true);
           RatingType.destroy(typeObj.type).then((response) => {

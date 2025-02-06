@@ -2,9 +2,9 @@ import Component from "@ember/component";
 import { action } from "@ember/object";
 import { equal } from "@ember/object/computed";
 import { classNameBindings, tagName } from "@ember-decorators/component";
+import discourseComputed from "discourse/lib/decorators";
 import Category from "discourse/models/category";
-import discourseComputed from "discourse-common/utils/decorators";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 
 @classNameBindings(
   ":rating-object",
@@ -65,7 +65,7 @@ export default class RatingObject extends Component {
     } else {
       this.set(
         "error",
-        I18n.t("admin.ratings.error.object_already_exists", {
+        i18n("admin.ratings.error.object_already_exists", {
           objectType: this.objectType,
         })
       );
@@ -86,7 +86,7 @@ export default class RatingObject extends Component {
     } else {
       this.set(
         "error",
-        I18n.t("admin.ratings.error.object_already_exists", {
+        i18n("admin.ratings.error.object_already_exists", {
           objectType: this.objectType,
         })
       );

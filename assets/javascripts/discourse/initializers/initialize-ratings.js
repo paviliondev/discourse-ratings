@@ -3,18 +3,18 @@ import { computed } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { run } from "@ember/runloop";
 import Handlebars from "handlebars";
-import { withPluginApi } from "discourse/lib/plugin-api";
-import Category from "discourse/models/category";
-import Composer from "discourse/models/composer";
-import { isTesting } from "discourse-common/config/environment";
-import discourseDebounce from "discourse-common/lib/debounce";
-import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
+import discourseDebounce from "discourse/lib/debounce";
 import {
   default as discourseComputed,
   observes,
   on,
-} from "discourse-common/utils/decorators";
-import I18n from "I18n";
+} from "discourse/lib/decorators";
+import { withSilencedDeprecations } from "discourse/lib/deprecated";
+import { isTesting } from "discourse/lib/environment";
+import { withPluginApi } from "discourse/lib/plugin-api";
+import Category from "discourse/models/category";
+import Composer from "discourse/models/composer";
+import { i18n } from "discourse-i18n";
 import { ratingListHtml } from "../lib/rating-utilities";
 
 const PLUGIN_ID = "discourse-ratings";
@@ -242,7 +242,7 @@ export default {
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
             const dialog = api.container.lookup("service:dialog");
-            return dialog.alert(I18n.t("composer.select_rating"));
+            return dialog.alert(i18n("composer.select_rating"));
           }
 
           return this._super(ignore, event);

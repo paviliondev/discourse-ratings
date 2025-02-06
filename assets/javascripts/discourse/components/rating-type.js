@@ -1,7 +1,7 @@
 import Component from "@ember/component";
 import { equal, lt, not, or } from "@ember/object/computed";
 import { classNameBindings, tagName } from "@ember-decorators/component";
-import discourseComputed from "discourse-common/utils/decorators";
+import discourseComputed from "discourse/lib/decorators";
 
 const minTypeLength = 2;
 const minNameLength = 2;

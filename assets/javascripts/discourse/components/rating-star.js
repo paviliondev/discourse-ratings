@@ -1,7 +1,7 @@
 import Component from "@ember/component";
 import { not } from "@ember/object/computed";
 import { attributeBindings, tagName } from "@ember-decorators/component";
-import discourseComputed from "discourse-common/utils/decorators";
+import discourseComputed from "discourse/lib/decorators";
 
 @tagName("input")
 @attributeBindings("value", "checked:checked", "disabled:disabled")

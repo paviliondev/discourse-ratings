@@ -2,8 +2,8 @@ import Component from "@ember/component";
 import { action } from "@ember/object";
 import { notEmpty } from "@ember/object/computed";
 import { classNameBindings } from "@ember-decorators/component";
-import discourseComputed from "discourse-common/utils/decorators";
-import I18n from "I18n";
+import discourseComputed from "discourse/lib/decorators";
+import { i18n } from "discourse-i18n";
 import RatingObject from "../models/rating-object";
 
 @classNameBindings(":object-types", ":admin-ratings-list", "objectType")
@@ -12,17 +12,17 @@ export default class RatingObjectList extends Component {
 
   @discourseComputed("objectType")
   title(objectType) {
-    return I18n.t(`admin.ratings.${objectType}.title`);
+    return i18n(`admin.ratings.${objectType}.title`);
   }
 
   @discourseComputed("objectType")
   nameLabel(objectType) {
-    return I18n.t(`admin.ratings.${objectType}.name`);
+    return i18n(`admin.ratings.${objectType}.name`);
   }
 
   @discourseComputed("objectType")
   noneLabel(objectType) {
-    return I18n.t(`admin.ratings.${objectType}.none`);
+    return i18n(`admin.ratings.${objectType}.none`);
   }
 
   @action
