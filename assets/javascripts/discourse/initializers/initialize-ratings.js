@@ -8,7 +8,6 @@ import {
   observes,
   on,
 } from "discourse/lib/decorators";
-import { withSilencedDeprecations } from "discourse/lib/deprecated";
 import { isTesting } from "discourse/lib/environment";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import Category from "discourse/models/category";
@@ -304,22 +303,6 @@ export default {
           return classNames;
         }
       );
-
-      withSilencedDeprecations("discourse.hbr-topic-list-overrides", () => {
-        api.modifyClass("component:topic-list-item", {
-          pluginId: PLUGIN_ID,
-          hasRatings: and("topic.show_ratings", "topic.ratings"),
-
-          @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
-          unboundClassNames(topic, lastVisitedTopic, hasRatings) {
-            let classes = this._super(topic, lastVisitedTopic) || "";
-            if (hasRatings) {
-              classes += " has-ratings";
-            }
-            return classes;
-          },
-        });
-      });
 
       api.modifyClass("component:topic-title", {
         pluginId: PLUGIN_ID,
