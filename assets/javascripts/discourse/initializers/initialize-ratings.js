@@ -2,7 +2,6 @@ import { getOwner } from "@ember/application";
 import { computed } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { run } from "@ember/runloop";
-import Handlebars from "handlebars";
 import discourseDebounce from "discourse/lib/debounce";
 import {
   default as discourseComputed,
@@ -41,9 +40,7 @@ export default {
         const post = helper.getModel();
 
         if (post && post.topic && post.topic.show_ratings && post.ratings) {
-          return helper.rawHtml(
-            `${new Handlebars.SafeString(ratingListHtml(post.ratings))}`
-          );
+          return helper.rawHtml(ratingListHtml(post.ratings));
         }
       });
 
