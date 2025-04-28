@@ -1,24 +1,20 @@
 import EmberObject from "@ember/object";
 import { request } from "../lib/rating-utilities";
 
-const RatingType = EmberObject.extend();
-
-RatingType.reopenClass({
-  all() {
+export default class RatingType extends EmberObject {
+  static all() {
     return request("GET", "rating-type");
-  },
+  }
 
-  add(data) {
+  static add(data) {
     return request("POST", "rating-type", data);
-  },
+  }
 
-  update(type, data) {
+  static update(type, data) {
     return request("PUT", `rating-type/${type}`, data);
-  },
+  }
 
-  destroy(type) {
+  static destroy(type) {
     return request("DELETE", `rating-type/${type}`);
-  },
-});
-
-export default RatingType;
+  }
+}

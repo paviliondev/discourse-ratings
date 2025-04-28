@@ -1,5 +1,5 @@
-{{#if model.showRatings}}
-  {{#each model.ratings as |rating|}}
+{{#if this.model.showRatings}}
+  {{#each this.model.ratings as |rating|}}
     {{select-rating rating=rating updateRating=(action "updateRating")}}
   {{/each}}
 {{/if}}

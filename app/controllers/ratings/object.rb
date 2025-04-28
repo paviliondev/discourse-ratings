@@ -4,15 +4,22 @@ class DiscourseRatings::ObjectController < ::Admin::AdminController
   before_action :validate_object, only: [:create]
 
   def show
-    render_serialized(DiscourseRatings::Object.list(params[:type]), DiscourseRatings::ObjectSerializer)
+    render_serialized(
+      DiscourseRatings::Object.list(params[:type]),
+      DiscourseRatings::ObjectSerializer,
+    )
   end
 
   def create
-    handle_render(DiscourseRatings::Object.create(params[:type], object_params[:name], object_params[:types]))
+    handle_render(
+      DiscourseRatings::Object.create(params[:type], object_params[:name], object_params[:types]),
+    )
   end
 
   def update
-    handle_render(DiscourseRatings::Object.set(params[:type], object_params[:name], object_params[:types]))
+    handle_render(
+      DiscourseRatings::Object.set(params[:type], object_params[:name], object_params[:types]),
+    )
   end
 
   def destroy

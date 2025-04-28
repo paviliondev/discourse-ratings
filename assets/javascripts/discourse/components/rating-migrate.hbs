@@ -1,0 +1,36 @@
+{{category-chooser
+  value=this.categoryId
+  onChange=(action (mut this.categoryId))
+}}
+
+{{combo-box
+  value=this.fromType
+  content=this.ratingTypes
+  valueProperty="type"
+  onChange=(action (mut this.fromType))
+  options=(hash none="admin.ratings.type.select")
+}}
+
+{{combo-box
+  value=this.toType
+  content=this.ratingTypes
+  valueProperty="type"
+  onChange=(action (mut this.toType))
+  options=(hash none="admin.ratings.type.select")
+}}
+
+{{d-button
+  action=(action this.migrate)
+  label="admin.ratings.migrate.btn"
+  disabled=this.migrateDisabled
+}}
+
+{{#if this.startingMigration}}
+  {{loading-spinner size="small"}}
+{{/if}}
+
+{{#if this.migrationMessage}}
+  <div class="action-message">
+    {{i18n this.migrationMessage}}
+  </div>
+{{/if}}

@@ -1,0 +1,64 @@
+<td>
+  {{#if this.object.isNew}}
+    {{#if this.isCategory}}
+      {{category-chooser
+        value=this.category.id
+        onChange=(action "updateCategory")
+      }}
+    {{/if}}
+    {{#if this.isTag}}
+      {{tag-chooser
+        tags=this.tag
+        everyTag=true
+        excludeSynonyms=true
+        maximum=1
+        onChange=(action "updateTag")
+        options=(hash none="select_kit.default_header_text")
+      }}
+    {{/if}}
+  {{else}}
+    {{#if this.isCategory}}
+      {{category-badge this.category}}
+    {{/if}}
+    {{#if this.isTag}}
+      {{discourse-tag this.tag}}
+    {{/if}}
+  {{/if}}
+</td>
+
+<td>
+  {{multi-select
+    value=this.object.types
+    content=this.ratingTypes
+    valueProperty="type"
+    onChange=(action (mut this.object.types))
+  }}
+</td>
+
+<td class="type-controls">
+  {{#if this.object.isNew}}
+    {{d-button
+      class="btn-primary"
+      action=this.addObject
+      actionParam=this.object
+      label="admin.ratings.type.add"
+      icon="plus"
+      disabled=this.saveDisabled
+    }}
+  {{else}}
+    {{d-button
+      class="btn-primary"
+      action=this.updateObject
+      actionParam=this.object
+      label="admin.ratings.type.update"
+      icon="save"
+      disabled=this.saveDisabled
+    }}
+  {{/if}}
+
+  {{d-button action=this.destroyObject actionParam=this.object icon="times"}}
+</td>
+
+{{#if this.error}}
+  <span class="error">{{this.error}}</span>
+{{/if}}

@@ -4,20 +4,22 @@ class DiscourseRatings::RatingController < ::Admin::AdminController
 
   def migrate
     handle_render(
-      Jobs.enqueue(:migrate_ratings,
+      Jobs.enqueue(
+        :migrate_ratings,
         category_id: rating_params[:category_id],
         type: rating_params[:type],
-        new_type: rating_params[:new_type]
-      )
+        new_type: rating_params[:new_type],
+      ),
     )
   end
 
   def destroy
     handle_render(
-      Jobs.enqueue(:destroy_ratings,
+      Jobs.enqueue(
+        :destroy_ratings,
         category_id: rating_params[:category_id],
-        type: rating_params[:type]
-      )
+        type: rating_params[:type],
+      ),
     )
   end
 
@@ -32,8 +34,7 @@ class DiscourseRatings::RatingController < ::Admin::AdminController
       raise Discourse::InvalidParameters.new(:type)
     end
 
-    if action_name == "migrate" &&
-        !DiscourseRatings::RatingType.exists?(rating_params[:new_type])
+    if action_name == "migrate" && !DiscourseRatings::RatingType.exists?(rating_params[:new_type])
       raise Discourse::InvalidParameters.new(:new_type)
     end
   end

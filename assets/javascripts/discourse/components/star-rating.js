@@ -1,8 +1,9 @@
 import Component from "@ember/component";
+import { classNames, tagName } from "@ember-decorators/component";
 
-export default Component.extend({
-  tagName: "span",
-  classNames: "star-rating",
-  stars: [1, 2, 3, 4, 5],
-  enabled: false,
-});
+@tagName("span")
+@classNames("star-rating")
+export default class StarRating extends Component {
+  stars = [1, 2, 3, 4, 5];
+  enabled = false;
+}

@@ -1,30 +1,26 @@
-import Composer from "discourse/models/composer";
-import Category from "discourse/models/category";
-import { withPluginApi } from "discourse/lib/plugin-api";
-import { withSilencedDeprecations } from "discourse-common/lib/deprecated";
+import { getOwner } from "@ember/application";
+import { computed } from "@ember/object";
+import { alias, and, notEmpty, or } from "@ember/object/computed";
+import { run } from "@ember/runloop";
+import discourseDebounce from "discourse/lib/debounce";
 import {
   default as discourseComputed,
   observes,
   on,
-} from "discourse-common/utils/decorators";
-import { alias, and, notEmpty, or } from "@ember/object/computed";
+} from "discourse/lib/decorators";
+import { isTesting } from "discourse/lib/environment";
+import { withPluginApi } from "discourse/lib/plugin-api";
+import Category from "discourse/models/category";
+import Composer from "discourse/models/composer";
+import { i18n } from "discourse-i18n";
 import { ratingListHtml } from "../lib/rating-utilities";
-import I18n from "I18n";
-import Handlebars from "handlebars";
-import { getOwner } from "@ember/application";
-import { computed } from "@ember/object";
-import { isTesting } from "discourse-common/config/environment";
-import discourseDebounce from "discourse-common/lib/debounce";
-import { inject as service } from "@ember/service";
-import { run } from "@ember/runloop";
 
 const PLUGIN_ID = "discourse-ratings";
 
 export default {
-  dialog: service(),
   name: "initialize-ratings",
   initialize(container) {
-    const siteSettings = container.lookup("site-settings:main");
+    const siteSettings = container.lookup("service:site-settings");
 
     if (!siteSettings.rating_enabled) {
       return;
@@ -43,9 +39,7 @@ export default {
         const post = helper.getModel();
 
         if (post && post.topic && post.topic.show_ratings && post.ratings) {
-          return helper.rawHtml(
-            `${new Handlebars.SafeString(ratingListHtml(post.ratings))}`
-          );
+          return helper.rawHtml(ratingListHtml(post.ratings));
         }
       });
 
@@ -209,7 +203,7 @@ export default {
           }));
         },
 
-        ratingsString: computed("ratingsToSave.@each.{value}", {
+        ratingsString: computed("ratingsToSave.@each.value", {
           get() {
             return JSON.stringify(this.ratingsToSave);
           },
@@ -234,7 +228,7 @@ export default {
         }),
       });
 
-      api.modifyClass("controller:composer", {
+      api.modifyClass("service:composer", {
         pluginId: PLUGIN_ID,
 
         save(ignore, event) {
@@ -243,7 +237,8 @@ export default {
           const showRatings = model.showRatings;
 
           if (showRatings && ratings.some((r) => r.include && !r.value)) {
-            return this.dialog.alert(I18n.t("composer.select_rating"));
+            const dialog = api.container.lookup("service:dialog");
+            return dialog.alert(i18n("composer.select_rating"));
           }
 
           return this._super(ignore, event);
@@ -308,22 +303,6 @@ export default {
           return classNames;
         }
       );
-
-      withSilencedDeprecations("discourse.hbr-topic-list-overrides", () => {
-        api.modifyClass("component:topic-list-item", {
-          pluginId: PLUGIN_ID,
-          hasRatings: and("topic.show_ratings", "topic.ratings"),
-
-          @discourseComputed("topic", "lastVisitedTopic", "hasRatings")
-          unboundClassNames(topic, lastVisitedTopic, hasRatings) {
-            let classes = this._super(topic, lastVisitedTopic) || "";
-            if (hasRatings) {
-              classes += " has-ratings";
-            }
-            return classes;
-          },
-        });
-      });
 
       api.modifyClass("component:topic-title", {
         pluginId: PLUGIN_ID,

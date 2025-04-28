@@ -1,27 +1,31 @@
-import DiscourseRoute from "discourse/routes/discourse";
 import { A } from "@ember/array";
+import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { all } from "rsvp";
-import RatingType from "../models/rating-type";
+import DiscourseRoute from "discourse/routes/discourse";
+import { i18n } from "discourse-i18n";
 import RatingObject from "../models/rating-object";
-import I18n from "I18n";
+import RatingType from "../models/rating-type";
 
 const noneType = "none";
 
-export default DiscourseRoute.extend({
+export default class AdminPluginsRatings extends DiscourseRoute {
+  @service router;
+
   model() {
     return RatingType.all();
-  },
+  }
 
   afterModel() {
     return all([this._typesFor("category"), this._typesFor("tag")]);
-  },
+  }
 
   setupController(controller, model) {
     let ratingTypes = model || [];
 
     ratingTypes.unshift({
       type: noneType,
-      name: I18n.t("admin.ratings.type.none_type"),
+      name: i18n("admin.ratings.type.none_type"),
       isNone: true,
     });
 
@@ -30,17 +34,16 @@ export default DiscourseRoute.extend({
       categoryTypes: A(this.categoryTypes),
       tagTypes: A(this.tagTypes),
     });
-  },
+  }
 
   _typesFor(object) {
     return RatingObject.all(object).then((result) => {
       this.set(`${object}Types`, result);
     });
-  },
+  }
 
-  actions: {
-    refresh() {
-      this.refresh();
-    },
-  },
-});
+  @action
+  refresh() {
+    this.router.refresh();
+  }
+}

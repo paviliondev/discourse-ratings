@@ -1,31 +1,32 @@
-<h3>{{title}}</h3>
+<h3>{{this.title}}</h3>
 
-{{#if loading}}
+{{#if this.loading}}
   {{loading-spinner}}
 {{else}}
-  {{#if hasObjects}}
+  {{#if this.hasObjects}}
     <table>
       <thead>
         <tr>
-          <th>{{nameLabel}}</th>
+          <th>{{this.nameLabel}}</th>
           <th>{{i18n "admin.ratings.type.title"}}</th>
         </tr>
       </thead>
       <tbody>
-        {{#each objects as |object|}}
+        {{#each this.objects as |object|}}
           {{rating-object
             object=object
-            objects=objects
-            objectType=objectType
-            ratingTypes=ratingTypes
+            objects=this.objects
+            objectType=this.objectType
+            ratingTypes=this.ratingTypes
             addObject=(action "addObject")
             updateObject=(action "updateObject")
-            destroyObject=(action "destroyObject")}}
+            destroyObject=(action "destroyObject")
+          }}
         {{/each}}
       </tbody>
     </table>
   {{else}}
-    {{noneLabel}}
+    {{this.noneLabel}}
   {{/if}}
 {{/if}}
 
@@ -33,5 +34,6 @@
   {{d-button
     action=(action "newObject")
     label="admin.ratings.type.new"
-    icon="plus"}}
+    icon="plus"
+  }}
 </div>
