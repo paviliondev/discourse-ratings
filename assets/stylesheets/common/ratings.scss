@@ -19,8 +19,12 @@
   }
 }
 
-.topic-meta-data .names.has-ratings {
-  align-items: flex-start;
+.topic-meta-data .names .rating-list {
+  margin-left: 1em;
+  .rating-type {
+    // there is a .names span.first { font-weight: bold; }  in core... :sobs:
+    font-weight: normal;
+  }
 
   .rating {
     margin: 0 5px 0 0;

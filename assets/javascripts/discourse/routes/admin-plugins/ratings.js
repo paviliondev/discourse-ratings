@@ -4,8 +4,8 @@ import { service } from "@ember/service";
 import { all } from "rsvp";
 import DiscourseRoute from "discourse/routes/discourse";
 import { i18n } from "discourse-i18n";
-import RatingObject from "../models/rating-object";
-import RatingType from "../models/rating-type";
+import RatingObject from "../../models/rating-object";
+import RatingType from "../../models/rating-type";
 
 const noneType = "none";
 

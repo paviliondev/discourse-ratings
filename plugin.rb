@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 # name: discourse-ratings
 # about: A Discourse plugin that lets you use topics to rate things
-# version: 0.2.3
-# authors: Angus McLeod, Faizaan Gagan
+# version: 1.0
+# authors: Pavilion
 # url: https://github.com/paviliondev/discourse-ratings
 # contact_emails: development@pavilion.tech
 
@@ -182,12 +182,7 @@ after_initialize do
     )
   end
 
-  add_to_serializer(:post, :ratings, respect_plugin_enabled: false) do
-    DiscourseRatings::Rating.serialize(object.ratings)
-  end
-
-  add_to_serializer(:post, :include_ratings?) do
-    # we need to explictly check for plugin enabled when defining custom include method
+  add_to_serializer(:post, :ratings, respect_plugin_enabled: false, include_condition: -> {
     SiteSetting.rating_enabled &&
       (
         !SiteSetting.rating_hide_except_own_entry ||
@@ -196,6 +191,8 @@ after_initialize do
               (scope.current_user.staff? || scope.current_user.id === object.user.id)
           )
       )
+  }) do
+    DiscourseRatings::Rating.serialize(object.ratings)
   end
 
   ###### Topic ######
@@ -230,10 +227,10 @@ after_initialize do
       object.topic.ratings.present?
   end
 
-  add_to_serializer(:topic_view, :user_can_rate) { object.topic.user_can_rate(scope.current_user) }
-
-  add_to_serializer(:topic_view, :include_user_can_rate?) do
+  add_to_serializer(:topic_view, :user_can_rate, include_condition: -> {
     scope.current_user && object.topic.rating_enabled?
+  }) do
+    object.topic.user_can_rate(scope.current_user)
   end
 
   ::Topic.singleton_class.prepend TopicRatingsExtension

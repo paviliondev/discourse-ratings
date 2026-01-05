@@ -3,7 +3,7 @@ import { action } from "@ember/object";
 import { notEmpty } from "@ember/object/computed";
 import { service } from "@ember/service";
 import { i18n } from "discourse-i18n";
-import RatingType from "../models/rating-type";
+import RatingType from "../../models/rating-type";
 
 export default class AdminPluginsRatingsController extends Controller {
   @service dialog;

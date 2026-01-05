@@ -13,7 +13,6 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import Category from "discourse/models/category";
 import Composer from "discourse/models/composer";
 import { i18n } from "discourse-i18n";
-import { ratingListHtml } from "../lib/rating-utilities";
 
 const PLUGIN_ID = "discourse-ratings";
 
@@ -33,26 +32,7 @@ export default {
     withPluginApi("0.10.0", (api) => {
       const currentUser = api.getCurrentUser();
 
-      api.includePostAttributes("ratings");
-
-      api.decorateWidget("poster-name:after", function (helper) {
-        const post = helper.getModel();
-
-        if (post && post.topic && post.topic.show_ratings && post.ratings) {
-          return helper.rawHtml(ratingListHtml(post.ratings));
-        }
-      });
-
-      api.reopenWidget("poster-name", {
-        buildClasses() {
-          const post = this.findAncestorModel();
-          let classes = [];
-          if (post && post.topic && post.topic.show_ratings && post.ratings) {
-            classes.push("has-ratings");
-          }
-          return classes;
-        },
-      });
+      api.addTrackedPostProperties("ratings");
 
       api.modifyClass("model:composer", {
         pluginId: PLUGIN_ID,

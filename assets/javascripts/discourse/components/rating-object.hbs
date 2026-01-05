@@ -51,12 +51,12 @@
       action=this.updateObject
       actionParam=this.object
       label="admin.ratings.type.update"
-      icon="save"
+      icon="check"
       disabled=this.saveDisabled
     }}
   {{/if}}
 
-  {{d-button action=this.destroyObject actionParam=this.object icon="times"}}
+  {{d-button action=this.destroyObject actionParam=this.object icon="xmark"}}
 </td>
 
 {{#if this.error}}
