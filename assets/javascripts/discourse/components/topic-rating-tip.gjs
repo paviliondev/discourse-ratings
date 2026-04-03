@@ -1,44 +1,51 @@
-import Component from "@ember/component";
+import Component from "@glimmer/component";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
+import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import { bind } from "@ember/runloop";
-import { classNames } from "@ember-decorators/component";
-import $ from "jquery";
 import icon from "discourse/helpers/d-icon";
 import htmlSafe from "discourse/helpers/html-safe";
 import i18n from "discourse/helpers/i18n";
 
-@classNames("topic-rating-tip")
 export default class TopicRatingTip extends Component {
-  didInsertElement() {
-    super.didInsertElement(...arguments);
-    $(document).on("click", bind(this, this.documentClick));
+  @tracked showDetails = false;
+
+  element = null;
+
+  @action
+  setup(element) {
+    this.element = element;
+    document.addEventListener("click", this.documentClick);
   }
 
-  willDestroyElement() {
-    super.willDestroyElement(...arguments);
-    $(document).off("click", bind(this, this.documentClick));
+  @action
+  teardown() {
+    document.removeEventListener("click", this.documentClick);
   }
 
+  @action
   documentClick(e) {
-    let $element = $(this.element);
-    let $target = $(e.target);
+    if (!this.element || this.isDestroying || this.isDestroyed) {
+      return;
+    }
 
-    if ($target.closest($element).length < 1 && this._state !== "destroying") {
-      this.set("showDetails", false);
+    if (!this.element.contains(e.target)) {
+      this.showDetails = false;
     }
   }
 
   @action
   toggleDetails() {
-    this.toggleProperty("showDetails");
+    this.showDetails = !this.showDetails;
   }
 
-<template><a role="button" {{on "click" this.toggleDetails}}>
+<template><div class="topic-rating-tip" {{didInsert this.setup}} {{willDestroy this.teardown}}>
+<a role="button" {{on "click" this.toggleDetails}}>
   {{icon "circle-info"}}
 </a>
 {{#if this.showDetails}}
   <div class="tip-details">
-    {{htmlSafe (i18n this.details)}}
+    {{htmlSafe (i18n @details)}}
   </div>
-{{/if}}</template>}
+{{/if}}</div></template>}

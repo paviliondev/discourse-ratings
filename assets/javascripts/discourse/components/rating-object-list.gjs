@@ -1,36 +1,35 @@
-import Component from "@ember/component";
+import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
+import { set } from "@ember/object";
 import { action } from "@ember/object";
-import { notEmpty } from "@ember/object/computed";
-import { classNameBindings } from "@ember-decorators/component";
 import DButton from "discourse/components/d-button";
 import loadingSpinner from "discourse/helpers/loading-spinner";
-import discourseComputed from "discourse/lib/decorators";
 import { i18n } from "discourse-i18n";
 import RatingObject from "../models/rating-object";
 import RatingObjectItem from "./rating-object-item";
 
-@classNameBindings(":object-types", ":admin-ratings-list", "objectType")
 export default class RatingObjectList extends Component {
-  @notEmpty("objects") hasObjects;
+  @tracked loading = false;
 
-  @discourseComputed("objectType")
-  title(objectType) {
-    return i18n(`admin.ratings.${objectType}.title`);
+  get hasObjects() {
+    return !!this.args.objects?.length;
   }
 
-  @discourseComputed("objectType")
-  nameLabel(objectType) {
-    return i18n(`admin.ratings.${objectType}.name`);
+  get title() {
+    return i18n(`admin.ratings.${this.args.objectType}.title`);
   }
 
-  @discourseComputed("objectType")
-  noneLabel(objectType) {
-    return i18n(`admin.ratings.${objectType}.none`);
+  get nameLabel() {
+    return i18n(`admin.ratings.${this.args.objectType}.name`);
+  }
+
+  get noneLabel() {
+    return i18n(`admin.ratings.${this.args.objectType}.none`);
   }
 
   @action
   newObject() {
-    this.get("objects").pushObject({
+    this.args.objects.pushObject({
       name: "",
       types: [],
       isNew: true,
@@ -42,17 +41,17 @@ export default class RatingObjectList extends Component {
     let data = {
       name: obj.name,
       types: obj.types,
-      type: this.objectType,
+      type: this.args.objectType,
     };
 
-    this.set("loading", true);
+    this.loading = true;
     RatingObject.add(data).then((result) => {
       if (result.success) {
-        this.refresh();
+        this.args.refresh();
       } else {
-        obj.set("hasError", true);
+        set(obj, "hasError", true);
       }
-      this.set("loading", false);
+      this.loading = false;
     });
   }
 
@@ -62,70 +61,74 @@ export default class RatingObjectList extends Component {
       name: obj.name,
       types: obj.types,
     };
-    this.set("loading", true);
-    RatingObject.update(this.objectType, data).then((result) => {
+    this.loading = true;
+    RatingObject.update(this.args.objectType, data).then((result) => {
       if (result.success) {
-        this.refresh();
+        this.args.refresh();
       } else {
-        obj.set("hasError", true);
+        set(obj, "hasError", true);
       }
-      this.set("loading", false);
+      this.loading = false;
     });
   }
 
   @action
   destroyObject(obj) {
     if (obj.isNew) {
-      this.get("objects").removeObject(obj);
+      this.args.objects.removeObject(obj);
     } else {
       let data = {
         name: obj.name,
       };
 
-      this.set("loading", true);
-      RatingObject.destroy(this.objectType, data).then((result) => {
+      this.loading = true;
+      RatingObject.destroy(this.args.objectType, data).then((result) => {
         if (result.success) {
-          this.refresh();
+          this.args.refresh();
         } else {
-          obj.set("hasError", true);
+          set(obj, "hasError", true);
         }
-        this.set("loading", false);
+        this.loading = false;
       });
     }
   }
 
-<template><h3>{{this.title}}</h3>
+<template>
+<div class="object-types admin-ratings-list {{@objectType}}">
+  <h3>{{this.title}}</h3>
 
-{{#if this.loading}}
-  {{loadingSpinner}}
-{{else}}
-  {{#if this.hasObjects}}
-    <table>
-      <thead>
-        <tr>
-          <th>{{this.nameLabel}}</th>
-          <th>{{i18n "admin.ratings.type.title"}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each this.objects as |object|}}
-          <RatingObjectItem
-            @object={{object}}
-            @objects={{this.objects}}
-            @objectType={{this.objectType}}
-            @ratingTypes={{this.ratingTypes}}
-            @addObject={{this.addObject}}
-            @updateObject={{this.updateObject}}
-            @destroyObject={{this.destroyObject}}
-          />
-        {{/each}}
-      </tbody>
-    </table>
+  {{#if this.loading}}
+    {{loadingSpinner}}
   {{else}}
-    {{this.noneLabel}}
+    {{#if this.hasObjects}}
+      <table>
+        <thead>
+          <tr>
+            <th>{{this.nameLabel}}</th>
+            <th>{{i18n "admin.ratings.type.title"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each @objects as |object|}}
+            <RatingObjectItem
+              @object={{object}}
+              @objects={{@objects}}
+              @objectType={{@objectType}}
+              @ratingTypes={{@ratingTypes}}
+              @addObject={{this.addObject}}
+              @updateObject={{this.updateObject}}
+              @destroyObject={{this.destroyObject}}
+            />
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      {{this.noneLabel}}
+    {{/if}}
   {{/if}}
-{{/if}}
 
-<div class="admin-ratings-list-controls">
-  <DButton @action={{this.newObject}} @label="admin.ratings.type.new" @icon="plus" />
-</div></template>}
+  <div class="admin-ratings-list-controls">
+    <DButton @action={{this.newObject}} @label="admin.ratings.type.new" @icon="plus" />
+  </div>
+</div>
+</template>}

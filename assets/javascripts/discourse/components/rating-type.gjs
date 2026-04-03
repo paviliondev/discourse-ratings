@@ -1,56 +1,97 @@
-import Component, { Input } from "@ember/component";
-import { equal, lt, not, or } from "@ember/object/computed";
-import { classNameBindings, tagName } from "@ember-decorators/component";
+import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
+import { on } from "@ember/modifier";
+import { set } from "@ember/object";
+import { action } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse/helpers/i18n";
-import discourseComputed from "discourse/lib/decorators";
 
 const minTypeLength = 2;
 const minNameLength = 2;
 const noneType = "none";
 
-@tagName("tr")
-@classNameBindings(":rating-type", ":admin-ratings-list-object", "hasError")
 export default class RatingType extends Component {
-  @lt("type.type.length", minTypeLength) invalidType;
-  @lt("type.name.length", minNameLength) invalidName;
-  @or("invalidType", "invalidName") addDisabled;
-  @equal("type.type", noneType) noneType;
-  @not("noneType") showControls;
+  @tracked currentTypeValue;
+  @tracked currentTypeName;
 
-  didReceiveAttrs() {
-    super.didReceiveAttrs();
-    this.set("currentName", this.type.name);
+  originalName;
+
+  constructor(owner, args) {
+    super(owner, args);
+    this.currentTypeValue = args.type.type || "";
+    this.currentTypeName = args.type.name || "";
+    this.originalName = args.type.name || "";
   }
 
-  @discourseComputed("invalidName", "type.name", "currentName")
-  updateDisabled(invalidName, name, currentName) {
-    return invalidName || name === currentName;
+  get invalidType() {
+    return this.currentTypeValue.length < minTypeLength;
   }
 
-<template><td>
-  {{#if this.type.isNew}}
-    <Input @value={{this.type.type}} @placeholder={{i18n "admin.ratings.type.type_placeholder"}} />
+  get invalidName() {
+    return this.currentTypeName.length < minNameLength;
+  }
+
+  get addDisabled() {
+    return this.invalidType || this.invalidName;
+  }
+
+  get showControls() {
+    return this.currentTypeValue !== noneType;
+  }
+
+  get updateDisabled() {
+    return this.invalidName || this.currentTypeName === this.originalName;
+  }
+
+  @action
+  updateTypeValue(e) {
+    const val = e.target.value;
+    set(this.args.type, "type", val);
+    this.currentTypeValue = val;
+  }
+
+  @action
+  updateTypeName(e) {
+    const val = e.target.value;
+    set(this.args.type, "name", val);
+    this.currentTypeName = val;
+  }
+
+<template>
+<tr class="rating-type admin-ratings-list-object">
+  <td>
+  {{#if @type.isNew}}
+    <input
+      type="text"
+      value={{this.currentTypeValue}}
+      placeholder={{i18n "admin.ratings.type.type_placeholder"}}
+      {{on "input" this.updateTypeValue}}
+    />
   {{else}}
-    {{this.type.type}}
+    {{@type.type}}
   {{/if}}
 </td>
 
 <td>
-  {{#if this.type.isNone}}
+  {{#if @type.isNone}}
     {{i18n "admin.ratings.type.none_type_description"}}
   {{else}}
-    <Input @value={{this.type.name}} @placeholder={{i18n "admin.ratings.type.name_placeholder"}} />
+    <input
+      type="text"
+      value={{this.currentTypeName}}
+      placeholder={{i18n "admin.ratings.type.name_placeholder"}}
+      {{on "input" this.updateTypeName}}
+    />
   {{/if}}
 </td>
 
 <td class="type-controls">
   {{#if this.showControls}}
-    {{#if this.type.isNew}}
+    {{#if @type.isNew}}
       <DButton
         @class="btn-primary"
-        @action={{this.addType}}
-        @actionParam={{this.type}}
+        @action={{@addType}}
+        @actionParam={{@type}}
         @label="admin.ratings.type.add"
         @icon="plus"
         @disabled={{this.addDisabled}}
@@ -58,14 +99,16 @@ export default class RatingType extends Component {
     {{else}}
       <DButton
         @class="btn-primary"
-        @action={{this.updateType}}
-        @actionParam={{this.type}}
+        @action={{@updateType}}
+        @actionParam={{@type}}
         @label="admin.ratings.type.update"
         @icon="check"
         @disabled={{this.updateDisabled}}
       />
     {{/if}}
 
-    <DButton @action={{this.destroyType}} @actionParam={{this.type}} @icon="xmark" />
+    <DButton @action={{@destroyType}} @actionParam={{@type}} @icon="xmark" />
   {{/if}}
-</td></template>}
+</td>
+</tr>
+</template>}

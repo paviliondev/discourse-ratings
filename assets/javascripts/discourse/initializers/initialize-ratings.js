@@ -104,7 +104,7 @@ export default {
                 let rating = {
                   type,
                   value,
-                  include: include !== null ? include : true,
+                  include: include ?? false,
                 };
 
                 if (typeNames && typeNames[type]) {
@@ -127,13 +127,16 @@ export default {
 
                 if (this.hasRatingTypes && currentRating) {
                   score = currentRating.value;
-                  include = currentRating.value > 0 ? true : false;
+                  include =
+                    typeof currentRating.include === "boolean"
+                      ? currentRating.include
+                      : currentRating.value > 0;
                 }
 
                 let rating = {
                   type,
                   value: score,
-                  include: include !== null ? include : true,
+                  include: include ?? false,
                 };
 
                 if (typeNames && typeNames[type]) {

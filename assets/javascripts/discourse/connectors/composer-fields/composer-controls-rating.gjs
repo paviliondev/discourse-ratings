@@ -1,23 +1,25 @@
-import Component from "@ember/component";
+import Component from "@glimmer/component";
 import { set } from "@ember/object";
 import { action } from "@ember/object";
-import { classNames } from "@ember-decorators/component";
 import SelectRating from "../../components/select-rating";
 
-@classNames("composer-fields-outlet", "composer-controls-rating")
 export default class ComposerControlsRatingConnector extends Component {
   @action
   updateRating(rating) {
-    const ratings = this.get("model.ratings") || [];
-    const index = ratings.findIndex(r => r.type === rating.type);
+    const ratings = this.args.model.ratings || [];
+    const index = ratings.findIndex((r) => r.type === rating.type);
+    if (index === -1) {
+      return;
+    }
+    set(ratings[index], "include", rating.include);
     set(ratings[index], "value", rating.value);
-    this.set("model.ratings", ratings);
+    set(this.args.model, "ratings", ratings);
   }
 
-<template>
-  {{#if this.model.showRatings}}
-    {{#each this.model.ratings as |rating|}}
+<template><div class="composer-fields-outlet composer-controls-rating">
+  {{#if @model.showRatings}}
+    {{#each @model.ratings as |rating|}}
       <SelectRating @rating={{rating}} @updateRating={{this.updateRating}} />
     {{/each}}
   {{/if}}
-</template>}
+</div></template>}

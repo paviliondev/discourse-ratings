@@ -1,12 +1,11 @@
-import Component from "@ember/component";
-import { classNames } from "@ember-decorators/component";
+import Component from "@glimmer/component";
 import ratingList from "../../helpers/rating-list";
-@classNames("topic-title-outlet", "topic-rating-container")
+
 export default class TopicRatingContainerConnector extends Component {
   static shouldRender(_, context) {
     return context.siteSettings.rating_enabled;
   }
 
-<template>{{#if this.model.show_ratings}}
-  {{ratingList this.model.ratings topic=this.model}}
-{{/if}}</template>}
+<template><div class="topic-title-outlet topic-rating-container">{{#if @model.show_ratings}}
+  {{ratingList @model.ratings topic=@model}}
+{{/if}}</div></template>}

@@ -1,24 +1,29 @@
-import Component from "@ember/component";
+import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
 import { hash } from "@ember/helper";
 import { action } from "@ember/object";
-import { classNames } from "@ember-decorators/component";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse/helpers/i18n";
 import loadingSpinner from "discourse/helpers/loading-spinner";
-import discourseComputed from "discourse/lib/decorators";
 import CategoryChooser from "select-kit/components/category-chooser";
 import ComboBox from "select-kit/components/combo-box";
 import Rating from "../models/rating";
 
 const noneType = "none";
 
-@classNames("rating-action-controls")
 export default class RatingMigrate extends Component {
-  @discourseComputed("categoryId", "toType", "fromType")
-  migrateDisabled(categoryId, toType, fromType) {
+  @tracked categoryId = null;
+  @tracked fromType = null;
+  @tracked toType = null;
+  @tracked startingMigration = false;
+  @tracked migrationMessage = null;
+
+  get migrateDisabled() {
     return (
-      [categoryId, toType, fromType].any((i) => !i) ||
-      (toType !== noneType && fromType !== noneType)
+      !this.categoryId ||
+      !this.toType ||
+      !this.fromType ||
+      (this.toType !== noneType && this.fromType !== noneType)
     );
   }
 
@@ -30,63 +35,65 @@ export default class RatingMigrate extends Component {
       new_type: this.toType,
     };
 
-    this.set("startingMigration", true);
+    this.startingMigration = true;
 
     Rating.migrate(data)
       .then((result) => {
         if (result.success) {
-          this.set("migrationMessage", "admin.ratings.migrate.started");
+          this.migrationMessage = "admin.ratings.migrate.started";
         } else {
-          this.set(
-            "migrationMessage",
-            "admin.ratings.error.migration_failed_to_start"
-          );
+          this.migrationMessage =
+            "admin.ratings.error.migration_failed_to_start";
         }
       })
-      .finally(() => this.set("startingMigration", false));
+      .finally(() => (this.startingMigration = false));
   }
 
   @action
   updateCategory(categoryId) {
-    this.set("categoryId", categoryId);
+    this.categoryId = categoryId;
   }
 
   @action
   updateFromType(fromType) {
-    this.set("fromType", fromType);
+    this.fromType = fromType;
   }
 
   @action
   updateToType(toType) {
-    this.set("toType", toType);
+    this.toType = toType;
   }
 
-<template><CategoryChooser @value={{this.categoryId}} @onChange={{this.updateCategory}} />
+<template>
+<div class="rating-action-controls">
+  <CategoryChooser @value={{this.categoryId}} @onChange={{this.updateCategory}} />
 
-<ComboBox
-  @value={{this.fromType}}
-  @content={{this.ratingTypes}}
-  @valueProperty="type"
-  @onChange={{this.updateFromType}}
-  @options={{hash none="admin.ratings.type.select"}}
-/>
+  <ComboBox
+    @value={{this.fromType}}
+    @content={{@ratingTypes}}
+    @valueProperty="type"
+    @onChange={{this.updateFromType}}
+    @options={{hash none="admin.ratings.type.select"}}
+  />
 
-<ComboBox
-  @value={{this.toType}}
-  @content={{this.ratingTypes}}
-  @valueProperty="type"
-  @onChange={{this.updateToType}}
-  @options={{hash none="admin.ratings.type.select"}}
-/>
+  <ComboBox
+    @value={{this.toType}}
+    @content={{@ratingTypes}}
+    @valueProperty="type"
+    @onChange={{this.updateToType}}
+    @options={{hash none="admin.ratings.type.select"}}
+  />
 
-<DButton @action={{this.migrate}} @label="admin.ratings.migrate.btn" @disabled={{this.migrateDisabled}} />
+  <DButton @action={{this.migrate}} @label="admin.ratings.migrate.btn" @disabled={{this.migrateDisabled}} />
 
-{{#if this.startingMigration}}
-  {{loadingSpinner size="small"}}
-{{/if}}
+  {{#if this.startingMigration}}
+    {{loadingSpinner size="small"}}
+  {{/if}}
 
-{{#if this.migrationMessage}}
-  <div class="action-message">
-    {{i18n this.migrationMessage}}
-  </div>
-{{/if}}</template>}
+  {{#if this.migrationMessage}}
+    <div class="action-message">
+      {{i18n this.migrationMessage}}
+    </div>
+  {{/if}}
+</div>
+</template>}

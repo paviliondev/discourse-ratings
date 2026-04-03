@@ -1,35 +1,44 @@
-import Component, { Input } from "@ember/component";
+import Component from "@glimmer/component";
+import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import { classNames, tagName } from "@ember-decorators/component";
-import { observes } from "@ember-decorators/object";
+import { set } from "@ember/object";
 import i18n from "discourse/helpers/i18n";
 import StarRating from "./star-rating";
 
-@tagName("div")
-@classNames("rating-container")
 export default class SelectRating extends Component {
-  @observes("rating.include")
-  removeOnUncheck() {
-    if (!this.rating.include) {
-      this.set("rating.value", 0);
-      this.updateRating(this.rating);
+  @action
+  updateInclude(event) {
+    const include = event.target.checked;
+    set(this.args.rating, "include", include);
+
+    if (!include) {
+      set(this.args.rating, "value", 0);
     }
+
+    this.args.updateRating(this.args.rating);
   }
 
   @action
   triggerUpdateRating(value) {
-    this.set("rating.value", value);
-    this.updateRating(this.rating);
+    set(this.args.rating, "value", value);
+    this.args.updateRating(this.args.rating);
   }
 
-<template><Input @type="checkbox" @checked={{this.rating.include}} class="include-rating" />
+<template><div class="rating-container">
+  <input
+    type="checkbox"
+    checked={{@rating.include}}
+    class="include-rating"
+    {{on "change" this.updateInclude}}
+  />
 
 <span>
-  {{#if this.rating.typeName}}
-    {{this.rating.typeName}}
+  {{#if @rating.typeName}}
+    {{@rating.typeName}}
   {{else}}
     {{i18n "composer.your_rating"}}
   {{/if}}
 </span>
 
-  <StarRating @enabled={{this.rating.include}} @rating={{this.rating.value}} @onChange={{this.triggerUpdateRating}} /></template>}
+  <StarRating @enabled={{@rating.include}} @rating={{@rating.value}} @onChange={{this.triggerUpdateRating}} />
+</div></template>}
