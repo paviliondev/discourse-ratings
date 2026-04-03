@@ -1,10 +1,17 @@
 import Component from "@ember/component";
+import { hash } from "@ember/helper";
 import { action } from "@ember/object";
 import { equal } from "@ember/object/computed";
 import { classNameBindings, tagName } from "@ember-decorators/component";
+import DButton from "discourse/components/d-button";
+import categoryBadge from "discourse/helpers/category-badge";
+import discourseTag from "discourse/helpers/discourse-tag";
 import discourseComputed from "discourse/lib/decorators";
 import Category from "discourse/models/category";
 import { i18n } from "discourse-i18n";
+import CategoryChooser from "select-kit/components/category-chooser";
+import MultiSelect from "select-kit/components/multi-select";
+import TagChooser from "select-kit/components/tag-chooser";
 
 @classNameBindings(
   ":rating-object",
@@ -12,7 +19,7 @@ import { i18n } from "discourse-i18n";
   "error:hasError"
 )
 @tagName("tr")
-export default class RatingObject extends Component {
+export default class RatingObjectItem extends Component {
   @equal("objectType", "category") isCategory;
   @equal("objectType", "tag") isTag;
 
@@ -92,4 +99,70 @@ export default class RatingObject extends Component {
       );
     }
   }
-}
+
+  @action
+  updateTypes(types) {
+    this.set("object.types", types);
+  }
+
+<template><td>
+  {{#if this.object.isNew}}
+    {{#if this.isCategory}}
+      <CategoryChooser @value={{this.category.id}} @onChange={{this.updateCategory}} />
+    {{/if}}
+    {{#if this.isTag}}
+      <TagChooser
+        @tags={{this.tag}}
+        @everyTag={{true}}
+        @excludeSynonyms={{true}}
+        @maximum={{1}}
+        @onChange={{this.updateTag}}
+        @options={{hash none="select_kit.default_header_text"}}
+      />
+    {{/if}}
+  {{else}}
+    {{#if this.isCategory}}
+      {{categoryBadge this.category}}
+    {{/if}}
+    {{#if this.isTag}}
+      {{discourseTag this.tag}}
+    {{/if}}
+  {{/if}}
+</td>
+
+<td>
+  <MultiSelect
+    @value={{this.object.types}}
+    @content={{this.ratingTypes}}
+    @valueProperty="type"
+    @onChange={{this.updateTypes}}
+  />
+</td>
+
+<td class="type-controls">
+  {{#if this.object.isNew}}
+    <DButton
+      @class="btn-primary"
+      @action={{this.addObject}}
+      @actionParam={{this.object}}
+      @label="admin.ratings.type.add"
+      @icon="plus"
+      @disabled={{this.saveDisabled}}
+    />
+  {{else}}
+    <DButton
+      @class="btn-primary"
+      @action={{this.updateObject}}
+      @actionParam={{this.object}}
+      @label="admin.ratings.type.update"
+      @icon="check"
+      @disabled={{this.saveDisabled}}
+    />
+  {{/if}}
+
+  <DButton @action={{this.destroyObject}} @actionParam={{this.object}} @icon="xmark" />
+</td>
+
+{{#if this.error}}
+  <span class="error">{{this.error}}</span>
+{{/if}}</template>}

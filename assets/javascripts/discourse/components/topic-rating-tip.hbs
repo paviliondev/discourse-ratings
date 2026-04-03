@@ -1,8 +1,0 @@
-<a role="button" {{on "click" (action "toggleDetails")}}>
-  {{d-icon "circle-info"}}
-</a>
-{{#if this.showDetails}}
-  <div class="tip-details">
-    {{html-safe (i18n this.details)}}
-  </div>
-{{/if}}

@@ -20,11 +20,11 @@ export default class RatingStar extends Component {
   }
 
   click() {
-    this.set("rating", this.element.value);
+    this.onChange?.(Number(this.element.value));
   }
 
   @discourseComputed("rating")
   checked(rating) {
-    return this.get("value") <= rating;
+    return Number(this.get("value")) <= Number(rating || 0);
   }
 }

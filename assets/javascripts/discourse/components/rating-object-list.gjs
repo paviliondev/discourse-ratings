@@ -2,9 +2,12 @@ import Component from "@ember/component";
 import { action } from "@ember/object";
 import { notEmpty } from "@ember/object/computed";
 import { classNameBindings } from "@ember-decorators/component";
+import DButton from "discourse/components/d-button";
+import loadingSpinner from "discourse/helpers/loading-spinner";
 import discourseComputed from "discourse/lib/decorators";
 import { i18n } from "discourse-i18n";
 import RatingObject from "../models/rating-object";
+import RatingObjectItem from "./rating-object-item";
 
 @classNameBindings(":object-types", ":admin-ratings-list", "objectType")
 export default class RatingObjectList extends Component {
@@ -90,4 +93,39 @@ export default class RatingObjectList extends Component {
       });
     }
   }
-}
+
+<template><h3>{{this.title}}</h3>
+
+{{#if this.loading}}
+  {{loadingSpinner}}
+{{else}}
+  {{#if this.hasObjects}}
+    <table>
+      <thead>
+        <tr>
+          <th>{{this.nameLabel}}</th>
+          <th>{{i18n "admin.ratings.type.title"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each this.objects as |object|}}
+          <RatingObjectItem
+            @object={{object}}
+            @objects={{this.objects}}
+            @objectType={{this.objectType}}
+            @ratingTypes={{this.ratingTypes}}
+            @addObject={{this.addObject}}
+            @updateObject={{this.updateObject}}
+            @destroyObject={{this.destroyObject}}
+          />
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    {{this.noneLabel}}
+  {{/if}}
+{{/if}}
+
+<div class="admin-ratings-list-controls">
+  <DButton @action={{this.newObject}} @label="admin.ratings.type.new" @icon="plus" />
+</div></template>}
