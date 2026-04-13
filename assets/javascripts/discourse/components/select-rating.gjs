@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
-import { action } from "@ember/object";
-import { set } from "@ember/object";
+import { action,set } from "@ember/object";
 import i18n from "discourse/helpers/i18n";
 import StarRating from "./star-rating";
 

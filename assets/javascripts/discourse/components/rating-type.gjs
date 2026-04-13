@@ -1,8 +1,7 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
-import { set } from "@ember/object";
-import { action } from "@ember/object";
+import { action,set } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse/helpers/i18n";
 
@@ -89,7 +88,7 @@ export default class RatingType extends Component {
   {{#if this.showControls}}
     {{#if @type.isNew}}
       <DButton
-        @class="btn-primary"
+        class="btn-primary"
         @action={{@addType}}
         @actionParam={{@type}}
         @label="admin.ratings.type.add"
@@ -98,7 +97,7 @@ export default class RatingType extends Component {
       />
     {{else}}
       <DButton
-        @class="btn-primary"
+        class="btn-primary"
         @action={{@updateType}}
         @actionParam={{@type}}
         @label="admin.ratings.type.update"

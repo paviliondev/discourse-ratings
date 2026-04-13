@@ -1,9 +1,9 @@
 import Component from "@glimmer/component";
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
-import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 import icon from "discourse/helpers/d-icon";
 import htmlSafe from "discourse/helpers/html-safe";
 import i18n from "discourse/helpers/i18n";

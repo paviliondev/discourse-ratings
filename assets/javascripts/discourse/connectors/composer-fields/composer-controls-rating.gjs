@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
-import { set } from "@ember/object";
-import { action } from "@ember/object";
+import { action,set } from "@ember/object";
 import SelectRating from "../../components/select-rating";
 
 export default class ComposerControlsRatingConnector extends Component {

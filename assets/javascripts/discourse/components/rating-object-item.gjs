@@ -147,7 +147,7 @@ export default class RatingObjectItem extends Component {
 <td class="type-controls">
   {{#if @object.isNew}}
     <DButton
-      @class="btn-primary"
+      class="btn-primary"
       @action={{@addObject}}
       @actionParam={{@object}}
       @label="admin.ratings.type.add"
@@ -156,7 +156,7 @@ export default class RatingObjectItem extends Component {
     />
   {{else}}
     <DButton
-      @class="btn-primary"
+      class="btn-primary"
       @action={{@updateObject}}
       @actionParam={{@object}}
       @label="admin.ratings.type.update"

@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { set } from "@ember/object";
-import { action } from "@ember/object";
+import { action,set } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import loadingSpinner from "discourse/helpers/loading-spinner";
 import { i18n } from "discourse-i18n";
