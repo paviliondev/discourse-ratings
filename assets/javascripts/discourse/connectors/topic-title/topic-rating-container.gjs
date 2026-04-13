@@ -6,6 +6,11 @@ export default class TopicRatingContainerConnector extends Component {
     return context.siteSettings.rating_enabled;
   }
 
-<template><div class="topic-title-outlet topic-rating-container">{{#if @model.show_ratings}}
-  {{ratingList @model.ratings topic=@model}}
-{{/if}}</div></template>}
+  <template>
+    <div class="topic-title-outlet topic-rating-container">{{#if
+        @model.show_ratings
+      }}
+        {{ratingList @model.ratings topic=@model}}
+      {{/if}}</div>
+  </template>
+}

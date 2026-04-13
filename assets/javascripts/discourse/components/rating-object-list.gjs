@@ -1,6 +1,6 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { action,set } from "@ember/object";
+import { action, set } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import loadingSpinner from "discourse/helpers/loading-spinner";
 import { i18n } from "discourse-i18n";
@@ -92,42 +92,47 @@ export default class RatingObjectList extends Component {
     }
   }
 
-<template>
-<div class="object-types admin-ratings-list {{@objectType}}">
-  <h3>{{this.title}}</h3>
+  <template>
+    <div class="object-types admin-ratings-list {{@objectType}}">
+      <h3>{{this.title}}</h3>
 
-  {{#if this.loading}}
-    {{loadingSpinner}}
-  {{else}}
-    {{#if this.hasObjects}}
-      <table>
-        <thead>
-          <tr>
-            <th>{{this.nameLabel}}</th>
-            <th>{{i18n "admin.ratings.type.title"}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each @objects as |object|}}
-            <RatingObjectItem
-              @object={{object}}
-              @objects={{@objects}}
-              @objectType={{@objectType}}
-              @ratingTypes={{@ratingTypes}}
-              @addObject={{this.addObject}}
-              @updateObject={{this.updateObject}}
-              @destroyObject={{this.destroyObject}}
-            />
-          {{/each}}
-        </tbody>
-      </table>
-    {{else}}
-      {{this.noneLabel}}
-    {{/if}}
-  {{/if}}
+      {{#if this.loading}}
+        {{loadingSpinner}}
+      {{else}}
+        {{#if this.hasObjects}}
+          <table>
+            <thead>
+              <tr>
+                <th>{{this.nameLabel}}</th>
+                <th>{{i18n "admin.ratings.type.title"}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each @objects as |object|}}
+                <RatingObjectItem
+                  @object={{object}}
+                  @objects={{@objects}}
+                  @objectType={{@objectType}}
+                  @ratingTypes={{@ratingTypes}}
+                  @addObject={{this.addObject}}
+                  @updateObject={{this.updateObject}}
+                  @destroyObject={{this.destroyObject}}
+                />
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          {{this.noneLabel}}
+        {{/if}}
+      {{/if}}
 
-  <div class="admin-ratings-list-controls">
-    <DButton @action={{this.newObject}} @label="admin.ratings.type.new" @icon="plus" />
-  </div>
-</div>
-</template>}
+      <div class="admin-ratings-list-controls">
+        <DButton
+          @action={{this.newObject}}
+          @label="admin.ratings.type.new"
+          @icon="plus"
+        />
+      </div>
+    </div>
+  </template>
+}

@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import { action,set } from "@ember/object";
+import { action, set } from "@ember/object";
 import SelectRating from "../../components/select-rating";
 
 export default class ComposerControlsRatingConnector extends Component {
@@ -15,10 +15,16 @@ export default class ComposerControlsRatingConnector extends Component {
     set(this.args.model, "ratings", ratings);
   }
 
-<template><div class="composer-fields-outlet composer-controls-rating">
-  {{#if @model.showRatings}}
-    {{#each @model.ratings as |rating|}}
-      <SelectRating @rating={{rating}} @updateRating={{this.updateRating}} />
-    {{/each}}
-  {{/if}}
-</div></template>}
+  <template>
+    <div class="composer-fields-outlet composer-controls-rating">
+      {{#if @model.showRatings}}
+        {{#each @model.ratings as |rating|}}
+          <SelectRating
+            @rating={{rating}}
+            @updateRating={{this.updateRating}}
+          />
+        {{/each}}
+      {{/if}}
+    </div>
+  </template>
+}

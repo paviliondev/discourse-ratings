@@ -64,36 +64,44 @@ export default class RatingMigrate extends Component {
     this.toType = toType;
   }
 
-<template>
-<div class="rating-action-controls">
-  <CategoryChooser @value={{this.categoryId}} @onChange={{this.updateCategory}} />
+  <template>
+    <div class="rating-action-controls">
+      <CategoryChooser
+        @value={{this.categoryId}}
+        @onChange={{this.updateCategory}}
+      />
 
-  <ComboBox
-    @value={{this.fromType}}
-    @content={{@ratingTypes}}
-    @valueProperty="type"
-    @onChange={{this.updateFromType}}
-    @options={{hash none="admin.ratings.type.select"}}
-  />
+      <ComboBox
+        @value={{this.fromType}}
+        @content={{@ratingTypes}}
+        @valueProperty="type"
+        @onChange={{this.updateFromType}}
+        @options={{hash none="admin.ratings.type.select"}}
+      />
 
-  <ComboBox
-    @value={{this.toType}}
-    @content={{@ratingTypes}}
-    @valueProperty="type"
-    @onChange={{this.updateToType}}
-    @options={{hash none="admin.ratings.type.select"}}
-  />
+      <ComboBox
+        @value={{this.toType}}
+        @content={{@ratingTypes}}
+        @valueProperty="type"
+        @onChange={{this.updateToType}}
+        @options={{hash none="admin.ratings.type.select"}}
+      />
 
-  <DButton @action={{this.migrate}} @label="admin.ratings.migrate.btn" @disabled={{this.migrateDisabled}} />
+      <DButton
+        @action={{this.migrate}}
+        @label="admin.ratings.migrate.btn"
+        @disabled={{this.migrateDisabled}}
+      />
 
-  {{#if this.startingMigration}}
-    {{loadingSpinner size="small"}}
-  {{/if}}
+      {{#if this.startingMigration}}
+        {{loadingSpinner size="small"}}
+      {{/if}}
 
-  {{#if this.migrationMessage}}
-    <div class="action-message">
-      {{i18n this.migrationMessage}}
+      {{#if this.migrationMessage}}
+        <div class="action-message">
+          {{i18n this.migrationMessage}}
+        </div>
+      {{/if}}
     </div>
-  {{/if}}
-</div>
-</template>}
+  </template>
+}

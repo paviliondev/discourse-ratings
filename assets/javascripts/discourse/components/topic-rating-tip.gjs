@@ -40,12 +40,19 @@ export default class TopicRatingTip extends Component {
     this.showDetails = !this.showDetails;
   }
 
-<template><div class="topic-rating-tip" {{didInsert this.setup}} {{willDestroy this.teardown}}>
-<a role="button" {{on "click" this.toggleDetails}}>
-  {{icon "circle-info"}}
-</a>
-{{#if this.showDetails}}
-  <div class="tip-details">
-    {{htmlSafe (i18n @details)}}
-  </div>
-{{/if}}</div></template>}
+  <template>
+    <div
+      class="topic-rating-tip"
+      {{didInsert this.setup}}
+      {{willDestroy this.teardown}}
+    >
+      <a role="button" {{on "click" this.toggleDetails}}>
+        {{icon "circle-info"}}
+      </a>
+      {{#if this.showDetails}}
+        <div class="tip-details">
+          {{htmlSafe (i18n @details)}}
+        </div>
+      {{/if}}</div>
+  </template>
+}

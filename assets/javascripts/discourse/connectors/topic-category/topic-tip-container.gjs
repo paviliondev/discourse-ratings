@@ -9,6 +9,11 @@ export default class TopicTipContainerConnector extends Component {
     );
   }
 
-<template><div class="topic-category-outlet topic-tip-container">{{#if @topic.show_ratings}}
-  <TopicRatingTip @details="topic.tip.ratings.details" />
-{{/if}}</div></template>}
+  <template>
+    <div class="topic-category-outlet topic-tip-container">{{#if
+        @topic.show_ratings
+      }}
+        <TopicRatingTip @details="topic.tip.ratings.details" />
+      {{/if}}</div>
+  </template>
+}

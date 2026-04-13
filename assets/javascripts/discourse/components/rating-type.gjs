@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
-import { action,set } from "@ember/object";
+import { action, set } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse/helpers/i18n";
 
@@ -56,58 +56,63 @@ export default class RatingType extends Component {
     this.currentTypeName = val;
   }
 
-<template>
-<tr class="rating-type admin-ratings-list-object">
-  <td>
-  {{#if @type.isNew}}
-    <input
-      type="text"
-      value={{this.currentTypeValue}}
-      placeholder={{i18n "admin.ratings.type.type_placeholder"}}
-      {{on "input" this.updateTypeValue}}
-    />
-  {{else}}
-    {{@type.type}}
-  {{/if}}
-</td>
+  <template>
+    <tr class="rating-type admin-ratings-list-object">
+      <td>
+        {{#if @type.isNew}}
+          <input
+            type="text"
+            value={{this.currentTypeValue}}
+            placeholder={{i18n "admin.ratings.type.type_placeholder"}}
+            {{on "input" this.updateTypeValue}}
+          />
+        {{else}}
+          {{@type.type}}
+        {{/if}}
+      </td>
 
-<td>
-  {{#if @type.isNone}}
-    {{i18n "admin.ratings.type.none_type_description"}}
-  {{else}}
-    <input
-      type="text"
-      value={{this.currentTypeName}}
-      placeholder={{i18n "admin.ratings.type.name_placeholder"}}
-      {{on "input" this.updateTypeName}}
-    />
-  {{/if}}
-</td>
+      <td>
+        {{#if @type.isNone}}
+          {{i18n "admin.ratings.type.none_type_description"}}
+        {{else}}
+          <input
+            type="text"
+            value={{this.currentTypeName}}
+            placeholder={{i18n "admin.ratings.type.name_placeholder"}}
+            {{on "input" this.updateTypeName}}
+          />
+        {{/if}}
+      </td>
 
-<td class="type-controls">
-  {{#if this.showControls}}
-    {{#if @type.isNew}}
-      <DButton
-        class="btn-primary"
-        @action={{@addType}}
-        @actionParam={{@type}}
-        @label="admin.ratings.type.add"
-        @icon="plus"
-        @disabled={{this.addDisabled}}
-      />
-    {{else}}
-      <DButton
-        class="btn-primary"
-        @action={{@updateType}}
-        @actionParam={{@type}}
-        @label="admin.ratings.type.update"
-        @icon="check"
-        @disabled={{this.updateDisabled}}
-      />
-    {{/if}}
+      <td class="type-controls">
+        {{#if this.showControls}}
+          {{#if @type.isNew}}
+            <DButton
+              class="btn-primary"
+              @action={{@addType}}
+              @actionParam={{@type}}
+              @label="admin.ratings.type.add"
+              @icon="plus"
+              @disabled={{this.addDisabled}}
+            />
+          {{else}}
+            <DButton
+              class="btn-primary"
+              @action={{@updateType}}
+              @actionParam={{@type}}
+              @label="admin.ratings.type.update"
+              @icon="check"
+              @disabled={{this.updateDisabled}}
+            />
+          {{/if}}
 
-    <DButton @action={{@destroyType}} @actionParam={{@type}} @icon="xmark" />
-  {{/if}}
-</td>
-</tr>
-</template>}
+          <DButton
+            @action={{@destroyType}}
+            @actionParam={{@type}}
+            @icon="xmark"
+          />
+        {{/if}}
+      </td>
+    </tr>
+  </template>
+}

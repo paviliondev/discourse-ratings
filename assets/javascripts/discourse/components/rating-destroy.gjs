@@ -48,28 +48,36 @@ export default class RatingDestroy extends Component {
     this.type = type;
   }
 
-<template>
-<div class="admin-ratings-destroy rating-action">
-  <CategoryChooser @value={{this.categoryId}} @onChange={{this.updateCategory}} />
+  <template>
+    <div class="admin-ratings-destroy rating-action">
+      <CategoryChooser
+        @value={{this.categoryId}}
+        @onChange={{this.updateCategory}}
+      />
 
-  <ComboBox
-    @value={{this.type}}
-    @content={{@ratingTypes}}
-    @valueProperty="type"
-    @onChange={{this.updateType}}
-    @options={{hash none="admin.ratings.type.select"}}
-  />
+      <ComboBox
+        @value={{this.type}}
+        @content={{@ratingTypes}}
+        @valueProperty="type"
+        @onChange={{this.updateType}}
+        @options={{hash none="admin.ratings.type.select"}}
+      />
 
-  <DButton @action={{this.destroyRatings}} @label="admin.ratings.destroy.btn" @disabled={{this.destroyDisabled}} />
+      <DButton
+        @action={{this.destroyRatings}}
+        @label="admin.ratings.destroy.btn"
+        @disabled={{this.destroyDisabled}}
+      />
 
-  {{#if this.startingDestroy}}
-    {{loadingSpinner size="small"}}
-  {{/if}}
+      {{#if this.startingDestroy}}
+        {{loadingSpinner size="small"}}
+      {{/if}}
 
-  {{#if this.destroyMessage}}
-    <div class="action-message">
-      {{i18n this.destroyMessage}}
+      {{#if this.destroyMessage}}
+        <div class="action-message">
+          {{i18n this.destroyMessage}}
+        </div>
+      {{/if}}
     </div>
-  {{/if}}
-</div>
-</template>}
+  </template>
+}

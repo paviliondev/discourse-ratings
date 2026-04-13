@@ -16,10 +16,13 @@ export default class RatingStar extends Component {
     this.args.onChange?.(Number(this.args.value));
   }
 
-<template><input
-  type="radio"
-  value={{@value}}
-  checked={{this.checked}}
-  disabled={{this.disabled}}
-  {{on "click" this.select}}
-/></template>}
+  <template>
+    <input
+      type="radio"
+      value={{@value}}
+      checked={{this.checked}}
+      disabled={{this.disabled}}
+      {{on "click" this.select}}
+    />
+  </template>
+}

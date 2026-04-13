@@ -108,68 +108,76 @@ export default class RatingObjectItem extends Component {
     this.objectTypes = types;
   }
 
-<template>
-<tr class={{this.rowClass}}>
-  <td>
-  {{#if @object.isNew}}
-    {{#if this.isCategory}}
-      <CategoryChooser @value={{this.category.id}} @onChange={{this.updateCategory}} />
-    {{/if}}
-    {{#if this.isTag}}
-      <TagChooser
-        @tags={{this.tag}}
-        @everyTag={{true}}
-        @excludeSynonyms={{true}}
-        @maximum={{1}}
-        @onChange={{this.updateTag}}
-        @options={{hash none="select_kit.default_header_text"}}
-      />
-    {{/if}}
-  {{else}}
-    {{#if this.isCategory}}
-      {{categoryBadge this.category}}
-    {{/if}}
-    {{#if this.isTag}}
-      {{discourseTag this.tag}}
-    {{/if}}
-  {{/if}}
-</td>
+  <template>
+    <tr class={{this.rowClass}}>
+      <td>
+        {{#if @object.isNew}}
+          {{#if this.isCategory}}
+            <CategoryChooser
+              @value={{this.category.id}}
+              @onChange={{this.updateCategory}}
+            />
+          {{/if}}
+          {{#if this.isTag}}
+            <TagChooser
+              @tags={{this.tag}}
+              @everyTag={{true}}
+              @excludeSynonyms={{true}}
+              @maximum={{1}}
+              @onChange={{this.updateTag}}
+              @options={{hash none="select_kit.default_header_text"}}
+            />
+          {{/if}}
+        {{else}}
+          {{#if this.isCategory}}
+            {{categoryBadge this.category}}
+          {{/if}}
+          {{#if this.isTag}}
+            {{discourseTag this.tag}}
+          {{/if}}
+        {{/if}}
+      </td>
 
-<td>
-  <MultiSelect
-    @value={{this.objectTypes}}
-    @content={{@ratingTypes}}
-    @valueProperty="type"
-    @onChange={{this.updateTypes}}
-  />
-</td>
+      <td>
+        <MultiSelect
+          @value={{this.objectTypes}}
+          @content={{@ratingTypes}}
+          @valueProperty="type"
+          @onChange={{this.updateTypes}}
+        />
+      </td>
 
-<td class="type-controls">
-  {{#if @object.isNew}}
-    <DButton
-      class="btn-primary"
-      @action={{@addObject}}
-      @actionParam={{@object}}
-      @label="admin.ratings.type.add"
-      @icon="plus"
-      @disabled={{this.saveDisabled}}
-    />
-  {{else}}
-    <DButton
-      class="btn-primary"
-      @action={{@updateObject}}
-      @actionParam={{@object}}
-      @label="admin.ratings.type.update"
-      @icon="check"
-      @disabled={{this.saveDisabled}}
-    />
-  {{/if}}
+      <td class="type-controls">
+        {{#if @object.isNew}}
+          <DButton
+            class="btn-primary"
+            @action={{@addObject}}
+            @actionParam={{@object}}
+            @label="admin.ratings.type.add"
+            @icon="plus"
+            @disabled={{this.saveDisabled}}
+          />
+        {{else}}
+          <DButton
+            class="btn-primary"
+            @action={{@updateObject}}
+            @actionParam={{@object}}
+            @label="admin.ratings.type.update"
+            @icon="check"
+            @disabled={{this.saveDisabled}}
+          />
+        {{/if}}
 
-  <DButton @action={{@destroyObject}} @actionParam={{@object}} @icon="xmark" />
-</td>
+        <DButton
+          @action={{@destroyObject}}
+          @actionParam={{@object}}
+          @icon="xmark"
+        />
+      </td>
 
-{{#if this.error}}
-  <span class="error">{{this.error}}</span>
-{{/if}}
-</tr>
-</template>}
+      {{#if this.error}}
+        <span class="error">{{this.error}}</span>
+      {{/if}}
+    </tr>
+  </template>
+}
