@@ -1,11 +1,11 @@
-import RouteTemplate from "ember-route-template";
 import DButton from "discourse/components/d-button";
-import i18n from "discourse/helpers/i18n";
 import routeAction from "discourse/helpers/route-action";
+import { i18n } from "discourse-i18n";
 import RatingActions from "../../components/rating-actions";
 import RatingObjectList from "../../components/rating-object-list";
 import RatingType from "../../components/rating-type";
-export default RouteTemplate(<template>
+
+export default <template>
   <div class="types admin-ratings-list">
     <h3>{{i18n "admin.ratings.type.title"}}</h3>
 
@@ -56,4 +56,4 @@ export default RouteTemplate(<template>
   />
 
   <RatingActions @ratingTypes={{@controller.ratingTypes}} />
-</template>);
+</template>

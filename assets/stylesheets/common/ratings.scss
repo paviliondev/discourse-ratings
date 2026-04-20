@@ -21,6 +21,7 @@
 
 .topic-meta-data .names .rating-list {
   margin-left: 1em;
+
   .rating-type {
     // there is a .names span.first { font-weight: bold; }  in core... :sobs:
     font-weight: normal;
@@ -62,8 +63,7 @@ span.star-rating {
 
   input[type="radio"],
   span {
-    -moz-appearance: none;
-    -webkit-appearance: none;
+    appearance: none;
     opacity: 0;
     cursor: pointer;
     display: inline-block;

@@ -2,7 +2,7 @@ import { i18n } from "discourse-i18n";
 import RatingDestroy from "./rating-destroy";
 import RatingMigrate from "./rating-migrate";
 
-<template>
+export default <template>
   <div class="ratings-action-controls">
     <div class="admin-ratings-action">
       <h3>{{i18n "admin.ratings.migrate.title"}}</h3>

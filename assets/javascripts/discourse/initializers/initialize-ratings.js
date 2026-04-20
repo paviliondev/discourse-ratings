@@ -1,13 +1,9 @@
-import { getOwner } from "@ember/application";
-import { computed } from "@ember/object";
+/* eslint-disable ember/no-observers */
+import { computed, observer } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
+import { getOwner } from "@ember/owner";
 import { run } from "@ember/runloop";
 import discourseDebounce from "discourse/lib/debounce";
-import {
-  default as discourseComputed,
-  observes,
-  on,
-} from "discourse/lib/decorators";
 import { isTesting } from "discourse/lib/environment";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import Category from "discourse/models/category";
@@ -29,7 +25,7 @@ export default {
     Composer.serializeOnUpdate("ratings", "ratingsString");
     Composer.serializeToDraft("ratings", "ratingsString");
 
-    withPluginApi("0.10.0", (api) => {
+    withPluginApi((api) => {
       const currentUser = api.getCurrentUser();
 
       api.addTrackedPostProperties("ratings");
@@ -40,44 +36,39 @@ export default {
         hasRatingTypes: notEmpty("ratingTypes"),
         showRatings: or("hasRatingTypes", "editingPostWithRatings"),
 
-        @discourseComputed(
+        ratingTypes: computed(
           "editingPostWithRatings",
           "topicFirstPost",
           "post.ratings",
-          "allowedRatingTypes.[]"
-        )
-        ratingTypes(
-          editingPostWithRatings,
-          topicFirstPost,
-          postRatings,
-          allowedRatingTypes
-        ) {
-          let userCanRate;
-          if (this.topic) {
-            userCanRate = this.topic.user_can_rate;
-          }
-          let types = [];
+          "allowedRatingTypes.[]",
+          function () {
+            let userCanRate;
+            if (this.topic) {
+              userCanRate = this.topic.user_can_rate;
+            }
+            let types = [];
 
-          if (editingPostWithRatings) {
-            types.push(...postRatings.map((r) => r.type));
-          }
+            if (this.editingPostWithRatings) {
+              types.push(...this.post.ratings.map((r) => r.type));
+            }
 
-          if (topicFirstPost && allowedRatingTypes.length) {
-            allowedRatingTypes.forEach((t) => {
-              if (types.indexOf(t) === -1) {
-                types.push(t);
-              }
-            });
-          } else if (userCanRate && userCanRate.length) {
-            userCanRate.forEach((t) => {
-              if (types.indexOf(t) === -1) {
-                types.push(t);
-              }
-            });
-          }
+            if (this.topicFirstPost && this.allowedRatingTypes.length) {
+              this.allowedRatingTypes.forEach((t) => {
+                if (types.indexOf(t) === -1) {
+                  types.push(t);
+                }
+              });
+            } else if (userCanRate && userCanRate.length) {
+              userCanRate.forEach((t) => {
+                if (types.indexOf(t) === -1) {
+                  types.push(t);
+                }
+              });
+            }
 
-          return types;
-        },
+            return types;
+          }
+        ),
 
         ratings: computed(
           "ratingTypes",
@@ -150,23 +141,22 @@ export default {
           }
         ),
 
-        @discourseComputed("tags", "category")
-        allowedRatingTypes(tags, category) {
+        allowedRatingTypes: computed("tags", "category", function () {
           const site = this.site;
           let types = [];
 
-          if (category) {
+          if (this.category) {
             const categoryTypes =
-              site.category_rating_types[Category.slugFor(category)];
+              site.category_rating_types[Category.slugFor(this.category)];
             if (categoryTypes) {
               types.push(...categoryTypes);
             }
           }
 
-          if (tags) {
+          if (this.tags) {
             const tagTypes = site.tag_rating_types;
             if (tagTypes) {
-              tags.forEach((t) => {
+              this.tags.forEach((t) => {
                 if (tagTypes[t]) {
                   types.push(...tagTypes[t]);
                 }
@@ -175,16 +165,15 @@ export default {
           }
 
           return types;
-        },
+        }),
 
-        @discourseComputed("ratings.@each.{value}")
-        ratingsToSave(ratings) {
-          return ratings.map((r) => ({
+        ratingsToSave: computed("ratings.@each.value", function () {
+          return this.ratings.map((r) => ({
             type: r.type,
             value: r.value,
             weight: r.include ? 1 : 0,
           }));
-        },
+        }),
 
         ratingsString: computed("ratingsToSave.@each.value", {
           get() {
@@ -227,26 +216,30 @@ export default {
           return this._super(ignore, event);
         },
 
-        @observes("model.reply", "model.title", "model.ratings.@each.{value}")
-        _shouldSaveDraft() {
-          if (
-            this.model &&
-            !this.model.loading &&
-            !this.skipAutoSave &&
-            !this.model.disableDrafts
-          ) {
-            if (!this._lastDraftSaved) {
-              // pretend so we get a save unconditionally in 15 secs
-              this._lastDraftSaved = Date.now();
-            }
-            if (Date.now() - this._lastDraftSaved > 15000) {
-              this._saveDraft();
-            } else {
-              let method = isTesting() ? run : discourseDebounce;
-              this._saveDraftDebounce = method(this, this._saveDraft, 2000);
+        _shouldSaveDraft: observer(
+          "model.reply",
+          "model.title",
+          "model.ratings.@each.{value}",
+          function () {
+            if (
+              this.model &&
+              !this.model.loading &&
+              !this.skipAutoSave &&
+              !this.model.disableDrafts
+            ) {
+              if (!this._lastDraftSaved) {
+                // pretend so we get a save unconditionally in 15 secs
+                this._lastDraftSaved = Date.now();
+              }
+              if (Date.now() - this._lastDraftSaved > 15000) {
+                this._saveDraft();
+              } else {
+                let method = isTesting() ? run : discourseDebounce;
+                this._saveDraftDebounce = method(this, this._saveDraft, 2000);
+              }
             }
           }
-        },
+        ),
       });
 
       api.registerCustomPostMessageCallback("ratings", (controller, data) => {
@@ -301,8 +294,8 @@ export default {
         hasExtra: or("showTags", "showFeaturedLink"),
         classNameBindings: ["hasRatings", "editing", "hasExtra"],
 
-        @on("init")
-        setupController() {
+        init() {
+          this._super(...arguments);
           const topicController = getOwner(this).lookup("controller:topic");
           this.set("topicController", topicController);
         },
@@ -311,15 +304,14 @@ export default {
       api.modifyClass("component:composer-body", {
         pluginId: PLUGIN_ID,
 
-        @observes("composer.showRatings")
-        resizeIfShowRatings() {
+        resizeIfShowRatings: observer("composer.showRatings", function () {
           if (this.get("composer.viewOpen")) {
             this._triggerComposerResized();
           }
-        },
+        }),
 
-        @on("didRender")
-        addContainerClass() {
+        didRender() {
+          this._super(...arguments);
           if (!this.element || this.isDestroying || this.isDestroyed) {
             return;
           }
