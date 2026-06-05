@@ -2,9 +2,6 @@
 import { computed, observer } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { getOwner } from "@ember/owner";
-import { run } from "@ember/runloop";
-import discourseDebounce from "discourse/lib/debounce";
-import { isTesting } from "discourse/lib/environment";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import Category from "discourse/models/category";
 import Composer from "discourse/models/composer";
@@ -198,48 +195,14 @@ export default {
             return result;
           },
         }),
-      });
 
-      api.modifyClass("service:composer", {
-        pluginId: PLUGIN_ID,
-
-        save(ignore, event) {
-          const model = this.model;
-          const ratings = model.ratings;
-          const showRatings = model.showRatings;
-
-          if (showRatings && ratings.some((r) => r.include && !r.value)) {
-            const dialog = api.container.lookup("service:dialog");
+        save(opts) {
+          if (this.showRatings && this.ratings.some((r) => r.include && !r.value)) {
+            const dialog = getOwner(this).lookup("service:dialog");
             return dialog.alert(i18n("composer.select_rating"));
           }
-
-          return this._super(ignore, event);
+          return this._super(opts);
         },
-
-        _shouldSaveDraft: observer(
-          "model.reply",
-          "model.title",
-          "model.ratings.@each.{value}",
-          function () {
-            if (
-              this.model &&
-              !this.model.loading &&
-              !this.skipAutoSave &&
-              !this.model.disableDrafts
-            ) {
-              if (!this._lastDraftSaved) {
-                // pretend so we get a save unconditionally in 15 secs
-                this._lastDraftSaved = Date.now();
-              }
-              if (Date.now() - this._lastDraftSaved > 15000) {
-                this._saveDraft();
-              } else {
-                let method = isTesting() ? run : discourseDebounce;
-                this._saveDraftDebounce = method(this, this._saveDraft, 2000);
-              }
-            }
-          }
-        ),
       });
 
       api.registerCustomPostMessageCallback("ratings", (controller, data) => {
