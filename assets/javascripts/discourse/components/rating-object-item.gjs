@@ -88,7 +88,8 @@ export default class RatingObjectItem extends Component {
   @action
   updateTag(tags) {
     const objects = this.args.objects || [];
-    const tag = tags[0];
+    const rawTag = tags[0];
+    const tag = typeof rawTag === "string" ? rawTag : rawTag?.name;
 
     if (objects.every((o) => o.name !== tag)) {
       set(this.args.object, "name", tag);
