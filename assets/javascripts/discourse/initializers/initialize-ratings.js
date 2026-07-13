@@ -1,5 +1,5 @@
 /* eslint-disable ember/no-observers */
-import { computed, observer } from "@ember/object";
+import { get, observer } from "@ember/object";
 import { alias, and, notEmpty, or } from "@ember/object/computed";
 import { getOwner } from "@ember/owner";
 import { run } from "@ember/runloop";
@@ -30,174 +30,148 @@ export default {
 
       api.addTrackedPostProperties("ratings");
 
-      api.modifyClass("model:composer", {
-        pluginId: PLUGIN_ID,
-        editingPostWithRatings: and("editingPost", "post.ratings.length"),
-        hasRatingTypes: notEmpty("ratingTypes"),
-        showRatings: or("hasRatingTypes", "editingPostWithRatings"),
+      // Which rating types apply (reactive to category/tags/post) is kept
+      // separate from the user's entered values (`ratingValues`, plain state).
+      api.addModelGetter("composer", "editingPostWithRatings", function () {
+        return this.editingPost && this.post?.ratings?.length;
+      });
 
-        ratingTypes: computed(
-          "editingPostWithRatings",
-          "topicFirstPost",
-          "post.ratings",
-          "allowedRatingTypes.[]",
-          function () {
-            let userCanRate;
-            if (this.topic) {
-              userCanRate = this.topic.user_can_rate;
-            }
-            let types = [];
+      api.addModelGetter("composer", "hasRatingTypes", function () {
+        return this.ratingTypes.length > 0;
+      });
 
-            if (this.editingPostWithRatings) {
-              types.push(...this.post.ratings.map((r) => r.type));
-            }
+      api.addModelGetter("composer", "showRatings", function () {
+        return this.hasRatingTypes || this.editingPostWithRatings;
+      });
 
-            if (this.topicFirstPost && this.allowedRatingTypes.length) {
-              this.allowedRatingTypes.forEach((t) => {
-                if (types.indexOf(t) === -1) {
-                  types.push(t);
-                }
-              });
-            } else if (userCanRate && userCanRate.length) {
-              userCanRate.forEach((t) => {
-                if (types.indexOf(t) === -1) {
-                  types.push(t);
-                }
-              });
-            }
+      api.addModelGetter("composer", "allowedRatingTypes", function () {
+        const site = this.site;
+        let types = [];
 
-            return types;
+        if (this.category) {
+          const categoryTypes =
+            site.category_rating_types[Category.slugFor(this.category)];
+          if (categoryTypes) {
+            types.push(...categoryTypes);
           }
-        ),
+        }
 
-        ratings: computed(
-          "ratingTypes",
-          "editingPostWithRatings",
-          "post.ratings",
-          {
-            get() {
-              const typeNames = this.site.rating_type_names;
-
-              let result = this.ratingTypes.map((type) => {
-                let currentRating = (
-                  (this.post && this.post.ratings) ||
-                  []
-                ).find((r) => r.type === type);
-
-                let value;
-                let include;
-
-                if (this.editingPostWithRatings && currentRating) {
-                  value = currentRating.value;
-                  include = currentRating.weight > 0 ? true : false;
-                }
-
-                let rating = {
-                  type,
-                  value,
-                  include: include ?? false,
-                };
-
-                if (typeNames && typeNames[type]) {
-                  rating.typeName = typeNames[type];
-                }
-
-                return rating;
-              });
-              return result;
-            },
-
-            set(key, value) {
-              const typeNames = this.site.rating_type_names;
-
-              let result = this.ratingTypes.map((type) => {
-                let currentRating = (value || []).find((r) => r.type === type);
-
-                let score;
-                let include;
-
-                if (this.hasRatingTypes && currentRating) {
-                  score = currentRating.value;
-                  include =
-                    typeof currentRating.include === "boolean"
-                      ? currentRating.include
-                      : currentRating.value > 0;
-                }
-
-                let rating = {
-                  type,
-                  value: score,
-                  include: include ?? false,
-                };
-
-                if (typeNames && typeNames[type]) {
-                  rating.typeName = typeNames[type];
-                }
-
-                return rating;
-              });
-              return result;
-            },
+        // `tags` is a plain (non-tracked) composer property, so read it through
+        // `get` to establish autotracking for this getter and its observers.
+        const tags = get(this, "tags");
+        if (tags) {
+          const tagTypes = site.tag_rating_types;
+          if (tagTypes) {
+            tags.forEach((t) => {
+              if (tagTypes[t]) {
+                types.push(...tagTypes[t]);
+              }
+            });
           }
-        ),
+        }
 
-        allowedRatingTypes: computed("tags", "category", function () {
-          const site = this.site;
-          let types = [];
+        return types;
+      });
 
-          if (this.category) {
-            const categoryTypes =
-              site.category_rating_types[Category.slugFor(this.category)];
-            if (categoryTypes) {
-              types.push(...categoryTypes);
+      api.addModelGetter("composer", "ratingTypes", function () {
+        let userCanRate;
+        if (this.topic) {
+          userCanRate = this.topic.user_can_rate;
+        }
+        let types = [];
+
+        if (this.editingPostWithRatings) {
+          types.push(...this.post.ratings.map((r) => r.type));
+        }
+
+        if (this.topicFirstPost && this.allowedRatingTypes.length) {
+          this.allowedRatingTypes.forEach((t) => {
+            if (types.indexOf(t) === -1) {
+              types.push(t);
+            }
+          });
+        } else if (userCanRate && userCanRate.length) {
+          userCanRate.forEach((t) => {
+            if (types.indexOf(t) === -1) {
+              types.push(t);
+            }
+          });
+        }
+
+        return types;
+      });
+
+      // User-entered rating values, keyed by type.
+      api.addModelField("composer", "ratingValues", {
+        defaultValue: () => ({}),
+      });
+
+      api.addModelGetter("composer", "ratings", function () {
+        const typeNames = this.site.rating_type_names;
+        const values = this.ratingValues;
+        const postRatings =
+          (this.editingPostWithRatings && this.post?.ratings) || [];
+
+        return this.ratingTypes.map((type) => {
+          const override = values[type];
+
+          let value;
+          let include;
+
+          if (override) {
+            value = override.value;
+            include = override.include;
+          } else {
+            const currentRating = postRatings.find((r) => r.type === type);
+            if (currentRating) {
+              value = currentRating.value;
+              include = currentRating.weight > 0;
             }
           }
 
-          if (this.tags) {
-            const tagTypes = site.tag_rating_types;
-            if (tagTypes) {
-              this.tags.forEach((t) => {
-                if (tagTypes[t]) {
-                  types.push(...tagTypes[t]);
-                }
-              });
-            }
+          const rating = { type, value, include: include ?? false };
+
+          if (typeNames && typeNames[type]) {
+            rating.typeName = typeNames[type];
           }
 
-          return types;
-        }),
+          return rating;
+        });
+      });
 
-        ratingsToSave: computed("ratings.@each.value", function () {
-          return this.ratings.map((r) => ({
-            type: r.type,
-            value: r.value,
-            weight: r.include ? 1 : 0,
-          }));
-        }),
+      api.addModelMethod(
+        "composer",
+        "setRating",
+        function (type, value, include) {
+          this.ratingValues = {
+            ...this.ratingValues,
+            [type]: { value, include },
+          };
+        }
+      );
 
-        ratingsString: computed("ratingsToSave.@each.value", {
-          get() {
-            return JSON.stringify(this.ratingsToSave);
-          },
+      api.addModelGetter("composer", "ratingsToSave", function () {
+        return this.ratings.map((r) => ({
+          type: r.type,
+          value: r.value,
+          weight: r.include ? 1 : 0,
+        }));
+      });
 
-          set(key, value) {
-            if (value) {
-              const typeNames = this.site.rating_type_names;
+      api.addModelAccessor("composer", "ratingsString", {
+        get() {
+          return JSON.stringify(this.ratingsToSave);
+        },
 
-              const draftRatings = JSON.parse(value).map((r) => {
-                return {
-                  type: r.type,
-                  value: r.value,
-                  typeName: typeNames[r.type],
-                  include: true,
-                };
-              });
-              this.set("ratings", draftRatings);
-            }
-            let result = value || JSON.stringify(this.ratingsToSave);
-            return result;
-          },
-        }),
+        set(value) {
+          if (value) {
+            const values = { ...this.ratingValues };
+            JSON.parse(value).forEach((r) => {
+              values[r.type] = { value: r.value, include: true };
+            });
+            this.ratingValues = values;
+          }
+        },
       });
 
       api.modifyClass("service:composer", {
@@ -219,7 +193,7 @@ export default {
         _shouldSaveDraft: observer(
           "model.reply",
           "model.title",
-          "model.ratings.@each.{value}",
+          "model.ratingValues",
           function () {
             if (
               this.model &&
