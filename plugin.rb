@@ -87,7 +87,7 @@ after_initialize do
     ../extensions/post_revisor.rb
     ../extensions/posts_controller.rb
     ../extensions/topic.rb
-  ].each { |path| load File.expand_path(path, __FILE__) }
+  ].each { |path| require_relative File.expand_path(path, __FILE__) }
 
   ###### Site ######
 
