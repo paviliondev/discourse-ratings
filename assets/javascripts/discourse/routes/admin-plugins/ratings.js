@@ -1,4 +1,3 @@
-import { A } from "@ember/array";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { all } from "rsvp";
@@ -30,9 +29,9 @@ export default class AdminPluginsRatings extends DiscourseRoute {
     });
 
     controller.setProperties({
-      ratingTypes: A(ratingTypes.map((t) => RatingType.create(t))),
-      categoryTypes: A(this.categoryTypes),
-      tagTypes: A(this.tagTypes),
+      ratingTypes: ratingTypes.map((type) => RatingType.create(type)),
+      categoryTypes: this.categoryTypes,
+      tagTypes: this.tagTypes,
     });
   }
 

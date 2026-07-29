@@ -2,14 +2,14 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { hash } from "@ember/helper";
 import { action, set } from "@ember/object";
-import DButton from "discourse/components/d-button";
-import categoryBadge from "discourse/helpers/category-badge";
-import discourseTag from "discourse/helpers/discourse-tag";
 import Category from "discourse/models/category";
+import CategoryChooser from "discourse/select-kit/components/category-chooser";
+import MultiSelect from "discourse/select-kit/components/multi-select";
+import TagChooser from "discourse/select-kit/components/tag-chooser";
+import DButton from "discourse/ui-kit/d-button";
+import dCategoryBadge from "discourse/ui-kit/helpers/d-category-badge";
+import dDiscourseTag from "discourse/ui-kit/helpers/d-discourse-tag";
 import { i18n } from "discourse-i18n";
-import CategoryChooser from "select-kit/components/category-chooser";
-import MultiSelect from "select-kit/components/multi-select";
-import TagChooser from "select-kit/components/tag-chooser";
 
 export default class RatingObjectItem extends Component {
   @tracked error = null;
@@ -130,10 +130,10 @@ export default class RatingObjectItem extends Component {
           {{/if}}
         {{else}}
           {{#if this.isCategory}}
-            {{categoryBadge this.category}}
+            {{dCategoryBadge this.category}}
           {{/if}}
           {{#if this.isTag}}
-            {{discourseTag this.tag}}
+            {{dDiscourseTag this.tag}}
           {{/if}}
         {{/if}}
       </td>
