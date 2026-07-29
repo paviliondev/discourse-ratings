@@ -18,8 +18,8 @@ module PostRevisorRatingsExtension
   end
 
   def ratings_changed?
-    return false unless ratings.present?
-    return true unless @post.ratings.present?
+    return false if ratings.blank?
+    return true if @post.ratings.blank?
     return true if @post.ratings.length != ratings.length
 
     ratings.any? do |r|

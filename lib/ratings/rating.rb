@@ -2,7 +2,7 @@
 class DiscourseRatings::Rating
   include ActiveModel::SerializerSupport
 
-  KEY ||= "rating"
+  KEY = "rating"
 
   attr_accessor :type, :type_name, :value, :weight, :count
 

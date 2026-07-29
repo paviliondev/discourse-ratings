@@ -2,10 +2,10 @@
   "name": "discourse-ratings",
   "private": true,
   "devDependencies": {
-    "@discourse/lint-configs": "2.44.1",
-    "concurrently": "^9.2.1",
+    "@discourse/lint-configs": "3.2.0",
+    "concurrently": "^9.2.4",
     "ember-template-lint": "7.9.3",
-    "eslint": "9.39.2",
+    "eslint": "10.6.0",
     "prettier": "3.8.1",
     "stylelint": "17.5.0"
   },

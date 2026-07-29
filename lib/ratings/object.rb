@@ -2,7 +2,7 @@
 class DiscourseRatings::Object
   include ActiveModel::SerializerSupport
 
-  TYPES ||= %w[category tag]
+  TYPES = %w[category tag]
 
   attr_accessor :name, :types
 

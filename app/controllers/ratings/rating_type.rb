@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class DiscourseRatings::RatingTypeController < ::Admin::AdminController
+  requires_plugin "discourse-ratings"
+
   before_action :validate_existence, only: %i[create update destroy]
   before_action :validate_name, only: %i[update create]
   before_action :validate_type, only: %i[update create]
