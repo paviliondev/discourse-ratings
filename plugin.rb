@@ -69,25 +69,25 @@ end
 
 after_initialize do
   %w[
-    ../lib/ratings/engine.rb
-    ../lib/ratings/cache.rb
-    ../lib/ratings/rating.rb
-    ../lib/ratings/rating_type.rb
-    ../lib/ratings/object.rb
-    ../config/routes.rb
-    ../jobs/regular/destroy_rating_type.rb
-    ../jobs/regular/destroy_ratings.rb
-    ../jobs/regular/migrate_ratings.rb
-    ../app/serializers/ratings/object.rb
-    ../app/serializers/ratings/rating.rb
-    ../app/serializers/ratings/rating_type.rb
-    ../app/controllers/ratings/object.rb
-    ../app/controllers/ratings/rating.rb
-    ../app/controllers/ratings/rating_type.rb
-    ../extensions/post_revisor.rb
-    ../extensions/posts_controller.rb
-    ../extensions/topic.rb
-  ].each { |path| require_relative File.expand_path(path, __FILE__) }
+    lib/ratings/engine.rb
+    lib/ratings/cache.rb
+    lib/ratings/rating.rb
+    lib/ratings/rating_type.rb
+    lib/ratings/object.rb
+    config/routes.rb
+    jobs/regular/destroy_rating_type.rb
+    jobs/regular/destroy_ratings.rb
+    jobs/regular/migrate_ratings.rb
+    app/serializers/ratings/object.rb
+    app/serializers/ratings/rating.rb
+    app/serializers/ratings/rating_type.rb
+    app/controllers/ratings/object.rb
+    app/controllers/ratings/rating.rb
+    app/controllers/ratings/rating_type.rb
+    extensions/post_revisor.rb
+    extensions/posts_controller.rb
+    extensions/topic.rb
+  ].each { |path| require_relative path }
 
   ###### Site ######
 
