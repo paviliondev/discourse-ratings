@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class DiscourseRatings::RatingController < ::Admin::AdminController
+  requires_plugin "discourse-ratings"
+
   before_action :check_types_exist
 
   def migrate

@@ -2,8 +2,8 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action, set } from "@ember/object";
-import DButton from "discourse/components/d-button";
-import i18n from "discourse/helpers/i18n";
+import DButton from "discourse/ui-kit/d-button";
+import { i18n } from "discourse-i18n";
 
 const minTypeLength = 2;
 const minNameLength = 2;

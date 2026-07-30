@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
 import { action, set } from "@ember/object";
-import i18n from "discourse/helpers/i18n";
+import { i18n } from "discourse-i18n";
 import StarRating from "./star-rating";
 
 export default class SelectRating extends Component {

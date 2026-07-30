@@ -4,9 +4,9 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
-import icon from "discourse/helpers/d-icon";
-import htmlSafe from "discourse/helpers/html-safe";
-import i18n from "discourse/helpers/i18n";
+import { trustHTML } from "@ember/template";
+import dIcon from "discourse/ui-kit/helpers/d-icon";
+import { i18n } from "discourse-i18n";
 
 export default class TopicRatingTip extends Component {
   @tracked showDetails = false;
@@ -47,11 +47,11 @@ export default class TopicRatingTip extends Component {
       {{willDestroy this.teardown}}
     >
       <a role="button" {{on "click" this.toggleDetails}}>
-        {{icon "circle-info"}}
+        {{dIcon "circle-info"}}
       </a>
       {{#if this.showDetails}}
         <div class="tip-details">
-          {{htmlSafe (i18n @details)}}
+          {{trustHTML (i18n @details)}}
         </div>
       {{/if}}</div>
   </template>

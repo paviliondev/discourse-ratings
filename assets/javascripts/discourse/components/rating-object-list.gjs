@@ -1,8 +1,8 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action, set } from "@ember/object";
-import DButton from "discourse/components/d-button";
-import loadingSpinner from "discourse/helpers/loading-spinner";
+import DButton from "discourse/ui-kit/d-button";
+import dLoadingSpinner from "discourse/ui-kit/helpers/d-loading-spinner";
 import { i18n } from "discourse-i18n";
 import RatingObject from "../models/rating-object";
 import RatingObjectItem from "./rating-object-item";
@@ -97,7 +97,7 @@ export default class RatingObjectList extends Component {
       <h3>{{this.title}}</h3>
 
       {{#if this.loading}}
-        {{loadingSpinner}}
+        {{dLoadingSpinner}}
       {{else}}
         {{#if this.hasObjects}}
           <table>

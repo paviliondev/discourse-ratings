@@ -2,8 +2,8 @@
 class DiscourseRatings::RatingType
   include ActiveModel::SerializerSupport
 
-  KEY ||= "type"
-  NONE ||= "none"
+  KEY = "type"
+  NONE = "none"
 
   attr_accessor :type, :name
 

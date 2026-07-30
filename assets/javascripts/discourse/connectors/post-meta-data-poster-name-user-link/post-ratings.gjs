@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import { htmlSafe } from "@ember/template";
+import { trustHTML } from "@ember/template";
 import { ratingListHtml } from "../../lib/rating-utilities";
 
 export default class PostRatings extends Component {
@@ -8,7 +8,7 @@ export default class PostRatings extends Component {
   }
 
   get ratingList() {
-    return htmlSafe(ratingListHtml(this.args.post.ratings));
+    return trustHTML(ratingListHtml(this.args.post.ratings));
   }
 
   <template>

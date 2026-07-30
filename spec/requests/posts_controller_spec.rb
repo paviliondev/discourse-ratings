@@ -6,7 +6,7 @@ describe PostsController do
   let(:rating_hash) { JSON.parse('[{"type":"pointers","value":"4", "pavilion": "yes"}]') }
   let(:rating_none_type) { "none" }
   let(:rating_none_name) { "None" }
-  fab!(:rating_category) { Fabricate(:category) }
+  fab!(:rating_category, :category)
   fab!(:user) { sign_in(Fabricate(:user, refresh_auto_groups: true)) }
   fab!(:rating_topic) { Fabricate(:topic, category: rating_category) }
   fab!(:rating_post) { Fabricate(:post, topic: rating_topic, user: user) }

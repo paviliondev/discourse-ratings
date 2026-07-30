@@ -2,11 +2,11 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { hash } from "@ember/helper";
 import { action } from "@ember/object";
-import DButton from "discourse/components/d-button";
-import i18n from "discourse/helpers/i18n";
-import loadingSpinner from "discourse/helpers/loading-spinner";
-import CategoryChooser from "select-kit/components/category-chooser";
-import ComboBox from "select-kit/components/combo-box";
+import CategoryChooser from "discourse/select-kit/components/category-chooser";
+import ComboBox from "discourse/select-kit/components/combo-box";
+import DButton from "discourse/ui-kit/d-button";
+import dLoadingSpinner from "discourse/ui-kit/helpers/d-loading-spinner";
+import { i18n } from "discourse-i18n";
 import Rating from "../models/rating";
 
 export default class RatingDestroy extends Component {
@@ -70,7 +70,7 @@ export default class RatingDestroy extends Component {
       />
 
       {{#if this.startingDestroy}}
-        {{loadingSpinner size="small"}}
+        {{dLoadingSpinner size="small"}}
       {{/if}}
 
       {{#if this.destroyMessage}}

@@ -1,24 +1,28 @@
 import Controller from "@ember/controller";
-import { action } from "@ember/object";
-import { notEmpty } from "@ember/object/computed";
+import { action, computed } from "@ember/object";
 import { service } from "@ember/service";
+import { isEmpty } from "@ember/utils";
 import { i18n } from "discourse-i18n";
 import RatingType from "../../../models/rating-type";
 
 export default class AdminPluginsShowRatingsController extends Controller {
   @service dialog;
 
-  @notEmpty("ratingTypes") hasTypes;
+  @computed("ratingTypes.length")
+  get hasTypes() {
+    return !isEmpty(this.ratingTypes);
+  }
 
   @action
   newType() {
-    this.get("ratingTypes").pushObject(
+    this.set("ratingTypes", [
+      ...this.ratingTypes,
       RatingType.create({
         isNew: true,
         type: "",
         name: "",
-      })
-    );
+      }),
+    ]);
   }
 
   @action
@@ -59,7 +63,10 @@ export default class AdminPluginsShowRatingsController extends Controller {
   @action
   destroyType(typeObj) {
     if (typeObj.isNew) {
-      this.get("ratingTypes").removeObject(typeObj);
+      this.set(
+        "ratingTypes",
+        this.ratingTypes.filter((type) => type !== typeObj)
+      );
     } else {
       this.dialog.yesNoConfirm({
         message: i18n("admin.ratings.type.confirm_destroy"),

@@ -1,6 +1,6 @@
 import { classNames } from "@ember-decorators/component";
-import MultiSelectComponent from "select-kit/components/multi-select";
-import { selectKitOptions } from "select-kit/components/select-kit";
+import MultiSelectComponent from "discourse/select-kit/components/multi-select";
+import { selectKitOptions } from "discourse/select-kit/components/select-kit";
 
 @selectKitOptions({
   filterable: true,

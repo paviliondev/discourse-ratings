@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class DiscourseRatings::ObjectController < ::Admin::AdminController
+  requires_plugin "discourse-ratings"
+
   before_action :validate_type
   before_action :validate_object, only: [:create]
 
@@ -33,7 +35,7 @@ class DiscourseRatings::ObjectController < ::Admin::AdminController
   end
 
   def validate_type
-    unless DiscourseRatings::Object::TYPES.include?(params[:type])
+    if DiscourseRatings::Object::TYPES.exclude?(params[:type])
       raise Discourse::InvalidParameters.new(:type)
     end
   end
