@@ -46,3 +46,8 @@ and rebuild docker via
 cd /var/discourse
 ./launcher rebuild app
 ```
+## Configure ratings
+
+The Ratings plugin is enabled by default. You can turn it off and make other general adjustments in the settings: `/admin/site_settings/category/all_results?filter=rating`.
+
+Desgniate categories and tags for ratings via: `/admin/plugins/ratings`.
